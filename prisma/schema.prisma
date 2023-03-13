@@ -1,0 +1,979 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model categoria_estado {
+  id         Int          @id @default(autoincrement())
+  nombre     String
+  cat_estado cat_estado[]
+}
+
+model cat_estado {
+  id                         Int                          @id @default(autoincrement())
+  categoria_estado           categoria_estado             @relation(fields: [id_categoria_estado], references: [id])
+  id_categoria_estado        Int
+  nombre                     String
+  descripcion                String
+  cliente                    cliente[]
+  proveedor                  proveedor[]
+  trabajador                 trabajador[]
+  cat_cargo                  cat_cargo[]
+  historial_cargo_trabajador historial_cargo_trabajador[]
+  comprobante                comprobante[]
+  cat_forma_pago             cat_forma_pago[]
+  categoria_producto         categoria_producto[]
+  sub_categoria_producto     sub_categoria_producto[]
+  marca                      marca[]
+  unidad_medida              unidad_medida[]
+  producto                   producto[]
+  precio_producto            precio_producto[]
+  caducidad                  caducidad[]
+  lote_producto              lote_producto[]
+  solicitud_compra           solicitud_compra[]
+  tipo_orden_compra          tipo_orden_compra[]
+  orden_compra               orden_compra[]
+  compra                     compra[]
+  recepcion_compra           recepcion_compra[]
+  pedido                     pedido[]
+  reservacion                reservacion[]
+  venta                      venta[]
+  bodega                     bodega[]
+  entrega_pedido             entrega_pedido[]
+  caja                       caja[]
+  apertura_caja              apertura_caja[]
+  cierre_caja                cierre_caja[]
+  grupo_usuario              grupo_usuario[]
+  sub_grupo_usuario          sub_grupo_usuario[]
+  usuario                    usuario[]
+  rol                        rol[]
+  modulo                     modulo[]
+  conexion                   conexion[]
+  historial_sesion           historial_sesion[]
+  cat_impuesto               cat_impuesto[]
+  tipo_producto              tipo_producto[]
+  zona_preparacion           zona_preparacion[]
+  producto_elaborado         producto_elaborado[]
+  detalle_producto_elaborado detalle_producto_elaborado[]
+  tipo_categoria             tipo_categoria[]
+}
+
+model categoria_impuesto {
+  id           Int            @id @default(autoincrement())
+  nombre       String
+  cat_impuesto cat_impuesto[]
+}
+
+model cat_impuesto {
+  id                    Int                @id @default(autoincrement())
+  categoria_impuesto    categoria_impuesto @relation(fields: [id_categoria_impuesto], references: [id])
+  id_categoria_impuesto Int
+  cat_estado            cat_estado         @relation(fields: [id_estado], references: [id])
+  id_estado             Int
+  porcentaje            Float
+  descripcion           String
+}
+
+// Modulo de Gestion de Usuarios
+
+model persona {
+  id                            Int         @id @default(autoincrement())
+  nombre                        String
+  apellido_razon_social         String
+  cedula_ruc                    String      @unique
+  telefono                      String
+  direccion_domicilio           String
+  correo                        String
+  genero                        String
+  fecha_nacimiento_constitucion DateTime
+  fecha_registro                DateTime    @default(now())
+  tipo_persona                  String      @default("Natural")
+  cliente                       cliente[]
+  proveedor                     proveedor[]
+  trabajador                    trabajador?
+  usuario                       usuario?
+}
+
+model cliente {
+  id           Int           @id @default(autoincrement())
+  persona      persona       @relation(fields: [id_persona], references: [id])
+  id_persona   Int
+  cat_estado   cat_estado    @relation(fields: [id_estado], references: [id])
+  id_estado    Int
+  tipo_cliente String
+  pedido       pedido[]
+  reservacion  reservacion[]
+  venta        venta[]
+}
+
+model proveedor {
+  id                 Int                  @id @default(autoincrement())
+  persona            persona              @relation(fields: [id_persona], references: [id])
+  id_persona         Int
+  cat_estado         cat_estado           @relation(fields: [id_estado], references: [id])
+  id_estado          Int
+  sector_comercial   String
+  nacionalidad       String
+  contacto_proveedor contacto_proveedor[]
+  orden_compra       orden_compra[]
+  compra             compra[]
+  devolucion_compra  devolucion_compra[]
+  producto           producto[]
+}
+
+model contacto_proveedor {
+  id           Int       @id @default(autoincrement())
+  proveedor    proveedor @relation(fields: [id_proveedor], references: [id])
+  id_proveedor Int
+  telefono     String
+  celular      String
+  direccion    String
+}
+
+// Gestión de Trabajadores
+
+model cat_estado_civil {
+  id         Int          @id @default(autoincrement())
+  nombre     String
+  trabajador trabajador[]
+}
+
+model trabajador {
+  id                         Int                          @id @default(autoincrement())
+  persona                    persona                      @relation(fields: [id_persona], references: [id])
+  id_persona                 Int                          @unique
+  estado_civil               cat_estado_civil             @relation(fields: [id_estado_civil], references: [id])
+  id_estado_civil            Int
+  cat_estado                 cat_estado                   @relation(fields: [id_estado], references: [id])
+  id_estado                  Int
+  codigo_inss                String
+  fecha_ingreso              DateTime                     @default(now())
+  historial_cargo_trabajador historial_cargo_trabajador[]
+  compra                     compra[]
+  recepcion_compra           recepcion_compra[]
+  devolucion_compra          devolucion_compra[]
+  pedido                     pedido[]
+  venta                      venta[]
+  entrega_pedido             entrega_pedido[]
+  caja                       caja[]
+  apertura_caja              apertura_caja[]
+  movimiento_caja            movimiento_caja[]
+  arqueo_caja                arqueo_caja[]
+  privilegio_usuario         privilegio_usuario[]
+  solicitud_compra           solicitud_compra[]
+  orden_compra               orden_compra[]
+  cierre_caja                cierre_caja[]
+}
+
+model cat_cargo {
+  id                         Int                          @id @default(autoincrement())
+  cat_estado                 cat_estado                   @relation(fields: [id_estado], references: [id])
+  id_estado                  Int
+  nombre                     String
+  descripcion                String
+  salario                    Float
+  vigencia                   DateTime
+  historial_cargo_trabajador historial_cargo_trabajador[]
+}
+
+model historial_cargo_trabajador {
+  id            Int        @id @default(autoincrement())
+  trabajador    trabajador @relation(fields: [id_trabajador], references: [id])
+  id_trabajador Int
+  cat_cargo     cat_cargo  @relation(fields: [id_cargo], references: [id])
+  id_cargo      Int
+  cat_estado    cat_estado @relation(fields: [id_estado], references: [id])
+  id_estado     Int
+  motivo        String
+  fecha         DateTime
+}
+
+// Comprobantes y formas de pago
+
+model comprobante {
+  id               Int                @id @default(autoincrement())
+  cat_estado       cat_estado         @relation(fields: [id_estado], references: [id])
+  id_estado        Int
+  descripcion      String
+  numeracion       String             @default(cuid())
+  serie            String             @default(uuid())
+  fecha_ingreso    DateTime
+  solicitud_compra solicitud_compra[]
+  orden_compra     orden_compra[]
+  compra           compra[]
+  venta            venta[]
+}
+
+model cat_forma_pago {
+  id          Int        @id @default(autoincrement())
+  cat_estado  cat_estado @relation(fields: [id_estado], references: [id])
+  id_estado   Int
+  nombre      String
+  descripcion String
+  venta       venta[]
+}
+
+model moneda {
+  id              Int               @id @default(autoincrement())
+  origen          String
+  nombre          String
+  simbolo         String
+  tipo_cambio     tipo_cambio[]
+  venta           venta[]
+  apertura_caja   apertura_caja[]
+  movimiento_caja movimiento_caja[]
+}
+
+model tipo_cambio {
+  id             Int      @id @default(autoincrement())
+  moneda         moneda   @relation(fields: [id_moneda], references: [id])
+  id_moneda      Int
+  fecha          DateTime
+  valor_cambio   Float
+  fecha_registro DateTime @default(now())
+}
+
+// Modulo de Gestion de Productos
+
+// !        Inventario        //
+
+model tipo_producto {
+  id         Int        @id @default(autoincrement())
+  cat_estado cat_estado @relation(fields: [id_estado], references: [id])
+  id_estado  Int
+  nombre     String
+  producto   producto[]
+}
+
+model tipo_categoria {
+  id         Int        @id @default(autoincrement())
+  cat_estado cat_estado @relation(fields: [id_estado], references: [id])
+  id_estado  Int
+  nombre     String
+}
+
+model categoria_producto {
+  id                     Int                      @id @default(autoincrement())
+  cat_estado             cat_estado               @relation(fields: [id_estado], references: [id])
+  id_estado              Int
+  nombre                 String
+  descripcion            String
+  sub_categoria_producto sub_categoria_producto[]
+  producto               producto[]
+  producto_elaborado     producto_elaborado[]
+}
+
+model sub_categoria_producto {
+  id                    Int                  @id @default(autoincrement())
+  categoria_producto    categoria_producto   @relation(fields: [id_categoria_producto], references: [id])
+  id_categoria_producto Int
+  cat_estado            cat_estado           @relation(fields: [id_estado], references: [id])
+  id_estado             Int
+  nombre                String
+  producto_elaborado    producto_elaborado[]
+  producto              producto[]
+}
+
+model marca {
+  id         Int        @id @default(autoincrement())
+  cat_estado cat_estado @relation(fields: [id_estado], references: [id])
+  id_estado  Int
+  nombre     String
+  siglas     String
+  producto   producto[]
+}
+
+model unidad_medida {
+  id                 Int                  @id @default(autoincrement())
+  cat_estado         cat_estado           @relation(fields: [id_estado], references: [id])
+  id_estado          Int
+  nombre             String
+  siglas             String
+  producto           producto[]
+  producto_elaborado producto_elaborado[]
+  equivalencia       equivalencia[]
+}
+
+model zona_preparacion {
+  id                 Int                  @id @default(autoincrement())
+  cat_estado         cat_estado           @relation(fields: [id_estado], references: [id])
+  id_estado          Int
+  nombre             String
+  producto_elaborado producto_elaborado[]
+}
+
+model equivalencia {
+  id               Int           @id @default(autoincrement())
+  nombre           String
+  siglas           String
+  unidad_medida    unidad_medida @relation(fields: [id_unidad_medida], references: [id])
+  id_unidad_medida Int
+}
+
+model producto {
+  id                         Int                          @id @default(autoincrement())
+  cat_estado                 cat_estado                   @relation(fields: [id_estado], references: [id])
+  id_estado                  Int
+  marca                      marca                        @relation(fields: [id_marca], references: [id])
+  id_marca                   Int
+  categoria_producto         categoria_producto           @relation(fields: [id_categoria_producto], references: [id])
+  id_categoria_producto      Int
+  sub_categoria_producto     sub_categoria_producto       @relation(fields: [id_sub_categoria_producto], references: [id])
+  id_sub_categoria_producto  Int
+  tipo_producto              tipo_producto                @relation(fields: [id_tipo_producto], references: [id])
+  id_tipo_producto           Int
+  unidad_medida              unidad_medida                @relation(fields: [id_unidad_medida], references: [id])
+  id_unidad_medida           Int
+  proveedor                  proveedor                    @relation(fields: [id_proveedor], references: [id])
+  id_proveedor               Int                          @default(1)
+  cod_producto               String                       @default(uuid())
+  nombre                     String
+  descripcion                String
+  imagen                     String                       @default("")
+  fecha_ingreso              DateTime                     @default(now())
+  precio_producto            precio_producto[]
+  caducidad                  caducidad[]
+  lote_producto              lote_producto[]
+  detalle_orden_compra       detalle_orden_compra[]
+  detalle_compra             detalle_compra[]
+  detalle_pedido             detalle_pedido[]
+  detalle_venta              detalle_venta[]
+  trans_inventario           trans_inventario[]
+  detalle_inventario         detalle_inventario[]
+  detalle_entrega            detalle_entrega[]
+  detalle_solicitud_compra   detalle_solicitud_compra[]
+  detalle_producto_elaborado detalle_producto_elaborado[]
+  coste_producto             coste_producto[]
+  inventario                 inventario?
+}
+
+model coste_producto {
+  id          Int      @id @default(autoincrement())
+  producto    producto @relation(fields: [id_producto], references: [id])
+  id_producto Int
+  fecha       DateTime
+  costo       Float
+}
+
+model producto_elaborado {
+  id                         Int                          @id @default(autoincrement())
+  cat_estado                 cat_estado                   @relation(fields: [id_estado], references: [id])
+  id_estado                  Int
+  categoria_producto         categoria_producto           @relation(fields: [id_categoria_producto], references: [id])
+  id_categoria_producto      Int
+  sub_categoria_producto     sub_categoria_producto       @relation(fields: [id_sub_categoria_producto], references: [id])
+  id_sub_categoria_producto  Int
+  zona_preparacion           zona_preparacion             @relation(fields: [id_zona_preparacion], references: [id])
+  id_zona_preparacion        Int
+  unidad_medida              unidad_medida                @relation(fields: [id_unidad_medida], references: [id])
+  id_unidad_medida           Int
+  cod_producto               String                       @default(uuid())
+  nombre                     String
+  descripcion                String
+  imagen                     String                       @default("")
+  precio_producto            Float
+  fecha_ingreso              DateTime                     @default(now())
+  detalle_producto_elaborado detalle_producto_elaborado[]
+  coste_producto_elaborado   coste_producto_elaborado[]
+}
+
+model detalle_producto_elaborado {
+  producto              producto           @relation(fields: [id_producto], references: [id])
+  id_producto           Int
+  producto_elaborado    producto_elaborado @relation(fields: [id_producto_elaborado], references: [id])
+  id_producto_elaborado Int
+  cat_estado            cat_estado         @relation(fields: [id_estado], references: [id])
+  id_estado             Int
+  cantidad              Float
+
+  @@id([id_producto, id_producto_elaborado])
+}
+
+model precio_producto {
+  id              Int        @id @default(autoincrement())
+  producto        producto   @relation(fields: [id_producto], references: [id])
+  id_producto     Int
+  cat_estado      cat_estado @relation(fields: [id_estado], references: [id])
+  id_estado       Int
+  fecha_precio    DateTime   @default(now())
+  gasto           Float
+  precio_compra   Float
+  margen_ganancia Float
+  precio_venta    Float
+}
+
+
+model coste_producto_elaborado {
+  id                    Int                @id @default(autoincrement())
+  producto_elaborado    producto_elaborado @relation(fields: [id_producto_elaborado], references: [id])
+  id_producto_elaborado Int
+  coste                 Float
+}
+
+model caducidad {
+  id              Int             @id @default(autoincrement())
+  producto        producto        @relation(fields: [id_producto], references: [id])
+  id_producto     Int
+  cat_estado      cat_estado      @relation(fields: [id_estado], references: [id])
+  id_estado       Int
+  fecha_entrada   DateTime
+  fecha_caducidad DateTime
+  lote_producto   lote_producto[]
+}
+
+model lote_producto {
+  id            Int        @id @default(autoincrement())
+  producto      producto   @relation(fields: [id_producto], references: [id])
+  id_producto   Int
+  cat_estado    cat_estado @relation(fields: [id_estado], references: [id])
+  id_estado     Int
+  caducidad     caducidad  @relation(fields: [id_caducidad], references: [id])
+  id_caducidad  Int
+  existencia    Int
+  fecha_entrada DateTime
+}
+
+// !        Compras        //
+
+model solicitud_compra {
+  id                       Int                        @id @default(autoincrement())
+  cat_estado               cat_estado                 @relation(fields: [id_estado], references: [id])
+  id_estado                Int
+  trabajador               trabajador                 @relation(fields: [id_trabajador], references: [id])
+  id_trabajador            Int
+  comprobante              comprobante                @relation(fields: [id_comprobante], references: [id])
+  id_comprobante           Int
+  motivo                   String
+  descuento                Float                      @default(0)
+  impuesto                 Float                      @default(0)
+  subtotal                 Float                      @default(0)
+  total                    Float                      @default(0)
+  fecha_solicitud          DateTime
+  fecha_vigencia           DateTime
+  cantidad                 Int
+  detalle_solicitud_compra detalle_solicitud_compra[]
+  orden_compra             orden_compra[]
+}
+
+model detalle_solicitud_compra {
+  producto            producto         @relation(fields: [id_producto], references: [id])
+  id_producto         Int
+  solicitud_compra    solicitud_compra @relation(fields: [id_solicitud_compra], references: [id])
+  id_solicitud_compra Int
+  cantidad            Int
+  precio_unitario     Float
+  monto               Float
+
+  @@id([id_producto, id_solicitud_compra])
+}
+
+model tipo_orden_compra {
+  id           Int            @id @default(autoincrement())
+  cat_estado   cat_estado     @relation(fields: [id_estado], references: [id])
+  id_estado    Int
+  nombre       String
+  orden_compra orden_compra[]
+}
+
+model orden_compra {
+  id                   Int                    @id @default(autoincrement())
+  proveedor            proveedor              @relation(fields: [id_proveedor], references: [id])
+  id_proveedor         Int
+  tipo_orden_compra    tipo_orden_compra      @relation(fields: [id_tipo_orden_compra], references: [id])
+  id_tipo_orden_compra Int
+  comprobante          comprobante            @relation(fields: [id_comprobante], references: [id])
+  id_comprobante       Int
+  cat_estado           cat_estado             @relation(fields: [id_estado], references: [id])
+  id_estado            Int
+  solicitud_compra     solicitud_compra       @relation(fields: [id_solicitud_compra], references: [id])
+  id_solicitud_compra  Int
+  trabajador           trabajador             @relation(fields: [autorizado_por], references: [id])
+  autorizado_por       Int
+  num_orden            Int                    @default(autoincrement())
+  subtotal             Float
+  descuento            Float
+  impuesto             Float
+  total                Float
+  fecha_orden          DateTime
+  detalle_orden_compra detalle_orden_compra[]
+  compra               compra[]
+}
+
+model detalle_orden_compra {
+  producto        producto     @relation(fields: [id_producto], references: [id])
+  id_producto     Int
+  orden_compra    orden_compra @relation(fields: [id_orden_compra], references: [id])
+  id_orden_compra Int
+  cantidad        Int
+  precio_unitario Float
+  monto           Float
+
+  @@id([id_producto, id_orden_compra])
+}
+
+model compra {
+  id                Int                 @id @default(autoincrement())
+  proveedor         proveedor           @relation(fields: [id_proveedor], references: [id])
+  id_proveedor      Int
+  trabajador        trabajador          @relation(fields: [id_trabajador], references: [id])
+  id_trabajador     Int
+  orden_compra      orden_compra        @relation(fields: [id_orden_compra], references: [id])
+  id_orden_compra   Int
+  comprobante       comprobante         @relation(fields: [id_comprobante], references: [id])
+  id_comprobante    Int
+  cat_estado        cat_estado          @relation(fields: [id_estado], references: [id])
+  id_estado         Int
+  fecha_compra      DateTime
+  descripcion       String
+  descuento         Float
+  subtotal          Float
+  impuesto          Float
+  total             Float
+  detalle_compra    detalle_compra[]
+  recepcion_compra  recepcion_compra[]
+  devolucion_compra devolucion_compra[]
+}
+
+model detalle_compra {
+  compra      compra   @relation(fields: [id_compra], references: [id])
+  id_compra   Int
+  producto    producto @relation(fields: [id_producto], references: [id])
+  id_producto Int
+  cantidad    Int
+  precio      Float
+  monto       Float
+
+  @@id([id_compra, id_producto])
+}
+
+model recepcion_compra {
+  id              Int        @id @default(autoincrement())
+  compra          compra     @relation(fields: [id_compra], references: [id])
+  id_compra       Int
+  trabajador      trabajador @relation(fields: [id_trabajador], references: [id])
+  id_trabajador   Int
+  cat_estado      cat_estado @relation(fields: [id_estado], references: [id])
+  id_estado       Int
+  descripcion     String
+  fecha_recepcion DateTime
+}
+
+model devolucion_compra {
+  id               Int        @id @default(autoincrement())
+  compra           compra     @relation(fields: [id_compra], references: [id])
+  id_compra        Int
+  proveedor        proveedor  @relation(fields: [id_proveedor], references: [id])
+  id_proveedor     Int
+  trabajador       trabajador @relation(fields: [id_trabajador], references: [id])
+  id_trabajador    Int
+  motivo           String
+  fecha_devolucion DateTime
+}
+
+// *        Pedidos        //
+
+model pedido {
+  id                Int              @id @default(autoincrement())
+  cliente           cliente          @relation(fields: [id_cliente], references: [id])
+  id_cliente        Int
+  trabajador        trabajador       @relation(fields: [id_trabajador], references: [id])
+  id_trabajador     Int
+  cat_estado        cat_estado       @relation(fields: [id_estado], references: [id])
+  id_estado         Int
+  tipo_pedido       String
+  fecha_pedido      DateTime
+  ubicacion_entrega String
+  observacion       String
+  vigencia          DateTime
+  detalle_pedido    detalle_pedido[]
+  venta             venta[]
+}
+
+model detalle_pedido {
+  pedido      pedido   @relation(fields: [id_pedido], references: [id])
+  id_pedido   Int
+  producto    producto @relation(fields: [id_producto], references: [id])
+  id_producto Int
+  cantidad    Int
+  precio      Float
+  monto       Float
+
+  @@id([id_pedido, id_producto])
+}
+
+// *        Reservación        //
+
+model reservacion {
+  id                  Int                   @id @default(autoincrement())
+  cliente             cliente               @relation(fields: [id_cliente], references: [id])
+  id_cliente          Int
+  cat_estado          cat_estado            @relation(fields: [id_estado], references: [id])
+  id_estado           Int
+  tipo_reservacion    String
+  fecha_reservacion   DateTime
+  horas_reservadas    Int
+  fecha_registro      DateTime
+  detalle_reservacion detalle_reservacion[]
+}
+
+model detalle_reservacion {
+  id             Int         @id @default(autoincrement())
+  reservacion    reservacion @relation(fields: [id_reservacion], references: [id])
+  id_reservacion Int
+  total_personas Int
+  observaciones  String
+}
+
+// *        Ventas        //
+
+model venta {
+  id                Int              @id @default(autoincrement())
+  cliente           cliente          @relation(fields: [id_cliente], references: [id])
+  id_cliente        Int
+  trabajador        trabajador       @relation(fields: [id_trabajador], references: [id])
+  id_trabajador     Int
+  pedido            pedido           @relation(fields: [id_pedido], references: [id])
+  id_pedido         Int
+  comprobante       comprobante      @relation(fields: [id_comprobante], references: [id])
+  id_comprobante    Int
+  moneda            moneda           @relation(fields: [id_moneda], references: [id])
+  id_moneda         Int
+  cat_forma_pago    cat_forma_pago   @relation(fields: [id_cat_forma_pago], references: [id])
+  id_cat_forma_pago Int
+  cat_estado        cat_estado       @relation(fields: [id_estado], references: [id])
+  id_estado         Int
+  tipo_venta        String
+  fecha_venta       DateTime
+  subtotal          Float
+  descuento         Float
+  impuesto          Float
+  total             Float
+  detalle_venta     detalle_venta[]
+  entrega_pedido    entrega_pedido[]
+}
+
+model detalle_venta {
+  venta       venta    @relation(fields: [id_venta], references: [id])
+  id_venta    Int
+  producto    producto @relation(fields: [id_producto], references: [id])
+  id_producto Int
+  cantidad    Int
+  precio      Float
+  monto       Float
+
+  @@id([id_venta, id_producto])
+}
+
+model tipo_bodega {
+  id     Int      @id @default(autoincrement())
+  nombre String
+  bodega bodega[]
+}
+
+model bodega {
+  id             Int         @id @default(autoincrement())
+  tipo_bodega    tipo_bodega @relation(fields: [id_tipo_bodega], references: [id])
+  id_tipo_bodega Int
+  cat_estado     cat_estado  @relation(fields: [id_estado], references: [id])
+  id_estado      Int
+  ubicacion      String
+  existencia     Int
+
+  ubicacion_en_bodega ubicacion_en_bodega[]
+}
+
+model ubicacion_en_bodega {
+  id                     Int    @id @default(autoincrement())
+  bodega                 bodega @relation(fields: [id_bodega], references: [id])
+  id_bodega              Int
+  nombre_pasillo         String
+  numero_pasillo         Int
+  numero_estante_vitrina Int
+}
+
+model trans_inventario {
+  id               Int      @id @default(autoincrement())
+  producto         producto @relation(fields: [id_producto], references: [id])
+  id_producto      Int
+  fecha_movimiento DateTime
+  cod_documento    String   @unique @default(uuid())
+  cantidad         Int
+  tipo_movimiento  String
+}
+
+model inventario {
+  id                 Int                  @id @default(autoincrement())
+  producto           producto             @relation(fields: [id_producto], references: [id])
+  id_producto        Int                  @unique
+  stock_min          Int
+  stock_max          Int
+  stock_actual       Int
+  detalle_inventario detalle_inventario[]
+}
+
+model detalle_inventario {
+  inventario    inventario @relation(fields: [id_inventario], references: [id])
+  id_inventario Int
+  producto      producto   @relation(fields: [id_producto], references: [id])
+  id_producto   Int
+  stock_minimo  Int
+  stock_maximo  Int
+  existencia    Int
+
+  @@id([id_inventario, id_producto])
+}
+
+// *        Delivery        //
+
+model entrega_pedido {
+  id              Int               @id @default(autoincrement())
+  trabajador      trabajador        @relation(fields: [id_trabajador], references: [id])
+  id_trabajador   Int
+  venta           venta             @relation(fields: [id_venta], references: [id])
+  id_venta        Int
+  cat_estado      cat_estado        @relation(fields: [id_estado], references: [id])
+  id_estado       Int
+  fecha_entrega   DateTime
+  tiempo_estimado Int
+  lugar_entrega   String
+  monto_delivery  Float
+  detalle_entrega detalle_entrega[]
+}
+
+model detalle_entrega {
+  id                Int            @id @default(autoincrement())
+  entrega_pedido    entrega_pedido @relation(fields: [id_entrega_pedido], references: [id])
+  id_entrega_pedido Int
+  producto          producto       @relation(fields: [id_producto], references: [id])
+  id_producto       Int
+  cantidad          Int
+  precio            Float
+  monto             Float
+}
+
+// *        Caja        //
+
+model caja {
+  id              Int               @id @default(autoincrement())
+  trabajador      trabajador        @relation(fields: [id_trabajador], references: [id])
+  id_trabajador   Int
+  cat_estado      cat_estado        @relation(fields: [id_estado], references: [id])
+  id_estado       Int
+  tipo_caja       String
+  fecha_registro  DateTime
+  apertura_caja   apertura_caja[]
+  movimiento_caja movimiento_caja[]
+  arqueo_caja     arqueo_caja[]
+  cierre_caja     cierre_caja[]
+}
+
+model apertura_caja {
+  id                    Int                    @id @default(autoincrement())
+  caja                  caja                   @relation(fields: [id_caja], references: [id])
+  id_caja               Int
+  trabajador            trabajador             @relation(fields: [id_trabajador], references: [id])
+  id_trabajador         Int
+  cat_estado            cat_estado             @relation(fields: [id_estado], references: [id])
+  id_estado             Int
+  moneda                moneda                 @relation(fields: [id_moneda], references: [id])
+  id_moneda             Int
+  fecha_apertura        DateTime
+  detalle_apertura_caja detalle_apertura_caja?
+}
+
+model detalle_apertura_caja {
+  id               Int           @id @default(autoincrement())
+  apertura_caja    apertura_caja @relation(fields: [id_apertura_caja], references: [id])
+  id_apertura_caja Int           @unique
+  monto_cordobas   Float
+  monto_dolares    Float
+}
+
+model movimiento_caja {
+  id               Int        @id @default(autoincrement())
+  caja             caja       @relation(fields: [id_caja], references: [id])
+  id_caja          Int
+  trabajador       trabajador @relation(fields: [id_trabajador], references: [id])
+  id_trabajador    Int
+  moneda           moneda     @relation(fields: [id_moneda], references: [id])
+  id_moneda        Int
+  num_movimiento   String     @default(cuid())
+  fecha_movimiento DateTime
+  concepto         String
+  monto            Float
+}
+
+model arqueo_caja {
+  id            Int        @id @default(autoincrement())
+  caja          caja       @relation(fields: [id_caja], references: [id])
+  id_caja       Int
+  trabajador    trabajador @relation(fields: [id_trabajador], references: [id])
+  id_trabajador Int
+  fecha_arqueo  DateTime
+  total         Float
+}
+
+model cierre_caja {
+  id            Int        @id @default(autoincrement())
+  caja          caja       @relation(fields: [id_caja], references: [id])
+  id_caja       Int
+  trabajador    trabajador @relation(fields: [id_trabajador], references: [id])
+  id_trabajador Int
+  cat_estado    cat_estado @relation(fields: [id_estado], references: [id])
+  id_estado     Int
+  fecha_cierre  DateTime   @default(now())
+  total         Float
+}
+
+//!        Seguridad        //
+model grupo_usuario {
+  id                Int                 @id @default(autoincrement())
+  cat_estado        cat_estado          @relation(fields: [id_estado], references: [id])
+  id_estado         Int
+  nombre            String
+  descripcion       String
+  sub_grupo_usuario sub_grupo_usuario[]
+  perfil            perfil[]
+}
+
+model sub_grupo_usuario {
+  id               Int           @id @default(autoincrement())
+  cat_estado       cat_estado    @relation(fields: [id_estado], references: [id])
+  id_estado        Int
+  grupo_usuario    grupo_usuario @relation(fields: [id_grupo_usuario], references: [id])
+  id_grupo_usuario Int
+  nombre           String
+  descripcion      String
+}
+
+model perfil {
+  id                 Int                  @id @default(autoincrement())
+  grupo_usuario      grupo_usuario        @relation(fields: [id_grupo_usuario], references: [id])
+  id_grupo_usuario   Int
+  nombre             String
+  descripcion        String
+  usuario            usuario[]
+  privilegio_usuario privilegio_usuario[]
+}
+
+model usuario {
+  id             Int        @id @default(autoincrement())
+  perfil         perfil     @relation(fields: [id_perfil], references: [id])
+  id_perfil      Int
+  cat_estado     cat_estado @relation(fields: [id_estado], references: [id])
+  id_estado      Int
+  persona        persona    @relation(fields: [id_persona], references: [id])
+  id_persona     Int        @unique
+  usuario        String     @unique
+  correo         String     @unique
+  password       String
+  rol            rol        @relation(fields: [id_rol], references: [id])
+  id_rol         Int        @default(6)
+  fecha_registro DateTime   @default(now())
+
+  historial_password_usuario historial_password_usuario[]
+  conexion                   conexion[]
+  historial_sesion           historial_sesion[]
+  historial_permiso_usuario  historial_permiso_usuario[]
+}
+
+model historial_password_usuario {
+  id               Int      @id @default(autoincrement())
+  usuario          usuario  @relation(fields: [id_usuario], references: [id])
+  id_usuario       Int
+  password_antigua String
+  fecha_registro   DateTime
+}
+
+model rol {
+  id         Int          @id @default(autoincrement())
+  nombre     String
+  cat_estado cat_estado   @relation(fields: [id_estado], references: [id])
+  id_estado  Int
+  rol_modulo rol_modulo[]
+  usuario    usuario[]
+}
+
+model modulo {
+  id             Int          @id @default(autoincrement())
+  cat_estado     cat_estado   @relation(fields: [id_estado], references: [id])
+  id_estado      Int
+  nombre         String
+  descripcion    String
+  icono          String       @default("")
+  fecha_registro DateTime     @default(now())
+  sub_modulo     sub_modulo[]
+  rol_modulo     rol_modulo[]
+}
+
+model sub_modulo {
+  id        Int    @id @default(autoincrement())
+  modulo    modulo @relation(fields: [id_modulo], references: [id])
+  id_modulo Int
+  nombre    String
+  url       String
+}
+
+model rol_modulo {
+  rol       rol    @relation(fields: [id_rol], references: [id])
+  id_rol    Int
+  modulo    modulo @relation(fields: [id_modulo], references: [id])
+  id_modulo Int
+  nombre    String
+
+  @@id([id_modulo, id_rol])
+}
+
+model permiso {
+  id                        Int                         @id @default(autoincrement())
+  nombre                    String
+  descripcion               String
+  historial_permiso_usuario historial_permiso_usuario[]
+}
+
+model privilegio_usuario {
+  id        Int    @id @default(autoincrement())
+  perfil    perfil @relation(fields: [id_perfil], references: [id])
+  id_perfil Int
+
+  id_rol_modulo Int
+  trabajador    trabajador @relation(fields: [id_trabajador], references: [id])
+  id_trabajador Int
+}
+
+model conexion {
+  id           Int        @id @default(autoincrement())
+  usuario      usuario    @relation(fields: [id_usuario], references: [id])
+  id_usuario   Int
+  cat_estado   cat_estado @relation(fields: [id_estado], references: [id])
+  id_estado    Int
+  num_conexion Int
+  ip           String
+  mac          String
+}
+
+model historial_sesion {
+  id            Int        @id @default(autoincrement())
+  usuario       usuario    @relation(fields: [id_usuario], references: [id])
+  id_usuario    Int
+  cat_estado    cat_estado @relation(fields: [id_estado], references: [id])
+  id_estado     Int
+  fecha_ingreso DateTime
+}
+
+model historial_permiso_usuario {
+  usuario        usuario  @relation(fields: [id_usuario], references: [id])
+  id_usuario     Int
+  permiso        permiso  @relation(fields: [id_permiso], references: [id])
+  id_permiso     Int
+  fecha_registro DateTime
+
+  @@id([id_usuario, id_permiso])
+}

@@ -1,0 +1,211 @@
+import type { NextApiRequest, NextApiResponse } from "next";
+
+import { prisma } from "./../../../database";
+import { hour } from "../../../helpers/addHours";
+import { IPedido } from "../../../interfaces";
+
+type Data =
+  | {
+      message: string;
+    }
+  | IPedido
+  | IPedido[];
+
+export default function hanlder(
+  req: NextApiRequest,
+  res: NextApiResponse<Data>
+) {
+  switch (req.method) {
+    case "GET":
+      return obtenerPedidos(res);
+    case "POST":
+      return registerPedido(req, res);
+    case "PUT":
+      return actualizarPedido(req, res);
+    case "PATCH":
+      return cancelarPedido(req, res);
+    default:
+      return res.status(404).json({ message: "Method not found" });
+  }
+}
+
+const obtenerPedidos = async (res: NextApiResponse<Data>) => {
+  await prisma.$connect();
+  const pedidos = await prisma.pedido.findMany({
+    select: {
+      id: true,
+      id_cliente: true,
+      cliente: {
+        select: {
+          id: true,
+          id_estado: true,
+          cat_estado: true,
+          id_persona: true,
+          persona: true,
+          tipo_cliente: true,
+        },
+      },
+      id_trabajador: true,
+      trabajador: {
+        select: {
+          id: true,
+          id_persona: true,
+          persona: true,
+          id_estado_civil: true,
+          estado_civil: true,
+          id_estado: true,
+          codigo_inss: true,
+          fecha_ingreso: true,
+        },
+      },
+      tipo_pedido: true,
+      fecha_pedido: true,
+      ubicacion_entrega: true,
+      id_estado: true,
+      cat_estado: true,
+      vigencia: true,
+      observacion: true,
+      detalle_pedido: {
+        select: {
+          id_producto: true,
+          producto: true,
+          monto: true,
+          cantidad: true,
+          precio: true,
+        },
+      },
+    },
+    orderBy: {
+      id: "desc",
+    },
+    where: {
+      id_estado: 1,
+    },
+  });
+  return res.status(200).json(pedidos);
+};
+
+const registerPedido = async (
+  req: NextApiRequest,
+  res: NextApiResponse<Data>
+) => {
+  const {
+    id_cliente,
+    id_trabajador = 1,
+    tipo_pedido,
+    ubicacion_entrega = "",
+    observacion = "",
+    productos,
+  } = req.body;
+
+  if (!id_cliente || !tipo_pedido || !productos)
+    return res.status(400).json({ message: "Dichos campos son obligatorios" });
+
+  await prisma.$connect();
+
+  const pedido = await prisma.pedido.create({
+    data: {
+      id_cliente: Number(id_cliente),
+      id_trabajador,
+      tipo_pedido,
+      fecha_pedido: new Date(),
+      ubicacion_entrega: ubicacion_entrega,
+      id_estado: 1,
+      observacion,
+      vigencia: hour(new Date(), 35),
+    },
+  });
+
+  await prisma.detalle_pedido.createMany({
+    data: productos.map((producto: any) => ({
+      id_pedido: pedido.id,
+      id_producto: producto.id,
+      cantidad: producto.cantidad,
+      monto: producto.cantidad * producto.precio,
+      precio: producto.precio,
+    })),
+  });
+
+  await prisma.$disconnect();
+
+  return res.status(200).json(pedido);
+};
+
+const actualizarPedido = async (
+  req: NextApiRequest,
+  res: NextApiResponse<Data>
+) => {
+  const {
+    id,
+    id_cliente,
+    id_trabajador = 1,
+    tipo_pedido,
+    ubicacion_entrega = "",
+    observacion = "",
+    productos,
+  } = req.body;
+
+  if (!id)
+    return res
+      .status(400)
+      .json({ message: "El id es necesario para actualizar el pedido" });
+
+  if (!id_cliente || !tipo_pedido || !productos)
+    return res.status(400).json({ message: "Dichos campos son obligatorios" });
+
+  await prisma.$connect();
+  const pedido = await prisma.pedido.update({
+    data: {
+      id_cliente: Number(id_cliente),
+      id_trabajador: Number(id_trabajador),
+      tipo_pedido,
+      ubicacion_entrega: ubicacion_entrega,
+      observacion,
+    },
+    where: {
+      id,
+    },
+  });
+
+  await prisma.detalle_pedido.deleteMany({
+    where: {
+      id_pedido: pedido.id,
+    },
+  });
+
+  // TODO Cambiar any
+  await prisma.detalle_pedido.createMany({
+    data: productos.map((producto: any) => ({
+      id_pedido: pedido.id,
+      id_producto: producto.id,
+      cantidad: producto.cantidad,
+      monto: producto.cantidad * producto.precio,
+      precio: producto.precio,
+    })),
+  });
+  await prisma.$disconnect();
+  return res.status(200).json(pedido);
+};
+
+const cancelarPedido = async (
+  req: NextApiRequest,
+  res: NextApiResponse<Data>
+) => {
+  const { id } = req.body;
+  if (!id)
+    return res
+      .status(400)
+      .json({ message: "El id del pedido es necesario para cancelarlo" });
+  await prisma.$connect();
+  const pedido = await prisma.pedido.update({
+    data: {
+      id_estado: 2,
+    },
+    where: {
+      id,
+    },
+  });
+  await prisma.$disconnect();
+
+  return res.status(200).json(pedido);
+};
