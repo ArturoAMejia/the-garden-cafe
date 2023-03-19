@@ -6,10 +6,14 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import React, { useContext, useMemo } from "react";
+import React, { useMemo } from "react";
 import { ICatEstado, ICliente, IPersona } from "../../../../interfaces";
-import { AdminContext } from "../../../../context";
+
 import { DescativarCliente, EditarCliente } from "../../../admin";
+import {
+  useObtenerClientesQuery,
+  useObtenerVentasQuery,
+} from "@/store/slices/venta";
 
 const columnHelper = createColumnHelper<ICliente>();
 
@@ -71,7 +75,8 @@ export const ClientesTable = () => {
     []
   );
 
-  const { clientes } = useContext(AdminContext);
+  const { data: clientes, isLoading } = useObtenerClientesQuery();
+
 
   const table = useReactTable({
     data: clientes!,
@@ -79,6 +84,9 @@ export const ClientesTable = () => {
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
+
+  if (isLoading) return <>Cargando...</>;
+
   return (
     <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
       <table className="min-w-full divide-y divide-gray-300">

@@ -1,12 +1,12 @@
-import { FC, Fragment, useContext, useState } from "react";
-import { useRouter } from "next/router";
+import { FC, Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import tgcApi from "../../../../../api/tgcApi";
+
 import { ICatEstado } from "../../../../../interfaces";
-import { AdminContext } from "../../../../../context";
+
+import { useCrearUnidadMedidaMutation } from "@/store/slices/inventario";
 
 interface Props {
   estados: ICatEstado[];
@@ -23,23 +23,22 @@ export const AgregarUnidadMedida: FC<Props> = ({ estados }) => {
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  const { crearUnidadMedida } = useContext(AdminContext);
+  const [crearUnidadMedida] = useCrearUnidadMedidaMutation();
+
   const onCrearUnidadMedida = async ({ nombre, siglas }: FormData) => {
-    const { hasError, message } = await crearUnidadMedida({
+    crearUnidadMedida({
       id: 0,
       id_estado: 1,
       nombre,
       siglas,
-    });
-    if (hasError) {
-      toast.error(message!);
-      return;
-    }
-
-    toast.success("Proveedor agregado correctamente.");
-
-    closeModal();
-    reset();
+    })
+      .unwrap()
+      .then((res) => {
+        toast.success("Proveedor agregado correctamente.");
+        closeModal();
+        reset();
+      })
+      .catch((error) => toast.error(error.data.message));
   };
   return (
     <>

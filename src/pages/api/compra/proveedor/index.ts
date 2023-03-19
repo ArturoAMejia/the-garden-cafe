@@ -147,12 +147,14 @@ const actualizarProveedor = async (
     celular = "",
     direccion_domicilio = "",
     tipo_persona,
-    genero= '',
+    genero = "",
     sector_comercial,
     nacionalidad,
   } = req.body;
 
   await prisma.$connect();
+
+  console.log(req.body);
 
   if (!id)
     return res
@@ -205,6 +207,12 @@ const actualizarProveedor = async (
       id, // ! El id que se manda es el ID del Proveedor
     },
   });
+
+  const cp = await prisma.contacto_proveedor.findFirst({
+    where: {
+      id_proveedor: id,
+    },
+  });
   await prisma.contacto_proveedor.update({
     data: {
       telefono,
@@ -212,7 +220,7 @@ const actualizarProveedor = async (
       direccion: direccion_domicilio,
     },
     where: {
-      id,
+      id: cp?.id,
     },
   });
   await prisma.$disconnect();
@@ -225,6 +233,8 @@ const desactivarProveedor = async (
   res: NextApiResponse<Data>
 ) => {
   const { id } = req.body;
+
+  console.log(req.body);
   if (!id)
     return res
       .status(400)

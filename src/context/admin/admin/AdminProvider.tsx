@@ -16,7 +16,6 @@ import {
   IOrdenCompra,
   IPedido,
   IProducto,
-  IProveedor,
   IReservacion,
   ISolicitudCompra,
   ITipoOrdenCompra,
@@ -29,7 +28,7 @@ import { IProductoCart } from "../../../interfaces/producto";
 export interface AdminState {
   categorias: ICategoriaProducto[] | [];
   unidades_medidas: IUnidadMedida[] | [];
-  proveedores: IProveedor[] | [];
+
   productos: IProductoCart[];
   inventarios: IInventario[];
   marcas: IMarca[] | [];
@@ -55,7 +54,7 @@ export interface AdminState {
 
 const ADMIN_INITIAL_STATE: AdminState = {
   categorias: [],
-  proveedores: [],
+
   productos: [],
   inventarios: [],
   unidades_medidas: [],
@@ -356,133 +355,6 @@ export const AdminProvider: FC<PropsWithChildren> = ({ children }) => {
     }
   };
 
-  const obtenerProveedores = async () => {
-    const { data } = await tgcApi.get<IProveedor[]>("api/compra/proveedor");
-    dispatch({ type: "[Admin] - Obtener Proveedores", payload: data });
-  };
-
-  const crearProveedor = async (
-    cedula_ruc: string,
-    nombre: string,
-    correo: string,
-    apellido_razon_social: string,
-    fecha_nacimiento_constitucion: Date,
-    telefono: string,
-    celular: string,
-    direccion_domicilio: string,
-    tipo_persona: string,
-    genero: string,
-    sector_comercial: string,
-    nacionalidad: string
-  ): Promise<{ hasError: boolean; message: string }> => {
-    try {
-      await tgcApi.post("api/compra/proveedor", {
-        cedula_ruc,
-        nombre,
-        correo,
-        apellido_razon_social,
-        fecha_nacimiento_constitucion,
-        telefono,
-        celular,
-        direccion_domicilio,
-        tipo_persona,
-        genero,
-        sector_comercial,
-        nacionalidad,
-      });
-      obtenerProveedores();
-      return {
-        hasError: false,
-        message: "Proveedor creado correctamente",
-      };
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        return {
-          hasError: true,
-          message: error.response?.data.message,
-        };
-      }
-
-      return {
-        hasError: true,
-        message: "No se pudo crear el proveedor - intente de nuevo",
-      };
-    }
-  };
-
-  const actualizarProveedor = async (
-    id: number,
-    cedula_ruc: string,
-    nombre: string,
-    correo: string,
-    apellido_razon_social: string,
-    fecha_nacimiento_constitucion: Date,
-    telefono: string,
-    celular: string,
-    direccion_domicilio: string,
-    tipo_persona: string,
-    genero: string,
-    sector_comercial: string,
-    nacionalidad: string
-  ): Promise<{ hasError: boolean; message: string }> => {
-    try {
-      await tgcApi.put("api/compra/proveedor", {
-        id,
-        cedula_ruc,
-        nombre,
-        correo,
-        apellido_razon_social,
-        fecha_nacimiento_constitucion,
-        telefono,
-        celular,
-        direccion_domicilio,
-        tipo_persona,
-        genero,
-        sector_comercial,
-        nacionalidad,
-      });
-      obtenerProveedores();
-      return {
-        hasError: false,
-        message: "Proveedor actualizado correctamente",
-      };
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        return {
-          hasError: true,
-          message: error.response?.data.message,
-        };
-      }
-
-      return {
-        hasError: true,
-        message: "No se pudo crear el proveedor - intente de nuevo",
-      };
-    }
-  };
-
-  const desactivarProveedor = async (proveedor: IProveedor) => {
-    await tgcApi.patch("api/compra/proveedor", proveedor);
-    obtenerProveedores();
-  };
-
-  const obtenerOrdenesCompra = async () => {
-    const { data } = await tgcApi.get<IOrdenCompra[]>("api/compra/orden");
-    dispatch({ type: "[Compra] - Obtener Ordenes de Compra", payload: data });
-  };
-
-  const obtenerCompras = async () => {
-    const { data } = await tgcApi.get<ICompra[]>("api/compra");
-    dispatch({ type: "[Compra] - Obtener Compras", payload: data });
-  };
-
-  const obtenerSolicitudesCompra = async () => {
-    const { data } = await tgcApi.get<ISolicitudCompra[]>(
-      "api/compra/solicitud"
-    );
-    dispatch({ type: "[Compra] - Obtener Solicitudes Compra", payload: data });
-  };
-
   const añadirProductoOrden = (producto: IProductoCart) => {
     const productoEnOrden = state.productos.some((p) => p.id === producto.id);
 
@@ -521,140 +393,11 @@ export const AdminProvider: FC<PropsWithChildren> = ({ children }) => {
     });
   };
 
-  const crearSolicitdCompra = async (
-    fecha_vigencia: Date,
-    motivo: string,
-    id_tipo_orden_compra: number,
-    productos: IProductoCart[],
-    id_trabajador: number,
-    descuento: number,
-    impuesto: number,
-    subtotal: number,
-    total: number
-  ): Promise<{ hasError: boolean; message: string }> => {
-    try {
-      await tgcApi.post("api/compra/solicitud", {
-        motivo,
-        fecha_vigencia,
-        id_tipo_orden_compra,
-        productos,
-        id_trabajador,
-        descuento,
-        impuesto,
-        subtotal,
-        total,
-      });
-      dispatch({ type: "[Compra] - Solicitud Completada" });
-      obtenerSolicitudesCompra();
-      return {
-        hasError: false,
-        message: "Orden de compra realizada.",
-      };
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        return {
-          hasError: true,
-          message: error.response?.data.message,
-        };
-      }
-      return {
-        hasError: true,
-        message: "No se puedo realizar la orden de compra. Intente nuevamente.",
-      };
-    }
-  };
 
   const solicitudCompleta = () => {
     dispatch({ type: "[Compra] - Solicitud Completada" });
   };
 
-  const aceptarSolicitudCompra = async (
-    orden_compra: IOrdenCompra,
-    productos: any
-  ): Promise<{ hasError: boolean; message: string }> => {
-    try {
-      await tgcApi.post("api/compra/orden", orden_compra, productos);
-      await tgcApi.patch("api/compra/solicitud", {
-        id: orden_compra.id_solicitud_compra,
-      });
-      obtenerSolicitudesCompra();
-      return {
-        hasError: false,
-        message: "",
-      };
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        return {
-          hasError: true,
-          message: error.response?.data.message,
-        };
-      }
-      return {
-        hasError: true,
-        message: "No se pudo aceptar la solicitud de compra.",
-      };
-    }
-  };
-
-  const rechazarSolicitudCompra = async (
-    id: number,
-    id_estado: number
-  ): Promise<{
-    hasError: boolean;
-    message: string;
-  }> => {
-    try {
-      await tgcApi.patch("api/compra/solicitud", {
-        id,
-        id_estado,
-      });
-      obtenerSolicitudesCompra();
-      return {
-        hasError: false,
-        message: "",
-      };
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        return {
-          hasError: true,
-          message: error.message,
-        };
-      }
-      return {
-        hasError: true,
-        message: "No se pudo rechazar la solicitud",
-      };
-    }
-  };
-
-  const anularOrdenCompra = async (
-    id: number
-  ): Promise<{
-    hasError: boolean;
-    message: string;
-  }> => {
-    try {
-      await tgcApi.patch("api/compra/orden", {
-        id,
-      });
-      obtenerOrdenesCompra();
-      return {
-        hasError: false,
-        message: "",
-      };
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        return {
-          hasError: true,
-          message: error.message,
-        };
-      }
-      return {
-        hasError: true,
-        message: "No se pudo anular la orden de compra",
-      };
-    }
-  };
 
   const obtenerTiposOrdenCompra = async () => {
     const { data } = await tgcApi.get<ITipoOrdenCompra[]>(
@@ -1252,47 +995,7 @@ export const AdminProvider: FC<PropsWithChildren> = ({ children }) => {
     obtenerGrupoUsuario();
   };
 
-  const realizarCompra = async (
-    id_proveedor: number,
-    id_trabajador: number,
-    id_orden_compra: number,
-    productos: [],
-    descripcion: string,
-    subtotal: number
-  ): Promise<{ hasError: boolean; message: string }> => {
-    try {
-      await tgcApi.post("api/compra", {
-        id_proveedor,
-        id_trabajador,
-        id_orden_compra,
-        productos,
-        descripcion,
-        subtotal,
-      });
-      await tgcApi.patch("api/compra/orden", { id: id_orden_compra });
-      obtenerOrdenesCompra();
-      return {
-        hasError: false,
-        message: "",
-      };
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        return {
-          hasError: true,
-          message: error.message,
-        };
-      }
-      return {
-        hasError: true,
-        message: "No se pudo registrar la compra - Intente nuevamente.",
-      };
-    }
-  };
 
-  const anularCompra = async (id: number) => {
-    await tgcApi.patch("api/compra", { id });
-    obtenerCompras();
-  };
 
   const cargarPedido = (productos: IProductoCart[]) => {
     dispatch({ type: "[Compra] - Cargar Orden compra", payload: productos });
@@ -1310,21 +1013,11 @@ export const AdminProvider: FC<PropsWithChildren> = ({ children }) => {
     obtenerTrabajadores();
   }, []);
 
-  useEffect(() => {
-    obtenerOrdenesCompra();
-  }, []);
 
   useEffect(() => {
     obtenerCategorias();
   }, []);
 
-  useEffect(() => {
-    obtenerProveedores();
-  }, []);
-
-  useEffect(() => {
-    obtenerSolicitudesCompra();
-  }, []);
 
   useEffect(() => {
     obtenerTiposOrdenCompra();
@@ -1356,10 +1049,6 @@ export const AdminProvider: FC<PropsWithChildren> = ({ children }) => {
 
   useEffect(() => {
     obtenerFormasPago();
-  }, []);
-
-  useEffect(() => {
-    obtenerCompras();
   }, []);
 
   useEffect(() => {
@@ -1396,17 +1085,10 @@ export const AdminProvider: FC<PropsWithChildren> = ({ children }) => {
         crearCategoria,
         actualizarCategorias,
         desactivarCategoria,
-        crearProveedor,
-        actualizarProveedor,
-        desactivarProveedor,
         añadirProductoOrden,
         actualizarCantidadProducto,
         quitarProducto,
-        crearSolicitdCompra,
         solicitudCompleta,
-        aceptarSolicitudCompra,
-        rechazarSolicitudCompra,
-        anularOrdenCompra,
         crearUnidadMedida,
         actualizarUnidadMedida,
         desactivarUnidadMedida,
@@ -1431,9 +1113,7 @@ export const AdminProvider: FC<PropsWithChildren> = ({ children }) => {
         desactivarFormaPago,
         realizarVenta,
         anularVenta,
-        realizarCompra,
         cargarPedido,
-        anularCompra,
         registrarTrabajador,
         actualizarTrabajador,
         desactivarTrabajador,

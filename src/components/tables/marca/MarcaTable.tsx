@@ -5,10 +5,9 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import React, { FC, useContext, useState } from "react";
 import { ICatEstado, IMarca } from "../../../interfaces";
 import { EditarMarca, DesactivarMarca } from "../../admin";
-import { AdminContext } from "../../../context";
+import { useObtenerMarcasQuery } from "@/store/slices/inventario";
 
 const columnHelper = createColumnHelper<IMarca>();
 
@@ -51,13 +50,16 @@ const columns = [
 ];
 
 export const MarcaTable = () => {
-  const { marcas } = useContext(AdminContext);
+
+  const { data: marcas, isLoading} = useObtenerMarcasQuery();
   const table = useReactTable({
     data: marcas!,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
+
+  if (isLoading) return <>Cargando...</>;
 
   return (
     <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">

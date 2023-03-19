@@ -1,15 +1,12 @@
-/* This example requires Tailwind CSS v2.0+ */
-import { FC, Fragment, useContext, useState } from "react";
+import { FC, Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import {
   ExclamationCircleIcon,
   XCircleIcon,
 } from "@heroicons/react/24/outline";
-import tgcApi from "../../../../../api/tgcApi";
 
 import toast from "react-hot-toast";
-import { useRouter } from "next/router";
-import { AdminContext } from "../../../../../context";
+import { useDesactivarMarcaMutation } from "@/store/slices/inventario";
 
 interface Props {
   id: number;
@@ -20,17 +17,16 @@ export const DesactivarMarca: FC<Props> = ({ id }) => {
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  const { desactivarMarca } = useContext(AdminContext);
+  const [desactivarMarca] = useDesactivarMarcaMutation();
 
   const ondesactivarMarca = async () => {
-    const { hasError, message } = await desactivarMarca(id);
-
-    if (hasError) {
-      toast.error(message!);
-      return;
-    }
-    toast.success("Marca desactivada correctamente.");
-    closeModal();
+    desactivarMarca({ id })
+      .unwrap()
+      .then((res) => {
+        toast.success("Marca desactivada correctamente.");
+        closeModal();
+      })
+      .catch((error) => toast.error(error.data.message));
   };
 
   return (

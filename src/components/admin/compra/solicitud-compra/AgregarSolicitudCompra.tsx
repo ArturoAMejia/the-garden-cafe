@@ -6,13 +6,13 @@ import { useForm } from "react-hook-form";
 
 import toast from "react-hot-toast";
 import { AdminContext, AuthContext } from "../../../../context";
+import { useCrearSolicitudCompraMutation } from "@/store/slices/compra/compraApi";
 
 type FormData = {
   fecha_vigencia: Date;
   motivo: string;
   id_tipo_orden_compra: number;
 };
-
 
 export const AgregarSolicitudCompra = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,42 +21,36 @@ export const AgregarSolicitudCompra = () => {
 
   const { user } = useContext(AuthContext);
 
-  const {
-    crearSolicitdCompra,
-    productos,
-    subtotal,
-    solicitudCompleta,
-    total,
-    tax,
-  } = useContext(AdminContext);
+  const [crearSolicitudCompra] = useCrearSolicitudCompraMutation();
+
+  const { productos, subtotal, solicitudCompleta, total, tax } =
+    useContext(AdminContext);
   const { register, handleSubmit, reset } = useForm<FormData>();
+
+  const trabajador_id = Number(user?.id);
 
   const onCrearNuevaOrdenCompra = async ({
     fecha_vigencia,
     id_tipo_orden_compra,
     motivo,
   }: FormData) => {
-    const { hasError, message } = await crearSolicitdCompra(
+    crearSolicitudCompra({
       fecha_vigencia,
       motivo,
-      Number(id_tipo_orden_compra),
       productos,
-      Number(user!.id),
-      0,
-      tax,
+      id_trabajador: trabajador_id,
+      impuesto: tax,
       subtotal,
-      total
-    );
-
-    if (hasError) {
-      toast.error(message!);
-      return;
-    }
-
-    toast.success("Solicitud de Compra realizada correctamente.");
-    solicitudCompleta();
-    closeModal();
-    reset();
+      total,
+    })
+      .unwrap()
+      .then((res) => {
+        toast.success("Solicitud de Compra realizada correctamente.");
+        closeModal();
+        reset();
+        solicitudCompleta();
+      })
+      .catch((error) => toast.error(error.data.message));
   };
 
   return (

@@ -1,16 +1,22 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 
-import { compraSlice } from "./slices/compra";
-import { compraApi } from "./slices/compra/compraApi";
+import { compraApi } from "./slices/compra";
+import { ventaApi } from "./slices/venta";
+import { inventarioApi } from "./slices/inventario";
 
 export function makeStore() {
   return configureStore({
     reducer: {
-      compra: compraSlice.reducer,
       [compraApi.reducerPath]: compraApi.reducer,
+      [ventaApi.reducerPath]: ventaApi.reducer,
+      [inventarioApi.reducerPath]: inventarioApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(compraApi.middleware),
+      getDefaultMiddleware().concat([
+        compraApi.middleware,
+        ventaApi.middleware,
+        inventarioApi.middleware,
+      ]),
   });
 }
 

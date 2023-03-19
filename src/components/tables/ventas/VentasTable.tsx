@@ -19,13 +19,11 @@ import Link from "next/link";
 import { IdentificationIcon } from "@heroicons/react/24/outline";
 import { IVenta } from "../../../interfaces";
 import { AnularVenta } from "../../admin";
+import { useObtenerVentasQuery } from "@/store/slices/venta";
 
 const columunHelper = createColumnHelper<IVenta>();
 
-interface Props {
-  ventas: IVenta[];
-}
-export const VentasTable: FC<Props> = ({ ventas }) => {
+export const VentasTable = () => {
   const columns = useMemo<ColumnDef<IVenta, any>[]>(
     () => [
       columunHelper.accessor<"cliente", ICliente>("cliente", {
@@ -107,12 +105,16 @@ export const VentasTable: FC<Props> = ({ ventas }) => {
     []
   );
 
+  const { data: ventas, isLoading } = useObtenerVentasQuery();
+
   const table = useReactTable({
-    data: ventas,
+    data: ventas!,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
+
+  if (isLoading) return  <>Cargando...</>
   return (
     <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
       <table className="min-w-full divide-y divide-gray-300">

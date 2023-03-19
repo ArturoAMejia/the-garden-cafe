@@ -9,6 +9,7 @@ import {
 import { AdminContext } from "../../../../context";
 import { AnularReservacion, EditarReservacion } from "../../../admin";
 import { ICatEstado, ICliente, IReservacion } from "../../../../interfaces";
+import { useObtenerReservacionesQuery } from "@/store/slices/venta";
 
 interface Props {}
 const columnHelper = createColumnHelper<IReservacion>();
@@ -71,14 +72,22 @@ export const ReservacionesTable: FC<Props> = () => {
     []
   );
 
-  const { reservaciones } = useContext(AdminContext);
+  const {
+    data: reservaciones,
+    error,
+    isError,
+    isLoading,
+  } = useObtenerReservacionesQuery();
 
   const table = useReactTable({
-    data: reservaciones,
+    data: reservaciones!,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
+
+  if (isLoading) return <>Cargando...</>;
+  
   return (
     <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
       <table className="min-w-full divide-y divide-gray-300">

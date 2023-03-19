@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { ICliente } from "../../../../interfaces";
 import { AdminContext } from "../../../../context";
+import { useActualizarClienteMutation } from "@/store/slices/venta";
 
 type FormData = ICliente;
 interface Props {
@@ -17,24 +18,24 @@ export const EditarCliente: FC<Props> = ({ cliente }) => {
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  const { actualizarCliente } = useContext(AdminContext);
+  const { id } = cliente;
+
+  const [actualizarCliente] = useActualizarClienteMutation();
 
   const { register, handleSubmit, reset } = useForm<FormData>();
 
   const onEditarCliente = async (data: FormData) => {
-    const { hasError, message } = await actualizarCliente({
+    actualizarCliente({
       ...data,
-      id: cliente.id,
-    });
-
-    if (hasError) {
-      toast.error(message);
-      return;
-    }
-
-    toast.success("Cliente actualizado correctamente.");
-    closeModal();
-    reset();
+      id,
+    })
+      .unwrap()
+      .then((res) => {
+        toast.success("Cliente actualizado correctamente.");
+        closeModal();
+        reset();
+      })
+      .catch((error) => toast.error(error.data.message));
   };
 
   return (

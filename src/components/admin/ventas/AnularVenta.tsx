@@ -1,12 +1,12 @@
-import React, { FC, Fragment, useContext, useState } from "react";
+import React, { FC, Fragment, useState } from "react";
 
 import { Transition, Dialog } from "@headlessui/react";
 import {
   XCircleIcon,
   ExclamationCircleIcon,
 } from "@heroicons/react/24/outline";
-import { AdminContext } from "../../../context";
 import { toast } from "react-hot-toast";
+import { useAnularVentaMutation } from "@/store/slices/venta";
 
 interface Props {
   id: number;
@@ -17,12 +17,18 @@ export const AnularVenta: FC<Props> = ({ id }) => {
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  const { anularVenta } = useContext(AdminContext);
+  // const { anularVenta } = useContext(AdminContext);
+
+  const [anularVenta] = useAnularVentaMutation();
 
   const onAnularPedido = () => {
-    anularVenta(id);
-    toast.success("Venta Anulada correctamente.");
-    closeModal();
+    anularVenta({ id })
+      .unwrap()
+      .then((res) => {
+        toast.success("Venta Anulada correctamente.");
+        closeModal();
+      })
+      .catch((error) => toast.error(error.data.message));
   };
   return (
     <>

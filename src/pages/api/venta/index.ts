@@ -28,7 +28,48 @@ export default function handler(
 }
 const obtenerVentas = async (res: NextApiResponse<Data>) => {
   await prisma.$connect();
-  const ventas = await prisma.venta.findMany();
+  const ventas = await prisma.venta.findMany({
+    select: {
+      id: true,
+      cliente: {
+        select: {
+          id: true,
+          id_estado: true,
+          cat_estado: true,
+          id_persona: true,
+          persona: true,
+          tipo_cliente: true,
+        },
+      },
+      id_trabajador: true,
+      trabajador: {
+        select: {
+          id: true,
+          id_persona: true,
+          persona: true,
+          id_estado_civil: true,
+          id_estado: true,
+        },
+      },
+      id_pedido: true,
+      pedido: true,
+      id_comprobante: true,
+      comprobante: true,
+      id_moneda: true,
+      moneda: true,
+      id_cat_forma_pago: true,
+      cat_forma_pago: true,
+      id_estado: true,
+      cat_estado: true,
+      tipo_venta: true,
+      fecha_venta: true,
+      subtotal: true,
+      descuento: true,
+      impuesto: true,
+      total: true,
+      detalle_venta: true,
+    },
+  });
   await prisma.$disconnect();
   return res.status(200).json(ventas);
 };
@@ -46,6 +87,8 @@ const crearVenta = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     id_pedido,
     productos,
   } = req.body;
+
+  console.log(req.body);
 
   if (
     !id_cliente ||
@@ -186,6 +229,7 @@ const actualizarVenta = async (
 const anularVenta = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   const { id } = req.body;
 
+  console.log(req.body);
   if (!id)
     return res
       .status(400)

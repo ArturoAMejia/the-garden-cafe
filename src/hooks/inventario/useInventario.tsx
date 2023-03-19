@@ -2,15 +2,10 @@ import { useEffect, useState } from "react";
 import { ICategoriaProducto } from "../../interfaces";
 import tgcApi from "../../api/tgcApi";
 import { fetcher } from "../../helpers";
-import useSWR from 'swr'
-
 export const useInventario = () => {
-  const [categorias, setCategorias] = useState<ICategoriaProducto[]| undefined>([]);
-
-  const { isValidating, data, error } = useSWR<ICategoriaProducto[]>(
-    "/api/catalogos/categoria-producto",
-    fetcher
-  );
+  const [categorias, setCategorias] = useState<
+    ICategoriaProducto[] | undefined
+  >([]);
 
   const obtenerCategorias = async () => {
     const { data } = await tgcApi.get<ICategoriaProducto[]>(
@@ -25,7 +20,5 @@ export const useInventario = () => {
   return {
     categorias,
     setCategorias,
-    data, 
-    error
   };
 };

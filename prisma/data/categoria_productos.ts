@@ -2,32 +2,38 @@ export const categoria_producto = [
   {
     nombre: "Desayuno",
     descripcion: "Desayuno completo de la casa",
-    id_estado: 4,
+    id_estado: 1,
+    id_tipo_categoria: 2,
   },
   {
     nombre: "Almuerzo",
     descripcion: "Almuerzo completo de la casa",
-    id_estado: 4,
+    id_estado: 1,
+    id_tipo_categoria: 2,
   },
   {
     nombre: "Cena",
     descripcion: "Cena completo de la casa",
-    id_estado: 4,
+    id_estado: 1,
+    id_tipo_categoria: 2,
   },
   {
     nombre: "Bebidas alcohólicas",
     descripcion: "Bebidas alcohólicas completo de la casa",
-    id_estado: 4,
+    id_estado: 1,
+    id_tipo_categoria: 2,
   },
   {
     nombre: "Bebidas no alcohólicas",
     descripcion: "Bebidas no alcohólicas completo de la casa",
-    id_estado: 4,
+    id_estado: 1,
+    id_tipo_categoria: 2,
   },
   {
     nombre: "Bebidas calientes",
     descripcion: "Bebidas calientes completo de la casa",
-    id_estado: 4,
+    id_estado: 1,
+    id_tipo_categoria: 2,
   },
 ];
 
@@ -76,11 +82,26 @@ export const sub_categoria_producto = [
 
 export const tipo_producto = [
   {
+    nombre: "Ingrediente",
+    id_estado: 1,
+  },
+  {
     nombre: "Platillo",
     id_estado: 1,
   },
   {
+    nombre: "Combo",
+    id_estado: 1,
+  },
+];
+
+export const tipo_categoria = [
+  {
     nombre: "Ingrediente",
+    id_estado: 1,
+  },
+  {
+    nombre: "Platillo",
     id_estado: 1,
   },
   {

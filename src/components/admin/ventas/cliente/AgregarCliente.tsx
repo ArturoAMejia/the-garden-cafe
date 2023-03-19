@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { ICliente } from "../../../../interfaces";
 import { Transition, Dialog } from "@headlessui/react";
 import { AdminContext } from "../../../../context";
+import { useCrearClienteMutation } from "@/store/slices/venta";
 
 type FormData = ICliente;
 
@@ -17,19 +18,17 @@ export const AgregarCliente = () => {
   const openModal = () => setIsOpen(!isOpen);
   const { register, handleSubmit, reset } = useForm<FormData>();
 
-  const { crearCliente } = useContext(AdminContext);
+  const [crearCliente] = useCrearClienteMutation();
 
   const onRegistrarCliente = async (form: FormData) => {
-    const { hasError, message } = await crearCliente(form);
-
-    if (hasError) {
-      toast.error(message);
-      return;
-    }
-
-    toast.success("Cliente creado satisfactoriamente.");
-    closeModal();
-    reset();
+    crearCliente(form)
+      .unwrap()
+      .then((res) => {
+        toast.success("Cliente creado satisfactoriamente.");
+        closeModal();
+        reset();
+      })
+      .catch((error) => toast.error(error.data.message));
   };
 
   return (

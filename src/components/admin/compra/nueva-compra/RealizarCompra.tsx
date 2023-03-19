@@ -10,6 +10,7 @@ import {
   IPedido,
   ISolicitudCompra,
 } from "../../../../interfaces";
+import { useCrearCompraMutation } from "@/store/slices/compra";
 
 type FormData = {
   id_proveedor: number;
@@ -24,10 +25,10 @@ interface Props {
 export const RealizarCompra: FC<Props> = ({ orden }) => {
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
-  const { cargarPedido, realizarCompra, productos, subtotal } =
-    useContext(AdminContext);
-  const openModal = () => {
 
+  const [crearCompra] = useCrearCompraMutation();
+  const { cargarPedido, productos, subtotal } = useContext(AdminContext);
+  const openModal = () => {
     cargarPedido(
       orden.detalle_orden_compra.map((producto: any) => ({
         id: producto.id_producto,
@@ -43,26 +44,35 @@ export const RealizarCompra: FC<Props> = ({ orden }) => {
 
   const { register, handleSubmit, reset } = useForm<FormData>();
 
-  const onRealizarVenta = async (data: FormData) => {
-    const { hasError, message } = await realizarCompra(
-      orden.id_proveedor,
-      orden.autorizado_por,
-      Number(orden!.id),
-      orden.detalle_orden_compra.map((producto: any) => ({
-        id: producto.id_producto,
-        precio: producto.precio_unitario,
-        cantidad: producto.cantidad,
-      })),
-      orden.comprobante!.descripcion,
-      subtotal
-    );
+  const {
+    id,
+    id_proveedor,
+    autorizado_por,
+    detalle_orden_compra,
+    comprobante,
+  } = orden;
 
-    if (hasError) {
-      toast.error(message);
-      return;
-    }
-    toast.success("Compra guardada correctamente");
-    closeModal();
+  const detalles = detalle_orden_compra.map((producto: any) => ({
+    id: producto.id_producto,
+    precio: producto.precio_unitario,
+    cantidad: producto.cantidad,
+  }));
+
+  const onRealizarVenta = async (data: FormData) => {
+    crearCompra({
+      id_proveedor,
+      id_trabajador: autorizado_por,
+      id_orden_compra: id,
+      productos: detalles,
+      descripcion: comprobante!.descripcion,
+      subtotal,
+    })
+      .unwrap()
+      .then((res) => {
+        toast.success("Compra guardada correctamente");
+        closeModal();
+      })
+      .catch((error) => toast.error(error.data.message));
   };
   return (
     <>

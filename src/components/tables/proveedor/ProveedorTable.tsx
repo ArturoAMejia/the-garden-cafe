@@ -10,6 +10,11 @@ import {
 } from "@tanstack/react-table";
 import { ICatEstado, IPersona, IProveedor } from "../../../interfaces";
 import { AdminContext } from "../../../context";
+import {
+  useObtenerProveedoresQuery,
+  useObtenerComprasQuery,
+  useObtenerSolicitudesCompraQuery,
+} from "@/store/slices/compra/compraApi";
 
 const columHelper = createColumnHelper<IProveedor>();
 
@@ -71,7 +76,11 @@ export const ProveedorTable = () => {
     []
   );
 
-  const { proveedores } = useContext(AdminContext);
+  const {
+    data: proveedores,
+    isLoading,
+    isError,
+  } = useObtenerProveedoresQuery();
 
   const table = useReactTable({
     data: proveedores!,
@@ -80,6 +89,18 @@ export const ProveedorTable = () => {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
+  if (isLoading)
+    return (
+      <>
+        <button type="button" className="... bg-indigo-500" disabled>
+          <svg
+            className="... mr-3 h-5 w-5 animate-spin"
+            viewBox="0 0 24 24"
+          ></svg>
+          Processing...
+        </button>
+      </>
+    );
   return (
     <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
       <table className="min-w-full divide-y divide-gray-300">
@@ -109,7 +130,7 @@ export const ProveedorTable = () => {
               {row.getVisibleCells().map((cell) => (
                 <td
                   key={cell.id}
-                  className="whitespace-nowrap px-3 py-2 text-sm text-center text-gray-500"
+                  className="whitespace-nowrap px-3 py-2 text-center text-sm text-gray-500"
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
@@ -119,7 +140,7 @@ export const ProveedorTable = () => {
         </tbody>
       </table>
       <nav
-        className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 gap-1"
+        className="flex items-center justify-between gap-1 border-t border-gray-200 bg-white px-4 py-3 sm:px-6"
         aria-label="Pagination"
       >
         <div className="hidden sm:block">

@@ -34,9 +34,9 @@ const obtenerCategoriaProducto = async (res: NextApiResponse<Data>) => {
     select: {
       id: true,
       nombre: true,
-      id_estado:true,
+      id_estado: true,
       descripcion: true,
-      cat_estado: true
+      cat_estado: true,
     },
     orderBy: {
       id: "asc",
@@ -49,9 +49,9 @@ const crearCategoriaProducto = async (
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) => {
-  const { nombre, descripcion } = req.body;
+  const { nombre, descripcion, id_tipo_categoria } = req.body;
 
-  if (!nombre || !descripcion)
+  if (!nombre || !descripcion || !id_tipo_categoria)
     return res
       .status(400)
       .json({ message: "Todos los campos son obligatorios" });
@@ -62,6 +62,7 @@ const crearCategoriaProducto = async (
       nombre,
       descripcion,
       id_estado: 1,
+      id_tipo_categoria,
     },
   });
   await prisma.$disconnect();
@@ -117,6 +118,8 @@ const desactivarCategoria = async (
   res: NextApiResponse<Data>
 ) => {
   const { id } = req.body;
+
+  console.log(req.body);
 
   if (!id)
     return res

@@ -6,7 +6,10 @@ import {
 } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
 import { AdminContext } from "../../../../context";
-
+import {
+  useAnularCompraMutation,
+  useAnularOrdenCompraMutation,
+} from "@/store/slices/compra";
 
 interface Props {
   id: number;
@@ -17,7 +20,9 @@ export const AnularCompra: FC<Props> = ({ id }) => {
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  const { anularCompra } = useContext(AdminContext);
+  // const { anularCompra } = useContext(AdminContext);
+
+  const [anularCompra] = useAnularCompraMutation();
 
   const onAnularCompra = async () => {
     try {
@@ -99,7 +104,7 @@ export const AnularCompra: FC<Props> = ({ id }) => {
                       as="h3"
                       className="text-lg font-medium leading-6 text-gray-900"
                     >
-                        Anular Compra
+                      Anular Compra
                     </Dialog.Title>
                     <div className="mt-2">
                       <p className="text-sm text-gray-500">

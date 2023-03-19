@@ -7,6 +7,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { AdminContext } from "../../../../../context";
 import { toast } from "react-hot-toast";
+import { useDesactivarUnidadMedidaMutation } from "@/store/slices/inventario";
 
 interface Props {
   id: number;
@@ -17,17 +18,16 @@ export const DesactivarUnidadMedida: FC<Props> = ({ id }) => {
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  const { desactivarUnidadMedida } = useContext(AdminContext);
+  const [desactivarUnidadMedida] = useDesactivarUnidadMedidaMutation();
 
   const onDesactivarUnidadMedida = async () => {
-    const { hasError, message } = await desactivarUnidadMedida(id);
-
-    if (hasError) {
-      toast.error(message!)
-      return;
-    }
-    toast.success("Unidad de medida desactivada correctamente.")
-    closeModal();
+    desactivarUnidadMedida({ id })
+      .unwrap()
+      .then((res) => {
+        toast.success("Unidad de medida desactivada correctamente.");
+        closeModal();
+      })
+      .catch((error) => toast.error(error.data.message));
   };
 
   return (

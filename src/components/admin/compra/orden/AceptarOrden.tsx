@@ -1,10 +1,14 @@
 import { Transition, Dialog } from "@headlessui/react";
-import { EnvelopeIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
+import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import React, { FC, Fragment, useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { AdminContext, AuthContext } from "../../../../context";
 import { ISolicitudCompra } from "../../../../interfaces";
+import {
+  useCrearOrdenCompraMutation,
+  useObtenerProveedoresQuery,
+} from "@/store/slices/compra/compraApi";
 
 type FormData = {
   id_proveedor: number;
@@ -20,8 +24,11 @@ export const AceptarOrden: FC<Props> = ({ solicitud_compra }) => {
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  const { proveedores, tipos_orden_compra, aceptarSolicitudCompra } =
-    useContext(AdminContext);
+  const { tipos_orden_compra } = useContext(AdminContext);
+
+  const { data: proveedores } = useObtenerProveedoresQuery();
+
+  const [crearOrdenCompra] = useCrearOrdenCompraMutation();
 
   const { user } = useContext(AuthContext);
   const { register, handleSubmit, reset } = useForm<FormData>();
@@ -35,35 +42,30 @@ export const AceptarOrden: FC<Props> = ({ solicitud_compra }) => {
     //   return;
     // }
 
-    const { hasError, message } = await aceptarSolicitudCompra(
-      {
-        id: 1,
-        id_comprobante: solicitud_compra.id_comprobante,
-        id_estado: 8,
-        descuento: solicitud_compra.descuento,
-        id_proveedor,
-        id_tipo_orden_compra,
-        impuesto: solicitud_compra.impuesto,
-        subtotal: solicitud_compra.subtotal,
-        total: solicitud_compra.total,
-        fecha_orden: new Date(),
-        id_solicitud_compra: solicitud_compra.id,
-        autorizado_por: Number(user!.id),
-        detalle_orden_compra: solicitud_compra.detalle_solicitud_compra,
-        motivo: solicitud_compra.motivo,
-      },
-      solicitud_compra.detalle_solicitud_compra
-    );
+    crearOrdenCompra({
+      id: 1,
+      id_comprobante: solicitud_compra.id_comprobante,
+      id_estado: 8,
+      descuento: solicitud_compra.descuento,
+      id_proveedor,
+      id_tipo_orden_compra,
+      impuesto: solicitud_compra.impuesto,
+      subtotal: solicitud_compra.subtotal,
+      total: solicitud_compra.total,
+      fecha_orden: new Date(),
+      id_solicitud_compra: solicitud_compra.id,
+      autorizado_por: Number(user!.id),
+      detalle_orden_compra: solicitud_compra.detalle_solicitud_compra,
+      motivo: solicitud_compra.motivo,
+    })
+      .unwrap()
+      .then((res) => {
+        toast.success("Solicitud aceptada correctamente.");
 
-    if (hasError) {
-      toast.error(message!);
-      return;
-    }
-
-    toast.success("Solicitud aceptada correctamente.");
-
-    closeModal();
-    reset();
+        closeModal();
+        reset();
+      })
+      .catch((error) => toast.error(error.data.message));
   };
 
   return (
@@ -132,7 +134,7 @@ export const AceptarOrden: FC<Props> = ({ solicitud_compra }) => {
                             })}
                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                           >
-                            {proveedores.map((proveedor) => (
+                            {proveedores?.map((proveedor) => (
                               <option
                                 key={proveedor.id}
                                 value={proveedor.id}

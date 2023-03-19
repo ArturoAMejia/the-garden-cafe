@@ -21,6 +21,7 @@ import { AnularVenta } from "../../ventas";
 
 import { AnularCompra } from "../nueva-compra/AnularCompra";
 import { AdminContext } from "@/context";
+import { useObtenerComprasQuery } from "@/store/slices/compra";
 
 const columunHelper = createColumnHelper<ICompra>();
 
@@ -104,14 +105,18 @@ export const ComprasTable = () => {
     []
   );
 
-  const { compras } = useContext(AdminContext);
+  const { data: compras, isLoading, isError, error } = useObtenerComprasQuery();
 
   const table = useReactTable({
-    data: compras,
+    data: compras!,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
+
+  if (isLoading) return <>Cargando...</>;
+
+
   return (
     <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
       <table className="min-w-full divide-y divide-gray-300">

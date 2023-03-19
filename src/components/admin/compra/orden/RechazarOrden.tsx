@@ -7,6 +7,10 @@ import {
 } from "@heroicons/react/24/outline";
 import { AdminContext } from "../../../../context";
 import { toast } from "react-hot-toast";
+import {
+  useAnularOrdenCompraMutation,
+  useRechazarSolicitudCompraMutation,
+} from "@/store/slices/compra";
 
 interface Props {
   solicitud_compra: ISolicitudCompra;
@@ -17,21 +21,19 @@ export const RechazarOrden: FC<Props> = ({ solicitud_compra }) => {
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  const { rechazarSolicitudCompra } = useContext(AdminContext);
+  const { id } = solicitud_compra;
+  // const { rechazarSolicitudCompra } = useContext(AdminContext);
+
+  const [rechazarSolicitudCompra] = useRechazarSolicitudCompraMutation();
 
   const onRechazarSolicitud = async () => {
-    const { hasError, message } = await rechazarSolicitudCompra(
-      solicitud_compra.id,
-      2
-    );
-
-    if (hasError) {
-      toast.error(message);
-      return;
-    }
-
-    toast.success("Solicitud de compra rechazada correctamente.");
-    closeModal();
+    rechazarSolicitudCompra(id)
+      .unwrap()
+      .then((res) => {
+        toast.success("Solicitud de compra rechazada correctamente.");
+        closeModal();
+      })
+      .catch((error) => toast.error(error.data.message));
   };
   return (
     <>

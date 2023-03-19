@@ -1,10 +1,10 @@
-import { FC, Fragment, useContext, useState } from "react";
+import { FC, Fragment, useState } from "react";
 
 import { Dialog, Transition } from "@headlessui/react";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { AdminContext } from "../../../../../context";
+import { useActualizarMarcaMutation } from "@/store/slices/inventario";
 
 interface Props {
   marca: any;
@@ -22,27 +22,22 @@ export const EditarMarca: FC<Props> = ({ marca }) => {
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  const { actualizarMarca } = useContext(AdminContext);
 
-  const onCrearUnidadMedida = async ({
-    nombre,
-    id_estado,
-    siglas,
-  }: FormData) => {
-    const { hasError, message } = await actualizarMarca({
+  const [actualizarMarca] = useActualizarMarcaMutation();
+  const onActualizarMarca = async ({ nombre, id_estado, siglas }: FormData) => {
+    actualizarMarca({
       id: marca.id,
       id_estado: Number(id_estado),
       nombre,
       siglas,
-    });
-
-    if (hasError) {
-      toast.error(message!);
-      return;
-    }
-    toast.success("Marca actualizada correctamente.");
-    closeModal();
-    reset();
+    })
+      .unwrap()
+      .then((res) => {
+        toast.success("Marca actualizada correctamente.");
+        closeModal();
+        reset();
+      })
+      .catch((error) => toast.error(error.data.message));
   };
   return (
     <>
@@ -86,12 +81,12 @@ export const EditarMarca: FC<Props> = ({ marca }) => {
                     as="h3"
                     className="text-xl font-bold leading-6 text-gray-900"
                   >
-                    Actualizar Unidad de Medida
+                    Actualizar Marca
                   </Dialog.Title>
 
                   <form
                     className="h-3/4 w-full"
-                    onSubmit={handleSubmit(onCrearUnidadMedida)}
+                    onSubmit={handleSubmit(onActualizarMarca)}
                   >
                     <div className="grid grid-cols-3 gap-4">
                       {/* Nombre */}
@@ -156,7 +151,7 @@ export const EditarMarca: FC<Props> = ({ marca }) => {
                       type="submit"
                       className="mt-4 mr-2 inline-flex items-center rounded-md border border-transparent bg-[#388C04] px-4 py-2 font-medium text-white shadow-sm"
                     >
-                      Actualizar Unidad de Medida
+                      Actualizar Marca
                       <PlusCircleIcon
                         className="ml-2 -mr-1 h-5 w-5"
                         aria-hidden="true"

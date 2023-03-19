@@ -2,7 +2,7 @@ import { ICompra } from "./../../../interfaces/compra/compra";
 import {
   IUser,
   ICategoriaProducto,
-  IProveedor,
+
   IOrdenCompra,
   ISolicitudCompra,
   IUnidadMedida,
@@ -27,7 +27,6 @@ export type AdminReducerType =
   | { type: "[Admin] - Logout" }
   | { type: "[Admin] - Obtener Categorias"; payload: ICategoriaProducto[] }
   | { type: "[Admin] - Crear Categoria"; payload: ICategoriaProducto }
-  | { type: "[Admin] - Obtener Proveedores"; payload: IProveedor[] }
   | { type: "[Compra] - Crear Orden Compra"; payload: IOrdenCompra }
   | { type: "[Compra] - Obtener Ordenes de Compra"; payload: IOrdenCompra[] }
   | {

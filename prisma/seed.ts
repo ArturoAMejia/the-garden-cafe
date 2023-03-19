@@ -9,6 +9,7 @@ import { permisos } from "./data/permisos";
 import {
   categoria_producto,
   sub_categoria_producto,
+  tipo_categoria,
   tipo_producto,
 } from "./data/categoria_productos";
 import {
@@ -82,6 +83,9 @@ const main = async (): Promise<void> => {
     await prisma.tipo_producto.createMany({
       data: tipo_producto,
     });
+    await prisma.tipo_categoria.createMany({
+      data: tipo_categoria,
+    })
     await prisma.categoria_producto.createMany({
       data: categoria_producto,
     });

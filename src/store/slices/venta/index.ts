@@ -1,1 +1,1 @@
-export * from './ventaSlice';
+export * from './ventaApi';

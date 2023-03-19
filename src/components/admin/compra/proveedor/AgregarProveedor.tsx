@@ -1,11 +1,14 @@
-import { Fragment, useContext, useState } from "react";
+import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { EnvelopeIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
 
 import { useForm } from "react-hook-form";
-
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
-import { AdminContext } from "../../../../context";
+import { useCrearProveedorMutation } from "@/store/slices/compra/compraApi";
+
+import { Error } from "../../../landing/Error";
 
 type FormData = {
   cedula_ruc: string;
@@ -19,16 +22,39 @@ type FormData = {
   tipo_persona: string;
   genero: string;
   sector_comercial: string;
-  nacionalidad: string;  
+  nacionalidad: string;
 };
+
+const schema = z.object({
+  cedula_ruc: z.string().regex(new RegExp("^[0-9]{3}-[0-9]{6}-[0-9]{4}[aA-zZ]{1}$"), {message:"Formato de cédula no válido"}),
+  nombre: z.string().regex(new RegExp("^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑs]{2,50}$")),
+  correo: z.string(),
+  apellido_razon_social: z
+    .string()
+    .regex(new RegExp("^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑs-]{2,50}$")),
+  fecha_nacimiento_constitucion: z.string(),
+  telefono: z.string(),
+  celular: z.string(),
+  direccion_domicilio: z.string(),
+  tipo_persona: z.string(),
+  genero: z.string(),
+  sector_comercial: z.string(),
+  nacionalidad: z.string(),
+});
 
 export const AgregarProveedor = () => {
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  const { crearProveedor } = useContext(AdminContext);
-  const { register, handleSubmit, reset } = useForm<FormData>();
+  // const { crearProveedor } = useContext(AdminContext);
+  const [crearProveedor, { isError, error }] = useCrearProveedorMutation();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FormData>({ resolver: zodResolver(schema) });
 
   const onRegisterProveedor = async ({
     cedula_ruc,
@@ -44,7 +70,7 @@ export const AgregarProveedor = () => {
     sector_comercial,
     nacionalidad,
   }: FormData) => {
-    const { hasError, message } = await crearProveedor(
+    crearProveedor({
       cedula_ruc,
       nombre,
       correo,
@@ -56,18 +82,15 @@ export const AgregarProveedor = () => {
       tipo_persona,
       genero,
       sector_comercial,
-      nacionalidad
-    );
-
-    if (hasError) {
-      toast.error(message!);
-      return;
-    }
-
-    toast.success("Proveedor agregado correctamente.");
-
-    closeModal();
-    reset();
+      nacionalidad,
+    })
+      .unwrap()
+      .then((res) => {
+        toast.success("Proveedor agregado correctamente.");
+        closeModal();
+        reset();
+      })
+      .catch((error) => toast.error(error.data.message));
   };
 
   return (
@@ -76,7 +99,7 @@ export const AgregarProveedor = () => {
         <button
           type="button"
           onClick={openModal}
-          className="bg-lime-600 px-4 py-2 text-sm font-medium text-white hover:bg-lime-700  rounded-lg"
+          className="rounded-lg bg-lime-600 px-4 py-2 text-sm font-medium text-white  hover:bg-lime-700"
         >
           Añadir Proveedor
         </button>
@@ -107,7 +130,7 @@ export const AgregarProveedor = () => {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-6xl h-auto transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="h-auto w-full max-w-6xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title
                     as="h3"
                     className="text-xl font-bold leading-6 text-gray-900"
@@ -119,7 +142,7 @@ export const AgregarProveedor = () => {
                     className="h-3/4 w-full"
                     onSubmit={handleSubmit(onRegisterProveedor)}
                   >
-                    <div className="md:grid md:grid-cols-4 flex flex-col gap-4">
+                    <div className="flex flex-col gap-4 md:grid md:grid-cols-4">
                       {/* No_ruc */}
                       <div className="mt-2">
                         <label
@@ -133,9 +156,12 @@ export const AgregarProveedor = () => {
                             type="text"
                             id="no_ruc"
                             {...register("cedula_ruc")}
-                            className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full border-gray-300 rounded-md"
+                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             placeholder="001-191021-4313G"
                           />
+                          {errors.cedula_ruc && (
+                            <Error error={errors.cedula_ruc.message} />
+                          )}
                         </div>
                       </div>
                       {/* Nombre */}
@@ -151,8 +177,11 @@ export const AgregarProveedor = () => {
                             type="text"
                             id="nombre"
                             {...register("nombre")}
-                            className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full border-gray-300 rounded-md"
+                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                           />
+                                      {errors.nombre && (
+                            <Error error={errors.nombre.message} />
+                          )}
                         </div>
                       </div>
                       {/* Apellido Razon Social */}
@@ -168,7 +197,7 @@ export const AgregarProveedor = () => {
                             type="text"
                             id="apellido_razon_social"
                             {...register("apellido_razon_social")}
-                            className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full border-gray-300 rounded-md"
+                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                           />
                         </div>
                       </div>
@@ -180,7 +209,7 @@ export const AgregarProveedor = () => {
                         >
                           Número de Celular
                         </label>
-                        <div className="mt-1 relative rounded-md shadow-sm">
+                        <div className="relative mt-1 rounded-md shadow-sm">
                           <div className="absolute inset-y-0 left-0 flex items-center">
                             <label htmlFor="celular" className="sr-only">
                               Compañia
@@ -189,7 +218,7 @@ export const AgregarProveedor = () => {
                               id="telefono"
                               name="country"
                               autoComplete="country"
-                              className="focus:ring-indigo-500 focus:border-indigo-500 h-full py-0 pl-3 pr-7 mr-2 border-transparent bg-transparent text-gray-500 rounded-md"
+                              className="mr-2 h-full rounded-md border-transparent bg-transparent py-0 pl-3 pr-7 text-gray-500 focus:border-indigo-500 focus:ring-indigo-500"
                             >
                               <option>Tigo</option>
                               <option>Claro</option>
@@ -199,7 +228,7 @@ export const AgregarProveedor = () => {
                             type="number"
                             id="celular"
                             {...register("celular")}
-                            className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-16 mr-2 border-gray-300 rounded-md"
+                            className="mr-2 block w-full rounded-md border-gray-300 pl-16 focus:border-indigo-500 focus:ring-indigo-500"
                             placeholder="7666 8163"
                           />
                         </div>
@@ -216,12 +245,12 @@ export const AgregarProveedor = () => {
                           type="number"
                           id="telefono"
                           {...register("telefono")}
-                          className="focus:ring-indigo-500 focus:border-indigo-500 block w-full mr-2 border-gray-300 rounded-md"
+                          className="mr-2 block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
                           placeholder="2244 5588"
                         />
                       </div>
                       {/* Direccion */}
-                      <div className="mt-2 col-span-2">
+                      <div className="col-span-2 mt-2">
                         <label
                           htmlFor="direccion"
                           className="block font-medium text-gray-700"
@@ -232,7 +261,7 @@ export const AgregarProveedor = () => {
                           <textarea
                             rows={2}
                             id="direccion"
-                            className="resize-none shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full border-gray-300 rounded-md"
+                            className="block w-full resize-none rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             {...register("direccion_domicilio")}
                           />
                         </div>
@@ -245,8 +274,8 @@ export const AgregarProveedor = () => {
                         >
                           Correo
                         </label>
-                        <div className="mt-1 relative rounded-md shadow-sm">
-                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <div className="relative mt-1 rounded-md shadow-sm">
+                          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                             <EnvelopeIcon
                               className="h-5 w-5 text-gray-400"
                               aria-hidden="true"
@@ -256,7 +285,7 @@ export const AgregarProveedor = () => {
                             type="email"
                             id="correo"
                             {...register("correo")}
-                            className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 border-gray-300 rounded-md"
+                            className="block w-full rounded-md border-gray-300 pl-10 focus:border-indigo-500 focus:ring-indigo-500"
                             placeholder="ejemplo@ejemplo.com"
                           />
                         </div>
@@ -274,7 +303,7 @@ export const AgregarProveedor = () => {
                             type="date"
                             id="origen_proveedor"
                             {...register("fecha_nacimiento_constitucion")}
-                            className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full border-gray-300 rounded-md"
+                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                           />
                         </div>
                       </div>
@@ -291,7 +320,7 @@ export const AgregarProveedor = () => {
                             type="text"
                             id="sector_comercial"
                             {...register("sector_comercial")}
-                            className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full border-gray-300 rounded-md"
+                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                           />
                         </div>
                       </div>
@@ -308,7 +337,7 @@ export const AgregarProveedor = () => {
                             type="text"
                             id="nacionalidad"
                             {...register("nacionalidad")}
-                            className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full border-gray-300 rounded-md"
+                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                           />
                         </div>
                       </div>
@@ -325,14 +354,14 @@ export const AgregarProveedor = () => {
                             type="text"
                             id="tipo_persona"
                             {...register("tipo_persona")}
-                            className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full border-gray-300 rounded-md"
+                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                           />
                         </div>
                       </div>
                     </div>
                     <button
                       type="submit"
-                      className="mt-4 inline-flex items-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-[#388C04]"
+                      className="mt-4 inline-flex items-center rounded-md border border-transparent bg-[#388C04] px-4 py-2 font-medium text-white shadow-sm"
                     >
                       Agregar Proveedor
                       <PlusCircleIcon
@@ -342,7 +371,7 @@ export const AgregarProveedor = () => {
                     </button>
                     <button
                       type="button"
-                      className="mt-4 ml-10 inline-flex items-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-[#CA1514]"
+                      className="mt-4 ml-10 inline-flex items-center rounded-md border border-transparent bg-[#CA1514] px-4 py-2 font-medium text-white shadow-sm"
                       onClick={closeModal}
                     >
                       Cancelar

@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { IUnidadMedida } from "../../../../../interfaces";
 import { AdminContext } from "../../../../../context";
 import { toast } from "react-hot-toast";
+import { useActualizarUnidadMedidaMutation } from "@/store/slices/inventario";
 
 interface Props {
   unidad_medida: IUnidadMedida;
@@ -22,23 +23,28 @@ export const EditarUnidadMedida: FC<Props> = ({ unidad_medida }) => {
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  const { actualizarUnidadMedida } = useContext(AdminContext);
+  // const { actualizarUnidadMedida } = useContext(AdminContext);
 
-  const onCrearUnidadMedida = async ({ nombre, id_estado, siglas }: FormData) => {
-    const { hasError, message } = await actualizarUnidadMedida({
+  const [actualizarUnidadMedida] = useActualizarUnidadMedidaMutation();
+
+  const onCrearUnidadMedida = async ({
+    nombre,
+    id_estado,
+    siglas,
+  }: FormData) => {
+    actualizarUnidadMedida({
       id: unidad_medida.id,
       id_estado: Number(id_estado),
       nombre,
       siglas,
-    });
-
-    if (hasError) {
-      toast.error(message!);
-      return;
-    }
-    toast.success("Unidad de Medida actualizada correctamente.");
-    closeModal();
-    reset();
+    })
+      .unwrap()
+      .then((res) => {
+        toast.success("Unidad de Medida actualizada correctamente.");
+        closeModal();
+        reset();
+      })
+      .catch((error) => toast.error(error.data.message));
   };
   return (
     <>

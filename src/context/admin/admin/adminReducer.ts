@@ -20,12 +20,6 @@ export const adminReducer = (
         categorias: [...state.categorias, action.payload],
       };
 
-    case "[Admin] - Obtener Proveedores":
-      return {
-        ...state,
-        proveedores: action.payload,
-      };
-
     case "[Compra] - Obtener Ordenes de Compra":
       return {
         ...state,

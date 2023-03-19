@@ -1,45 +1,39 @@
-import { FC, Fragment, useContext, useState } from "react";
-import { useRouter } from "next/router";
+import { FC, Fragment, useState } from "react";
+
 import { Dialog, Transition } from "@headlessui/react";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import tgcApi from "../../../../../api/tgcApi";
-import { ICatEstado } from "../../../../../interfaces";
-import { AdminContext } from "../../../../../context";
 
-interface Props {
-  estados: ICatEstado[];
-}
+import { useCrearMarcaMutation } from "@/store/slices/inventario";
 
 type FormData = {
   nombre: string;
   siglas: string;
 };
-export const AgregarMarca: FC<Props> = ({ estados }) => {
+export const AgregarMarca = () => {
   const { register, handleSubmit, reset } = useForm<FormData>();
+
+  const [crearMarca] = useCrearMarcaMutation();
 
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  const { crearMarca } = useContext(AdminContext);
-
   const onCrearMarca = async ({ nombre, siglas }: FormData) => {
-    const { hasError, message } = await crearMarca({
+    crearMarca({
       id: 0,
       id_estado: 1,
       nombre,
       siglas,
-    });
-
-    if (hasError) {
-      toast.error(message!);
-      return;
-    }
-    toast.success("Marca creada correctamente.");
-    closeModal();
-    reset();
+    })
+      .unwrap()
+      .then((res) => {
+        toast.success("Marca creada correctamente.");
+        closeModal();
+        reset();
+      })
+      .catch((error) => toast.error(error.data.message));
   };
   return (
     <>

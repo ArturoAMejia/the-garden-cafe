@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { AdminContext, AuthContext, CartContext } from "../../../../context";
 import { IMoneda, IPedido } from "../../../../interfaces";
+import { useCrearVentaMutation } from "@/store/slices/venta";
 
 type FormData = {
   id_moneda: number;
@@ -21,6 +22,14 @@ export const RealizarVenta: FC<Props> = ({ pedido }) => {
   const { cargarPedido, subtotal } = useContext(CartContext);
   const { monedas, formas_pago, realizarVenta } = useContext(AdminContext);
 
+  const { id, id_trabajador, id_cliente, detalle_pedido } = pedido;
+  const productosPedido = detalle_pedido.map((producto: any) => ({
+    id: producto.id_producto,
+    precio: producto.precio,
+    cantidad: producto.cantidad,
+  }));
+
+  const [crearVenta] = useCrearVentaMutation();
 
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
@@ -42,32 +51,44 @@ export const RealizarVenta: FC<Props> = ({ pedido }) => {
   const { register, handleSubmit, reset } = useForm<FormData>();
 
   const onAceptarSolicitud = async (data: FormData) => {
-    const { hasError, message } = await realizarVenta(
-      pedido.id_trabajador,
-      pedido.id_cliente,
-      pedido.id,
-      data.id_forma_pago,
-      data.id_moneda,
+    const { descripcion, id_forma_pago, id_moneda, tipo_venta } = data;
+    // const { hasError, message } = await realizarVenta(
+    //   pedido.id_trabajador,
+    //   pedido.id_cliente,
+    //   pedido.id,
+    //   data.id_forma_pago,
+    //   data.id_moneda,
+    //   subtotal,
+    //   0,
+    //   data.tipo_venta,
+    //   data.descripcion,
+    //   pedido.detalle_pedido.map((producto: any) => ({
+    //     id: producto.id_producto,
+    //     precio: producto.precio,
+    //     cantidad: producto.cantidad,
+    //   }))
+    // );
+
+    crearVenta({
+      id_pedido: id,
+      id_trabajador,
+      id_cliente,
+      productos: productosPedido,
+      descripcion,
+      id_cat_forma_pago: id_forma_pago,
+      tipo_venta,
+      id_moneda,
       subtotal,
-      0,
-      data.tipo_venta,
-      data.descripcion,
-      pedido.detalle_pedido.map((producto: any) => ({
-        id: producto.id_producto,
-        precio: producto.precio,
-        cantidad: producto.cantidad,
-      }))
-    );
+      descuento: 0,
+    })
+      .unwrap()
+      .then((res) => {
+        toast.success("Venta realizada correctamente.");
 
-    if (hasError) {
-      toast.error(message!);
-      return;
-    }
-
-    toast.success("Venta realizada correctamente.");
-
-    closeModal();
-    reset();
+        closeModal();
+        reset();
+      })
+      .catch((error) => toast.error(error.data.message));
   };
 
   return (
@@ -210,7 +231,7 @@ export const RealizarVenta: FC<Props> = ({ pedido }) => {
                       type="submit"
                       className="mt-4 inline-flex items-center rounded-md border border-transparent bg-[#388C04] px-4 py-2 font-medium text-white shadow-sm"
                     >
-                        Realizar Venta
+                      Realizar Venta
                       <PlusCircleIcon
                         className="ml-2 -mr-1 h-5 w-5"
                         aria-hidden="true"

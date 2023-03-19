@@ -103,6 +103,11 @@ export const sub_modulos = [
   },
   {
     id_modulo: 3,
+    nombre: "Subcategorías",
+    url: "/admin/inventario/sub-categoria",
+  },
+  {
+    id_modulo: 3,
     nombre: "Unidad de Medida",
     url: "/admin/inventario/unidad-medida",
   },
@@ -110,6 +115,16 @@ export const sub_modulos = [
     id_modulo: 3,
     nombre: "Marca",
     url: "/admin/inventario/marca",
+  },
+  {
+    id_modulo: 3,
+    nombre: "Ingredientes",
+    url: "/admin/inventario/ingredientes",
+  },
+  {
+    id_modulo: 3,
+    nombre: "Platillos",
+    url: "/admin/inventario/platillos",
   },
   {
     id_modulo: 3,

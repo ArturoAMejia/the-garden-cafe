@@ -21,6 +21,7 @@ import { es } from "date-fns/locale";
 import Link from "next/link";
 import { AnularOrden } from "../../../admin/compra/orden/AnularOrden";
 import { IdentificationIcon } from "@heroicons/react/24/outline";
+import { useObtenerOrdenesCompraQuery } from "@/store/slices/compra/compraApi";
 
 const columnHelper = createColumnHelper<IOrdenCompra>();
 
@@ -96,7 +97,7 @@ const columns = [
 ];
 
 export const OrdenesAprobadasTable = () => {
-  const { ordenes_compra } = useContext(AdminContext);
+  const { data: ordenes_compra, isLoading } = useObtenerOrdenesCompraQuery();
 
   const table = useReactTable({
     data: ordenes_compra!,
@@ -104,6 +105,9 @@ export const OrdenesAprobadasTable = () => {
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
+
+  if (isLoading) return <>Cargando... </>;
+
   return (
     <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
       <table className="min-w-full divide-y divide-gray-300">

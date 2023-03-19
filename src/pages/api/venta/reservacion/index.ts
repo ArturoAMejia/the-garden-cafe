@@ -37,15 +37,16 @@ const crearReservacion = async (
   const {
     id_cliente,
     tipo_reservacion = "En línea",
-    fecha_reserva,
+    fecha_reservacion,
     total_personas,
     observaciones = "",
   } = req.body;
 
+  console.log(req.body);
 
-  const horas_rerservas = getHours(new Date(fecha_reserva));
+  const horas_rerservas = getHours(new Date(fecha_reservacion));
 
-  if (!id_cliente || !fecha_reserva || !total_personas) {
+  if (!id_cliente || !fecha_reservacion || !total_personas) {
     return res.status(400).json({ message: "Los campos son obligatorios" });
   }
   await prisma.$connect();
@@ -55,7 +56,7 @@ const crearReservacion = async (
       id_cliente: Number(id_cliente),
       id_estado: 1,
       tipo_reservacion,
-      fecha_reservacion: new Date(fecha_reserva),
+      fecha_reservacion: new Date(fecha_reservacion),
       horas_reservadas: Number(horas_rerservas),
       fecha_registro: new Date(),
     },

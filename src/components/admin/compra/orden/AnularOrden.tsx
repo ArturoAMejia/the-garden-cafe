@@ -1,12 +1,13 @@
-import React, { FC, Fragment, useContext, useState } from "react";
-import { IOrdenCompra, ISolicitudCompra } from "../../../../interfaces";
+import React, { FC, Fragment, useState } from "react";
+import { IOrdenCompra } from "../../../../interfaces";
 import { Transition, Dialog } from "@headlessui/react";
 import {
   XCircleIcon,
   ExclamationCircleIcon,
 } from "@heroicons/react/24/outline";
-import { AdminContext } from "../../../../context";
+
 import { toast } from "react-hot-toast";
+import { useAnularOrdenCompraMutation } from "@/store/slices/compra/compraApi";
 
 interface Props {
   orden: IOrdenCompra;
@@ -17,18 +18,17 @@ export const AnularOrden: FC<Props> = ({ orden }) => {
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  const { anularOrdenCompra } = useContext(AdminContext);
+  const [anularOrdenCompra] = useAnularOrdenCompraMutation();
 
+  const { id } = orden;
   const onAnularSolicitud = async () => {
-    const { hasError, message } = await anularOrdenCompra(Number(orden.id));
-
-    if (hasError) {
-      toast.error(message);
-      return;
-    }
-
-    toast.success("Orden de compra anulada correctamente.");
-    closeModal();
+    anularOrdenCompra({ id })
+      .unwrap()
+      .then((res) => {
+        toast.success("Orden de compra anulada correctamente.");
+        closeModal();
+      })
+      .catch((error) => toast.error(error.data.message));
   };
   return (
     <>

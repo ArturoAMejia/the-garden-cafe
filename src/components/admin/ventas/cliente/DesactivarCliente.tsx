@@ -8,6 +8,7 @@ import tgcApi from "../../../../api/tgcApi";
 
 import toast from "react-hot-toast";
 import { AdminContext } from "../../../../context";
+import { useDesactivarClienteMutation } from "@/store/slices/venta";
 
 interface Props {
   id: number;
@@ -18,12 +19,16 @@ export const DescativarCliente: FC<Props> = ({ id }) => {
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  const { desactivarCliente } = useContext(AdminContext);
+  const [desactivarCliente] = useDesactivarClienteMutation();
 
   const onDescativarCliente = async () => {
-    desactivarCliente(id);
-    toast.success("Cliente desactivado correctamente.");
-    closeModal();
+    desactivarCliente({ id })
+      .unwrap()
+      .then((res) => {
+        toast.success("Cliente desactivado correctamente.");
+        closeModal();
+      })
+      .catch((error) => toast.error(error.data.message));
   };
 
   return (

@@ -8,6 +8,7 @@ import tgcApi from "../../../../api/tgcApi";
 import toast from "react-hot-toast";
 import { IProveedor } from "../../../../interfaces";
 import { AdminContext } from "../../../../context";
+import { useActualizarProveeedorMutation } from "@/store/slices/compra/compraApi";
 
 type FormData = {
   cedula_ruc: string;
@@ -28,11 +29,15 @@ interface Props {
   proveedor: IProveedor;
 }
 export const EditarProveedor: FC<Props> = ({ proveedor }) => {
+  const id = proveedor.id;
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  const { actualizarProveedor } = useContext(AdminContext);
+  // const { actualizarProveedor } = useContext(AdminContext);
+
+  const [actualizarProveedor, { isError, error }] =
+    useActualizarProveeedorMutation();
   const { register, handleSubmit, reset } = useForm<FormData>();
 
   const onActualizarProveedor = async ({
@@ -49,31 +54,33 @@ export const EditarProveedor: FC<Props> = ({ proveedor }) => {
     sector_comercial,
     nacionalidad,
   }: FormData) => {
-    const { hasError, message } = await actualizarProveedor(
-      proveedor.id,
+    actualizarProveedor({
+      id,
       cedula_ruc,
       nombre,
-      correo,
       apellido_razon_social,
+      correo,
       fecha_nacimiento_constitucion,
       telefono,
       celular,
+      genero,
       direccion_domicilio,
       tipo_persona,
-      genero,
       sector_comercial,
-      nacionalidad
-    );
+      nacionalidad,
+    })
+      .unwrap()
+      .then((res) => {
+        toast.success("Proveedor actualizado correctamente.");
+        closeModal();
+        reset();
+      })
+      .catch((error) => toast.error(error.data.message));
 
-    if (hasError) {
-      toast.error(message!);
-      return;
-    }
-
-    toast.success("Proveedor actualizado correctamente.");
-
-    closeModal();
-    reset();
+    // if (hasError) {
+    //   toast.error(message!);
+    //   return;
+    // }
   };
 
   return (
@@ -82,7 +89,7 @@ export const EditarProveedor: FC<Props> = ({ proveedor }) => {
         <button
           type="button"
           onClick={openModal}
-          className="bg-sky-500 px-4 py-2 text-sm font-medium text-white hover:bg-sky-300  rounded-2xl"
+          className="rounded-2xl bg-sky-500 px-4 py-2 text-sm font-medium text-white  hover:bg-sky-300"
         >
           Editar
         </button>
@@ -113,7 +120,7 @@ export const EditarProveedor: FC<Props> = ({ proveedor }) => {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-6xl h-auto transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="h-auto w-full max-w-6xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title
                     as="h3"
                     className="text-xl font-bold leading-6 text-gray-900"
@@ -125,7 +132,7 @@ export const EditarProveedor: FC<Props> = ({ proveedor }) => {
                     className="h-3/4 w-full"
                     onSubmit={handleSubmit(onActualizarProveedor)}
                   >
-                    <div className="md:grid md:grid-cols-4 flex flex-col gap-4">
+                    <div className="flex flex-col gap-4 md:grid md:grid-cols-4">
                       {/* No_ruc */}
                       <div className="mt-2">
                         <label
@@ -139,7 +146,7 @@ export const EditarProveedor: FC<Props> = ({ proveedor }) => {
                             type="text"
                             id="no_ruc"
                             {...register("cedula_ruc")}
-                            className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full border-gray-300 rounded-md"
+                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             placeholder="001-191021-4313G"
                             defaultValue={proveedor.persona?.cedula_ruc}
                           />
@@ -158,7 +165,7 @@ export const EditarProveedor: FC<Props> = ({ proveedor }) => {
                             type="text"
                             id="nombre"
                             {...register("nombre")}
-                            className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full border-gray-300 rounded-md"
+                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             defaultValue={proveedor.persona?.nombre}
                           />
                         </div>
@@ -176,7 +183,7 @@ export const EditarProveedor: FC<Props> = ({ proveedor }) => {
                             type="text"
                             id="apellido_razon_social"
                             {...register("apellido_razon_social")}
-                            className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full border-gray-300 rounded-md"
+                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             defaultValue={
                               proveedor.persona?.apellido_razon_social
                             }
@@ -191,7 +198,7 @@ export const EditarProveedor: FC<Props> = ({ proveedor }) => {
                         >
                           Número de Celular
                         </label>
-                        <div className="mt-1 relative rounded-md shadow-sm">
+                        <div className="relative mt-1 rounded-md shadow-sm">
                           <div className="absolute inset-y-0 left-0 flex items-center">
                             <label htmlFor="celular" className="sr-only">
                               Compañia
@@ -200,7 +207,7 @@ export const EditarProveedor: FC<Props> = ({ proveedor }) => {
                               id="telefono"
                               name="country"
                               autoComplete="country"
-                              className="focus:ring-indigo-500 focus:border-indigo-500 h-full py-0 pl-3 pr-7 mr-2 border-transparent bg-transparent text-gray-500 rounded-md"
+                              className="mr-2 h-full rounded-md border-transparent bg-transparent py-0 pl-3 pr-7 text-gray-500 focus:border-indigo-500 focus:ring-indigo-500"
                             >
                               <option>Tigo</option>
                               <option>Claro</option>
@@ -210,7 +217,7 @@ export const EditarProveedor: FC<Props> = ({ proveedor }) => {
                             type="number"
                             id="celular"
                             {...register("celular")}
-                            className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-16 mr-2 border-gray-300 rounded-md"
+                            className="mr-2 block w-full rounded-md border-gray-300 pl-16 focus:border-indigo-500 focus:ring-indigo-500"
                             placeholder="7666 8163"
                             defaultValue={proveedor.persona?.telefono}
                           />
@@ -224,7 +231,7 @@ export const EditarProveedor: FC<Props> = ({ proveedor }) => {
                         >
                           Número de Teléfono
                         </label>
-                        <div className="mt-1 relative rounded-md shadow-sm">
+                        <div className="relative mt-1 rounded-md shadow-sm">
                           <div className="absolute inset-y-0 left-0 flex items-center">
                             <label htmlFor="telefono" className="sr-only">
                               Compañia
@@ -233,7 +240,7 @@ export const EditarProveedor: FC<Props> = ({ proveedor }) => {
                               id="telefono"
                               name="country"
                               autoComplete="country"
-                              className="focus:ring-indigo-500 focus:border-indigo-500 h-full py-0 pl-3 pr-7 mr-2 border-transparent bg-transparent text-gray-500 rounded-md"
+                              className="mr-2 h-full rounded-md border-transparent bg-transparent py-0 pl-3 pr-7 text-gray-500 focus:border-indigo-500 focus:ring-indigo-500"
                             >
                               <option>Tigo</option>
                               <option>Claro</option>
@@ -243,14 +250,14 @@ export const EditarProveedor: FC<Props> = ({ proveedor }) => {
                             type="number"
                             id="telefono"
                             {...register("telefono")}
-                            className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-16 mr-2 border-gray-300 rounded-md"
+                            className="mr-2 block w-full rounded-md border-gray-300 pl-16 focus:border-indigo-500 focus:ring-indigo-500"
                             placeholder="7666 8163"
                             defaultValue={proveedor.persona!.telefono}
                           />
                         </div>
                       </div>
                       {/* Direccion */}
-                      <div className="mt-2 col-span-2">
+                      <div className="col-span-2 mt-2">
                         <label
                           htmlFor="direccion"
                           className="block font-medium text-gray-700"
@@ -261,7 +268,7 @@ export const EditarProveedor: FC<Props> = ({ proveedor }) => {
                           <textarea
                             rows={2}
                             id="direccion"
-                            className="resize-none shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full border-gray-300 rounded-md"
+                            className="block w-full resize-none rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             {...register("direccion_domicilio")}
                             defaultValue={
                               proveedor.persona!.direccion_domicilio
@@ -277,8 +284,8 @@ export const EditarProveedor: FC<Props> = ({ proveedor }) => {
                         >
                           Correo
                         </label>
-                        <div className="mt-1 relative rounded-md shadow-sm">
-                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <div className="relative mt-1 rounded-md shadow-sm">
+                          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                             <EnvelopeIcon
                               className="h-5 w-5 text-gray-400"
                               aria-hidden="true"
@@ -288,7 +295,7 @@ export const EditarProveedor: FC<Props> = ({ proveedor }) => {
                             type="email"
                             id="correo"
                             {...register("correo")}
-                            className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 border-gray-300 rounded-md"
+                            className="block w-full rounded-md border-gray-300 pl-10 focus:border-indigo-500 focus:ring-indigo-500"
                             placeholder="ejemplo@ejemplo.com"
                             defaultValue={proveedor.persona!.correo}
                           />
@@ -307,7 +314,7 @@ export const EditarProveedor: FC<Props> = ({ proveedor }) => {
                             type="date"
                             id="fecha_nacimiento_constitucion"
                             {...register("fecha_nacimiento_constitucion")}
-                            className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full border-gray-300 rounded-md"
+                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             defaultValue={
                               proveedor.persona?.fecha_nacimiento_constitucion
                                 ? proveedor.persona.fecha_nacimiento_constitucion
@@ -331,7 +338,7 @@ export const EditarProveedor: FC<Props> = ({ proveedor }) => {
                             type="text"
                             id="nacionalidad"
                             {...register("nacionalidad")}
-                            className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full border-gray-300 rounded-md"
+                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             defaultValue={proveedor.nacionalidad}
                           />
                         </div>
@@ -349,7 +356,7 @@ export const EditarProveedor: FC<Props> = ({ proveedor }) => {
                             type="text"
                             id="sector_comercial"
                             {...register("sector_comercial")}
-                            className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full border-gray-300 rounded-md"
+                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             defaultValue={proveedor.sector_comercial}
                           />
                         </div>
@@ -367,7 +374,7 @@ export const EditarProveedor: FC<Props> = ({ proveedor }) => {
                             type="text"
                             id="tipo_persona"
                             {...register("tipo_persona")}
-                            className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full border-gray-300 rounded-md"
+                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             defaultValue={proveedor.persona!.tipo_persona}
                           />
                         </div>
@@ -375,7 +382,7 @@ export const EditarProveedor: FC<Props> = ({ proveedor }) => {
                     </div>
                     <button
                       type="submit"
-                      className="mt-4 inline-flex items-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-[#388C04]"
+                      className="mt-4 inline-flex items-center rounded-md border border-transparent bg-[#388C04] px-4 py-2 font-medium text-white shadow-sm"
                     >
                       Editar Proveedor
                       <PlusCircleIcon
@@ -385,7 +392,7 @@ export const EditarProveedor: FC<Props> = ({ proveedor }) => {
                     </button>
                     <button
                       type="button"
-                      className="mt-4 ml-10 inline-flex items-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-[#CA1514]"
+                      className="mt-4 ml-10 inline-flex items-center rounded-md border border-transparent bg-[#CA1514] px-4 py-2 font-medium text-white shadow-sm"
                       onClick={closeModal}
                     >
                       Cancelar

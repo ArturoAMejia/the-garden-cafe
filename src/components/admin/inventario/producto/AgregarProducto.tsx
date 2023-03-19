@@ -7,7 +7,7 @@ import tgcApi from "../../../../api/tgcApi";
 import { ICatEstado, IProducto } from "../../../../interfaces";
 import { AdminContext } from "../../../../context";
 
-import { SubirImagen } from "../../SubirImagen";
+
 
 type FormData = IProducto;
 
@@ -29,23 +29,23 @@ export const AgregarProducto: FC<Props> = ({ estados }) => {
     if (!target.files || target.files.length === 0) return;
 
     // console.log(file)
-    try {
-      for (const file of target.files) {
-        console.log(file);
-        const formData = new FormData();
-        formData.append("file", file);
-        const { data } = await tgcApi.post<{ message: string }>(
-          "api/upload",
-          formData
-        );
-        console.log(data.message);
-        setValue("imagen", data.message, {
-          shouldValidate: true,
-        });
-      }
-    } catch (error) {
-      console.log(error);
-    }
+    // try {
+    //   for (const file of target.files) {
+    //     console.log(file);
+    //     const formData = new FormData();
+    //     formData.append("file", file);
+    //     const { data } = await tgcApi.post<{ message: string }>(
+    //       "api/upload",
+    //       formData
+    //     );
+    //     console.log(data.message);
+    //     setValue("imagen", data.message, {
+    //       shouldValidate: true,
+    //     });
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    // }
   };
   const onCrearProducto = async (data: FormData) => {
     const { hasError, message } = await crearProducto(data);

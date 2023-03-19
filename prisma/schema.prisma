@@ -253,17 +253,20 @@ model tipo_producto {
 }
 
 model tipo_categoria {
-  id         Int        @id @default(autoincrement())
-  cat_estado cat_estado @relation(fields: [id_estado], references: [id])
-  id_estado  Int
-  nombre     String
+  id                 Int                  @id @default(autoincrement())
+  cat_estado         cat_estado           @relation(fields: [id_estado], references: [id])
+  id_estado          Int
+  nombre             String
+  categoria_producto categoria_producto[]
 }
 
 model categoria_producto {
   id                     Int                      @id @default(autoincrement())
   cat_estado             cat_estado               @relation(fields: [id_estado], references: [id])
   id_estado              Int
-  nombre                 String
+  tipo_categoria         tipo_categoria           @relation(fields: [id_tipo_categoria], references: [id])
+  id_tipo_categoria      Int
+  nombre                 String                   @unique
   descripcion            String
   sub_categoria_producto sub_categoria_producto[]
   producto               producto[]
@@ -285,8 +288,8 @@ model marca {
   id         Int        @id @default(autoincrement())
   cat_estado cat_estado @relation(fields: [id_estado], references: [id])
   id_estado  Int
-  nombre     String
-  siglas     String
+  nombre     String     @unique
+  siglas     String     @unique
   producto   producto[]
 }
 
@@ -294,8 +297,8 @@ model unidad_medida {
   id                 Int                  @id @default(autoincrement())
   cat_estado         cat_estado           @relation(fields: [id_estado], references: [id])
   id_estado          Int
-  nombre             String
-  siglas             String
+  nombre             String               @unique
+  siglas             String               @unique
   producto           producto[]
   producto_elaborado producto_elaborado[]
   equivalencia       equivalencia[]
@@ -408,7 +411,6 @@ model precio_producto {
   margen_ganancia Float
   precio_venta    Float
 }
-
 
 model coste_producto_elaborado {
   id                    Int                @id @default(autoincrement())

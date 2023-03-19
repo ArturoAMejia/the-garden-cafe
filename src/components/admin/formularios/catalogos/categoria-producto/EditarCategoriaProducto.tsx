@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 
 import { ICategoriaProducto } from "../../../../../interfaces";
 import { AdminContext } from "../../../../../context";
+import { useActualizarCategoriaMutation } from "@/store/slices/inventario";
 
 interface Props {
   cat_producto: ICategoriaProducto;
@@ -27,29 +28,26 @@ export const EditarCatProducto: FC<Props> = ({ cat_producto }) => {
 
   const { actualizarCategorias } = useContext(AdminContext);
 
+  const [actualizarCategoria] = useActualizarCategoriaMutation();
+
   const onActualizarCategoria = async ({
     id = cat_producto.id,
     nombre,
     descripcion,
   }: FormData) => {
-    try {
-      const { hasError, message } = await actualizarCategorias({
-        id: cat_producto.id,
-        nombre,
-        id_estado: cat_producto.id_estado,
-        descripcion,
-      });
-      if (hasError) {
-        toast.error(message!);
-        return;
-      }
-
-      toast.success("Categoria actualizada correctamente");
-      closeModal();
-      reset();
-    } catch (error) {
-      console.log(error);
-    }
+    actualizarCategoria({
+      id: cat_producto.id,
+      nombre,
+      id_estado: cat_producto.id_estado,
+      descripcion,
+    })
+      .unwrap()
+      .then((res) => {
+        toast.success("Categoria actualizada correctamente");
+        closeModal();
+        reset();
+      })
+      .catch((error) => toast.error(error.data.message));
   };
   return (
     <>

@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { ICatEstado } from "../../../../../interfaces";
 import { AdminContext } from "../../../../../context";
+import { useCrearCategoriaMutation } from "@/store/slices/inventario";
 
 interface Props {
   estados: ICatEstado[];
@@ -17,11 +18,11 @@ type FormData = {
   descripcion: string;
   id_estado: number;
 };
-export const AgregarCatProducto: FC<Props> = ({ estados }) => {
-  const { crearCategoria } = useContext(AdminContext);
+export const AgregarCatProducto = () => {
+  // const { crearCategoria } = useContext(AdminContext);
   const { register, handleSubmit, reset } = useForm<FormData>();
-  const router = useRouter();
 
+  const [crearCategoria] = useCrearCategoriaMutation();
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
@@ -32,22 +33,19 @@ export const AgregarCatProducto: FC<Props> = ({ estados }) => {
     id_estado,
     id,
   }: FormData) => {
-    const { hasError, message } = await crearCategoria({
+    crearCategoria({
       nombre,
       descripcion,
       id_estado,
       id,
-    });
-
-    if (hasError) {
-      toast.error(message!);
-      return;
-    }
-
-    toast.success("Categoría agregada correctamente.")
-
-    closeModal();
-    reset();
+    })
+      .unwrap()
+      .then((res) => {
+        toast.success("Categoría agregada correctamente.");
+        closeModal();
+        reset();
+      })
+      .catch((error) => toast.error(error.data.message));
   };
   return (
     <>
@@ -55,7 +53,7 @@ export const AgregarCatProducto: FC<Props> = ({ estados }) => {
         <button
           type="button"
           onClick={openModal}
-          className="inline-flex items-center justify-center rounded-md border border-transparent bg-[#388C04] hover:bg-[#8CA862] px-4 py-2 text-sm font-medium text-white shadow-sm sm:w-auto"
+          className="inline-flex items-center justify-center rounded-md border border-transparent bg-[#388C04] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#8CA862] sm:w-auto"
         >
           Agregar Categoria de Producto
         </button>
@@ -86,7 +84,7 @@ export const AgregarCatProducto: FC<Props> = ({ estados }) => {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="w-full max-w-max h-auto transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="h-auto w-full max-w-max transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title
                     as="h3"
                     className="text-xl font-bold leading-6 text-gray-900"
@@ -112,7 +110,7 @@ export const AgregarCatProducto: FC<Props> = ({ estados }) => {
                             type="text"
                             id="nombre"
                             {...register("nombre")}
-                            className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full border-gray-300 rounded-md"
+                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                           />
                         </div>
                       </div>
@@ -129,14 +127,14 @@ export const AgregarCatProducto: FC<Props> = ({ estados }) => {
                             type="text"
                             id="descripcion"
                             {...register("descripcion")}
-                            className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full border-gray-300 rounded-md"
+                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                           />
                         </div>
                       </div>
                     </div>
                     <button
                       type="submit"
-                      className="mt-4 mr-2 inline-flex items-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-[#388C04]"
+                      className="mt-4 mr-2 inline-flex items-center rounded-md border border-transparent bg-[#388C04] px-4 py-2 font-medium text-white shadow-sm"
                     >
                       Agregar Categoria Producto
                       <PlusCircleIcon
@@ -146,7 +144,7 @@ export const AgregarCatProducto: FC<Props> = ({ estados }) => {
                     </button>
                     <button
                       type="button"
-                      className="mt-4 ml-16 inline-flex items-center px-4 py-2 border border-transparent shadow-sm font-medium rounded-md text-white bg-[#CA1514]"
+                      className="mt-4 ml-16 inline-flex items-center rounded-md border border-transparent bg-[#CA1514] px-4 py-2 font-medium text-white shadow-sm"
                       onClick={closeModal}
                     >
                       Cancelar

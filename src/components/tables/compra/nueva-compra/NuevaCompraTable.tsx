@@ -23,6 +23,7 @@ import { AnularPedido } from "../../../admin/pedido/AnularPedido";
 import { RealizarCompra } from "../../../admin/compra/nueva-compra/RealizarCompra";
 import { AnularCompra } from "../../../admin/compra/nueva-compra/AnularCompra";
 import { AdminContext } from "@/context";
+import { useObtenerOrdenesCompraQuery } from "@/store/slices/compra/compraApi";
 
 const columunHelper = createColumnHelper<IOrdenCompra>();
 
@@ -88,14 +89,17 @@ export const NuevaCompraTable = () => {
     []
   );
 
-  const { ordenes_compra } = useContext(AdminContext);
+  const { data: ordenes_compra, isLoading } = useObtenerOrdenesCompraQuery();
 
   const table = useReactTable({
-    data: ordenes_compra,
+    data: ordenes_compra!,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
+
+  if (isLoading) return <>Cargando...</>;
+
   return (
     <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
       <table className="min-w-full divide-y divide-gray-300">

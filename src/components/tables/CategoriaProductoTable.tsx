@@ -6,14 +6,14 @@ import {
   ColumnDef,
   getPaginationRowModel,
 } from "@tanstack/react-table";
-import { FC, useContext, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { ICatEstado, ICategoriaProducto } from "../../interfaces";
 
 import {
   EditarCatProducto,
   DesactivarCategoriaProducto,
 } from "../admin/formularios/catalogos";
-import { AdminContext } from "../../context";
+import { useObtenerCategoriasQuery } from "@/store/slices/inventario";
 
 const columHelper = createColumnHelper<ICategoriaProducto>();
 
@@ -51,14 +51,15 @@ export const CategoriaProductoTable = () => {
         cell: (props) => (
           <div className="flex justify-center">
             <EditarCatProducto cat_producto={props.row.original} />{" "}
-            <DesactivarCategoriaProducto cat_producto={props.row.original} />
+            <DesactivarCategoriaProducto id={props.row.original.id} />
           </div>
         ),
       }),
     ],
     []
   );
-  const { categorias } = useContext(AdminContext);
+
+  const { data: categorias, isLoading } = useObtenerCategoriasQuery();
 
   const table = useReactTable({
     data: categorias!,
@@ -67,9 +68,10 @@ export const CategoriaProductoTable = () => {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
+  if (isLoading) return <>Cargando...</>;
+
   return (
     <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-
       <table className="min-w-full divide-y divide-gray-300">
         <thead className="bg-gray-50">
           {table.getHeaderGroups().map((headerGroup) => (
@@ -97,7 +99,7 @@ export const CategoriaProductoTable = () => {
               {row.getVisibleCells().map((cell) => (
                 <td
                   key={cell.id}
-                  className="whitespace-nowrap px-3 py-2 text-sm text-center text-gray-500"
+                  className="whitespace-nowrap px-3 py-2 text-center text-sm text-gray-500"
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
@@ -107,7 +109,7 @@ export const CategoriaProductoTable = () => {
         </tbody>
       </table>
       <nav
-        className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 gap-1"
+        className="flex items-center justify-between gap-1 border-t border-gray-200 bg-white px-4 py-3 sm:px-6"
         aria-label="Pagination"
       >
         <div className="hidden sm:block">
