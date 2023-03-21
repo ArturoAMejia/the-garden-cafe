@@ -8,8 +8,10 @@ import {
 } from "@tanstack/react-table";
 import { useMemo } from "react";
 
-import { useObtenerCategoriasQuery, useObtenerSubcategoriasQuery } from "@/store/slices/inventario";
+import { useObtenerSubcategoriasQuery } from "@/store/slices/inventario";
 import { ISubCategoriaProducto, ICatEstado, ICategoriaProducto } from "@/interfaces";
+import { EditarSubCategoriaProducto } from "@/components/admin/formularios/catalogos/sub-categoria-producto/EditarSubCategoriaProducto";
+import { DesactivarSubCategoriaProducto } from "@/components/admin/formularios/catalogos/sub-categoria-producto/DesactivarSubCategoriaProducto";
 
 const columHelper = createColumnHelper<ISubCategoriaProducto>();
 
@@ -46,9 +48,8 @@ export const SubCategoriaProductoTable = () => {
         header: "Acciones",
         cell: (props) => (
           <div className="flex justify-center">
-            {/* //TODO */}
-            {/* <EditarCatProducto cat_producto={props.row.original} />{" "}
-            <DesactivarCategoriaProducto id={props.row.original.id} /> */}
+            <EditarSubCategoriaProducto sub_categoria_producto={props.row.original}/>
+            <DesactivarSubCategoriaProducto id={props.row.original.id}/>
           </div>
         ),
       }),

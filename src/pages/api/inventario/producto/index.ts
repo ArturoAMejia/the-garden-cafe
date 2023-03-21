@@ -10,7 +10,8 @@ type Data =
       message: string;
     }
   | IProducto
-  | IProducto[];
+  | IProducto[]
+  | any;
 
 export default function handler(
   req: NextApiRequest,
@@ -42,6 +43,11 @@ const obtenerProductos = async (res: NextApiResponse<Data>) => {
       descripcion: true,
       id_estado: true,
       id_marca: true,
+      marca: true,
+      id_sub_categoria_producto: true,
+      sub_categoria_producto: true,
+      id_tipo_producto: true,
+      tipo_producto: true,
       id_unidad_medida: true,
       unidad_medida: true,
       precio_producto: true,
@@ -50,11 +56,6 @@ const obtenerProductos = async (res: NextApiResponse<Data>) => {
       cod_producto: true,
       imagen: true,
       fecha_ingreso: true,
-    },
-    where: {
-      categoria_producto: {
-        nombre: "Desayuno",
-      },
     },
   });
   await prisma.$disconnect();
@@ -73,8 +74,13 @@ const crearProducto = async (
     id_unidad_medida,
     id_sub_categoria_producto,
     id_tipo_producto,
+    precio_compra,
+    gasto,
+    margen_ganancia,
     imagen,
   } = req.body;
+
+  console.log(req.body);
 
   if (
     !nombre ||
@@ -83,7 +89,10 @@ const crearProducto = async (
     !id_marca ||
     !id_unidad_medida ||
     !id_sub_categoria_producto ||
-    !id_tipo_producto
+    !id_tipo_producto ||
+    !precio_compra ||
+    !gasto ||
+    !margen_ganancia
   )
     return res
       .status(400)
@@ -102,6 +111,18 @@ const crearProducto = async (
       fecha_ingreso: new Date(),
       id_sub_categoria_producto,
       id_tipo_producto,
+    },
+  });
+
+  await prisma.precio_producto.create({
+    data: {
+      id_producto: producto.id,
+      precio_compra,
+      gasto,
+      margen_ganancia,
+      fecha_precio: new Date(),
+      precio_venta: precio_compra + gasto + margen_ganancia,
+      id_estado: 1,
     },
   });
   await prisma.$disconnect();
@@ -124,12 +145,12 @@ const actualizarProducto = async (
     cod_producto,
     fecha_ingreso,
   } = req.body;
-  
+
   if (!id)
-  return res
-  .status(400)
-  .json({ message: "El id es necesario para actualizar el producto" });
-  
+    return res
+      .status(400)
+      .json({ message: "El id es necesario para actualizar el producto" });
+
   if (
     !nombre ||
     !descripcion ||
@@ -140,11 +161,11 @@ const actualizarProducto = async (
     !cod_producto ||
     !id_unidad_medida ||
     !fecha_ingreso
-    )
+  )
     return res
-    .status(400)
-    .json({ message: "Todos los campos son obligatorios" });
-    
+      .status(400)
+      .json({ message: "Todos los campos son obligatorios" });
+
   await prisma.$connect();
 
   const producto = await prisma.producto.update({

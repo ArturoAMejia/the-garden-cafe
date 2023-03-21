@@ -4,6 +4,7 @@ import {
   IProducto,
   ISubCategoriaProducto,
   IUnidadMedida,
+  ITipoCategoria,
 } from "@/interfaces";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
 
@@ -21,6 +22,7 @@ export const inventarioApi = createApi({
     "Categorias",
     "Subcategorias",
     "Tipo de Productos",
+    "Tipo de Categorias",
   ],
   endpoints: (builder) => ({
     obtenerProductos: builder.query<IProducto[], void>({
@@ -80,7 +82,7 @@ export const inventarioApi = createApi({
       invalidatesTags: ["Platillos"],
     }),
     obtenerIngredientes: builder.query<IProducto[], void>({
-      query: () => "/inventario/producto/ingredientes",
+      query: () => "/inventario/producto/ingrediente",
       providesTags: ["Ingredientes"],
     }),
     crearIngrediente: builder.mutation<IProducto, any>({
@@ -192,12 +194,12 @@ export const inventarioApi = createApi({
       invalidatesTags: ["Categorias"],
     }),
     obtenerSubcategorias: builder.query<ISubCategoriaProducto[], void>({
-      query: () => "/inventario/subcategoria",
+      query: () => "/catalogos/subcategoria",
       providesTags: ["Subcategorias"],
     }),
     crearSubcategoria: builder.mutation<ISubCategoriaProducto, any>({
       query: (subcategoria) => ({
-        url: "/inventario/subcategoria",
+        url: "/catalogos/subcategoria",
         method: "POST",
         body: subcategoria,
       }),
@@ -205,7 +207,7 @@ export const inventarioApi = createApi({
     }),
     actualizarSubcategoria: builder.mutation<ISubCategoriaProducto, any>({
       query: (subcategoria) => ({
-        url: "/inventario/subcategoria",
+        url: "/catalogos/subcategoria",
         method: "PUT",
         body: subcategoria,
       }),
@@ -213,11 +215,39 @@ export const inventarioApi = createApi({
     }),
     desactivarSubcategoria: builder.mutation<number, any>({
       query: (subcategoria) => ({
-        url: "/inventario/subcategoria",
+        url: "/catalogos/subcategoria",
         method: "PATCH",
         body: subcategoria,
       }),
       invalidatesTags: ["Subcategorias"],
+    }),
+    obtenerTiposCategoria: builder.query<ITipoCategoria[], void>({
+      query: () => "/catalogos/tipo-categoria",
+      providesTags: ["Tipo de Categorias"],
+    }),
+    crearTipoCategoria: builder.mutation<ITipoCategoria, any>({
+      query: (tipoCategoria) => ({
+        url: "/catalogos/tipo-categoria",
+        method: "POST",
+        body: tipoCategoria,
+      }),
+      invalidatesTags: ["Tipo de Categorias"],
+    }),
+    actualizarTipoCategoria: builder.mutation<ITipoCategoria, any>({
+      query: (tipoCategoria) => ({
+        url: "/catalogos/tipo-categoria",
+        method: "PUT",
+        body: tipoCategoria,
+      }),
+      invalidatesTags: ["Tipo de Categorias"],
+    }),
+    desactivarTipoCategoria: builder.mutation<number, any>({
+      query: (id) => ({
+        url: "/catalogos/tipo-categoria",
+        method: "PATCH",
+        body: id,
+      }),
+      invalidatesTags: ["Tipo de Categorias"],
     }),
   }),
 });
@@ -258,4 +288,9 @@ export const {
   useCrearSubcategoriaMutation,
   useActualizarSubcategoriaMutation,
   useDesactivarSubcategoriaMutation,
+  // Tipo de Categorias
+  useObtenerTiposCategoriaQuery,
+  useCrearTipoCategoriaMutation,
+  useActualizarTipoCategoriaMutation,
+  useDesactivarTipoCategoriaMutation,
 } = inventarioApi;

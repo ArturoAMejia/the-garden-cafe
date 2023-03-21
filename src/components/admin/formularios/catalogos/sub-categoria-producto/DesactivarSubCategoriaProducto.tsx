@@ -1,27 +1,28 @@
-import { FC, Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import {
   ExclamationCircleIcon,
-  XCircleIcon,
+  XCircleIcon
 } from "@heroicons/react/24/outline";
+import { FC, Fragment, useState } from "react";
 
+import { useDesactivarSubcategoriaMutation } from "@/store/slices/inventario";
 import toast from "react-hot-toast";
-import { useDesactivarCategoriaMutation } from "@/store/slices/inventario";
 
 interface Props {
   id: number;
 }
 
-export const DesactivarCategoriaProducto: FC<Props> = ({ id }) => {
-  // const { desactivarCategoria } = useContext(AdminContext);
+export const DesactivarSubCategoriaProducto: FC<Props> = ({ id }) => {
+
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  const [desactivarCategoria] = useDesactivarCategoriaMutation();
+
+  const [desactivarSubcategoria] = useDesactivarSubcategoriaMutation();
 
   const onDesactivarCategoriaProducto = async () => {
-    desactivarCategoria({ id })
+    desactivarSubcategoria({ id })
       .unwrap()
       .then((res) => {
         toast.success("Categorias desactivada correctamente.");
@@ -100,11 +101,11 @@ export const DesactivarCategoriaProducto: FC<Props> = ({ id }) => {
                       as="h3"
                       className="text-lg font-medium leading-6 text-gray-900"
                     >
-                      Desactivar categoria
+                      Desactivar subcategoria
                     </Dialog.Title>
                     <div className="mt-2">
                       <p className="text-sm text-gray-500">
-                        ¿Está seguro que quiere desactivar la categoria?
+                        ¿Está seguro que quiere desactivar la subcategoria?
                       </p>
                     </div>
                   </div>

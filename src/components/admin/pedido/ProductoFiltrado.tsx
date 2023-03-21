@@ -3,11 +3,11 @@ import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 import React, { FC, useState } from "react";
 import toast from "react-hot-toast";
 
-import { IMenu } from "../../../interfaces";
+import { IMenu, IProducto } from "../../../interfaces";
 import { IProductoCart } from "../../../interfaces/producto";
 
 interface Props {
-  producto: IMenu;
+  producto: any;
   añadirProductoOrden: (producto: IProductoCart) => void;
 }
 
@@ -19,12 +19,12 @@ export const ProductoFiltrado: FC<Props> = ({
   producto,
   añadirProductoOrden,
 }) => {
-  const [tempCartProducto, setTempCartProducto] = useState<IProductoCart>({
+  const [tempCartProducto, setTempCartProducto] = useState<any>({
     id: Number(producto.id),
     nombre: producto.nombre,
     descripcion: producto.descripcion,
     categoria: producto?.categoria_producto.nombre,
-    unidad_medida: producto!.unidad_medida.siglas,
+    unidad_medida: producto?.unidad_medida.siglas,
     cantidad: 1,
     precio: producto.precio_producto![0].precio_venta,
     imagen: producto.imagen,

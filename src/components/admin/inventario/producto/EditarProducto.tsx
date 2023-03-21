@@ -21,8 +21,13 @@ type FormData = IProducto;
 interface Props {
   isIngredient?: boolean;
   isProduct?: boolean;
+  producto: IProducto;
 }
-export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
+export const EditarProducto: FC<Props> = ({
+  isIngredient,
+  isProduct,
+  producto,
+}) => {
   const { data: categorias, isLoading: isLoadingCategorias } =
     useObtenerCategoriasQuery();
   const { data: marcas, isLoading: isLoadingMarcas } = useObtenerMarcasQuery();
@@ -68,7 +73,7 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
 
   const onCrearProducto = async (data: FormData) => {
     if (isIngredient) {
-      crearIngrediente({ ...data, id_tipo_producto: 1 })
+      crearIngrediente(data)
         .unwrap()
         .then((res) => {
           toast.success("Ingrediente agregado correctamente");
@@ -77,7 +82,7 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
         })
         .catch((error) => toast.error(error.data.message));
     } else if (isProduct) {
-      crearProducto({ ...data, id_tipo_producto: 2 })
+      crearProducto(data)
         .unwrap()
         .then((res) => {
           toast.success("Producto agregado correctamente");
@@ -105,9 +110,9 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
           className="inline-flex items-center justify-center rounded-md border border-transparent bg-[#388C04] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#8CA862] sm:w-auto"
         >
           {isProduct
-            ? `Agregar Producto`
+            ? `Editar`
             : isIngredient
-            ? `Agregar Ingrediente`
+            ? `Editar`
             : ""}
         </button>
       </div>
@@ -142,7 +147,7 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
                     as="h3"
                     className="text-xl font-bold leading-6 text-gray-900"
                   >
-                    Agregar Producto
+                    Editar Producto
                   </Dialog.Title>
 
                   <form
@@ -162,6 +167,7 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
                           <input
                             type="text"
                             id="nombre"
+                            defaultValue={producto.nombre}
                             {...register("nombre")}
                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                           />
@@ -179,6 +185,7 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
                           <input
                             type="text"
                             id="nombre"
+                            defaultValue={producto.descripcion}
                             {...register("descripcion")}
                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                           />
@@ -204,6 +211,7 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
                               <option
                                 key={categoria.nombre}
                                 value={categoria.id}
+                                defaultValue={producto.id_categoria_producto}
                               >
                                 {categoria.nombre}
                               </option>
@@ -231,6 +239,9 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
                               <option
                                 key={sub_categoria.nombre}
                                 value={sub_categoria.id}
+                                defaultValue={
+                                  producto.id_sub_categoria_producto
+                                }
                               >
                                 {sub_categoria.nombre}
                               </option>
@@ -255,7 +266,11 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
                             className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
                           >
                             {marcas?.map((marca) => (
-                              <option key={marca.siglas} value={marca.id}>
+                              <option
+                                key={marca.siglas}
+                                value={marca.id}
+                                defaultValue={producto.id_marca}
+                              >
                                 {marca.siglas}
                               </option>
                             ))}
@@ -279,7 +294,9 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
                             className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
                           >
                             {unidades_medidas?.map((medida) => (
-                              <option key={medida.siglas} value={medida.id}>
+                              <option key={medida.siglas} value={medida.id}
+                              defaultValue={producto.id_unidad_medida}
+                              >
                                 {medida.siglas}
                               </option>
                             ))}
@@ -378,72 +395,12 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
                           </select>
                         </div>
                       </div> */}
-                      {/* Precio de compra */}
-                      <div className="mt-2">
-                        <label
-                          htmlFor="Precio de compra"
-                          className="block font-medium text-gray-700"
-                        >
-                          Precio de compra
-                        </label>
-                        <div className="mt-1">
-                          <input
-                            type="number"
-                            id="Precio de compra"
-                            max={50}
-                            {...register("precio_compra", {
-                              valueAsNumber: true,
-                            })}
-                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                          />
-                        </div>
-                      </div>
-                      {/* Margen de Ganancias */}
-                      <div className="mt-2">
-                        <label
-                          htmlFor="Margen de Ganancias"
-                          className="block font-medium text-gray-700"
-                        >
-                          Margen de Ganancias
-                        </label>
-                        <div className="mt-1">
-                          <input
-                            type="number"
-                            id="Margen de Ganancias"
-                            max={50}
-                            {...register("margen_ganancia", {
-                              valueAsNumber: true,
-                            })}
-                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                          />
-                        </div>
-                      </div>
-                      {/* Gasto */}
-                      <div className="mt-2">
-                        <label
-                          htmlFor="Gasto"
-                          className="block font-medium text-gray-700"
-                        >
-                          Gasto
-                        </label>
-                        <div className="mt-1">
-                          <input
-                            type="number"
-                            id="Gasto"
-                            max={50}
-                            {...register("gasto", {
-                              valueAsNumber: true,
-                            })}
-                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                          />
-                        </div>
-                      </div>
                     </div>
                     <button
                       type="submit"
                       className="mt-4 mr-2 inline-flex items-center rounded-md border border-transparent bg-[#388C04] px-4 py-2 font-medium text-white shadow-sm"
                     >
-                      Agregar Producto
+                      Editar Producto
                       <PlusCircleIcon
                         className="ml-2 -mr-1 h-5 w-5"
                         aria-hidden="true"

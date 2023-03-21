@@ -109,3 +109,5 @@ export const tipo_categoria = [
     id_estado: 1,
   },
 ];
+
+

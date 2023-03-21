@@ -1,4 +1,5 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
+
 import {
   ColumnDef,
   createColumnHelper,
@@ -7,20 +8,20 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+
 import {
   ICategoriaProducto,
   IMarca,
-  IMenu,
   IProducto,
   IUnidadMedida,
 } from "../../../interfaces";
 
+import { useObtenerIngredientesQuery } from "@/store/slices/inventario";
 import { EditarProducto } from "@/components/admin";
-import { useObtenerProductosQuery } from "@/store/slices/inventario";
 import { DesactivarProducto } from "@/components/admin/inventario/producto/DesactivarProducto";
 
 const columnHelper = createColumnHelper<IProducto>();
-export const ProductoTable = () => {
+export const IngredienteTable = () => {
   const columns = useMemo<ColumnDef<IProducto, any>[]>(
     () => [
       columnHelper.accessor<"id", number>("id", {
@@ -29,6 +30,10 @@ export const ProductoTable = () => {
       }),
       columnHelper.accessor<"nombre", string>("nombre", {
         header: "Nombre",
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor<"descripcion", string>("descripcion", {
+        header: "Descripción",
         cell: (info) => info.getValue(),
       }),
       columnHelper.accessor<"categoria_producto", ICategoriaProducto>(
@@ -51,8 +56,8 @@ export const ProductoTable = () => {
         header: () => <span>Acciones</span>,
         cell: (props) => (
           <div className="flex justify-center">
-            <EditarProducto isProduct={true} producto={props.row.original} />
-            <DesactivarProducto isProduct={true} id={props.row.original.id} />
+            <EditarProducto isIngredient={true} producto={props.row.original} />
+            <DesactivarProducto isIngredient={true} id={props.row.original.id} />
           </div>
         ),
       }),
@@ -60,10 +65,9 @@ export const ProductoTable = () => {
     []
   );
 
-  const { data: productos, isLoading } = useObtenerProductosQuery();
-
+  const { data: ingredientes, isLoading } = useObtenerIngredientesQuery();
   const table = useReactTable({
-    data: productos!,
+    data: ingredientes!,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -72,8 +76,8 @@ export const ProductoTable = () => {
   if (isLoading) return <>Cargando...</>;
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-gray-200">
-      <table className="min-w-full divide-y-2 divide-gray-200 text-sm">
+    <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+      <table className="min-w-full divide-y divide-gray-300">
         <thead className="bg-gray-50">
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
@@ -81,7 +85,7 @@ export const ProductoTable = () => {
                 <th
                   key={header.id}
                   scope="col"
-                  className="whitespace-nowrap px-4 py-2 text-center text-gray-900"
+                  className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900"
                 >
                   {header.isPlaceholder
                     ? null
@@ -94,13 +98,13 @@ export const ProductoTable = () => {
             </tr>
           ))}
         </thead>
-        <tbody className="divide-y divide-gray-200">
+        <tbody className="divide-y divide-gray-200 bg-white">
           {table.getRowModel().rows.map((row) => (
             <tr key={row.id}>
               {row.getVisibleCells().map((cell) => (
                 <td
                   key={cell.id}
-                  className="whitespace-nowrap px-4 py-2  text-center text-gray-900"
+                  className="whitespace-nowrap px-3 py-2 text-center text-sm text-gray-500"
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>

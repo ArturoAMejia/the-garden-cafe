@@ -1,14 +1,14 @@
-import { FC, Fragment, useContext, useState } from "react";
-import { useRouter } from "next/router";
+import { FC, Fragment, useState } from "react";
+
 import { Dialog, Transition } from "@headlessui/react";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { ICatEstado } from "../../../../../interfaces";
-import { AdminContext } from "../../../../../context";
+
 import {
-  useCrearCategoriaMutation,
-  useObtenerTiposCategoriaQuery,
+  useCrearSubcategoriaMutation,
+  useObtenerCategoriasQuery,
 } from "@/store/slices/inventario";
 
 interface Props {
@@ -18,45 +18,39 @@ interface Props {
 type FormData = {
   id: number;
   nombre: string;
-  descripcion: string;
+  id_categoria_producto: number;
   id_estado: number;
-  id_tipo_categoria: number;
 };
-export const AgregarCatProducto = () => {
-  // const { crearCategoria } = useContext(AdminContext);
+export const AgregarSubCategoriaProducto = () => {
   const { register, handleSubmit, reset } = useForm<FormData>();
 
-  const { data: tipo_categorias, isLoading } = useObtenerTiposCategoriaQuery();
-  const [crearCategoria] = useCrearCategoriaMutation();
+  const { data: categorias } = useObtenerCategoriasQuery();
 
+  const [crearSubcategoria] = useCrearSubcategoriaMutation();
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
   const onCrearCategoria = async ({
     nombre,
-    descripcion,
+    id_categoria_producto,
     id_estado,
     id,
-    id_tipo_categoria,
   }: FormData) => {
-    crearCategoria({
+    crearSubcategoria({
       nombre,
-      descripcion,
+      id_categoria_producto,
       id_estado,
       id,
-      id_tipo_categoria,
     })
       .unwrap()
       .then((res) => {
-        toast.success("Categoría agregada correctamente.");
+        toast.success("Subcategoría agregada correctamente.");
         closeModal();
         reset();
       })
       .catch((error) => toast.error(error.data.message));
   };
-
-  if (isLoading) return <>Cargando...</>;
   return (
     <>
       <div className="mx-2">
@@ -65,7 +59,7 @@ export const AgregarCatProducto = () => {
           onClick={openModal}
           className="inline-flex items-center justify-center rounded-md border border-transparent bg-[#388C04] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#8CA862] sm:w-auto"
         >
-          Agregar Categoria de Producto
+          Agregar Subcategoria de Producto
         </button>
       </div>
 
@@ -124,46 +118,29 @@ export const AgregarCatProducto = () => {
                           />
                         </div>
                       </div>
-                      {/* Tipo de categoria */}
+                      {/* Categorias */}
                       <div className="mt-2">
                         <label
-                          htmlFor="tipo_categoria"
+                          htmlFor="categorias"
                           className="block font-medium text-gray-700"
                         >
-                          Tipo de Categoría
-                        </label>
-                        <select
-                          {...register("id_tipo_categoria", {
-                            valueAsNumber: true,
-                          })}
-                          id=""
-                          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                        >
-                          {tipo_categorias?.map((tipo_categoria) => (
-                            <option
-                              key={tipo_categoria.id}
-                              value={tipo_categoria.id}
-                            >
-                              {tipo_categoria.nombre}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      {/* Descripcion */}
-                      <div className="mt-2">
-                        <label
-                          htmlFor="descripcion"
-                          className="block font-medium text-gray-700"
-                        >
-                          Descripción
+                          Categoría
                         </label>
                         <div className="mt-1">
-                          <input
-                            type="text"
-                            id="descripcion"
-                            {...register("descripcion")}
+                          <select
+                            id="categorias"
+                            {...register("id_categoria_producto", {
+                              valueAsNumber: true,
+                            })}
                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                          />
+                          >
+                            {categorias?.map((categoria) => (
+                              <option
+                                key={categoria.id}
+                                value={categoria.id}
+                              >{`${categoria.nombre}`}</option>
+                            ))}
+                          </select>
                         </div>
                       </div>
                     </div>
@@ -171,7 +148,7 @@ export const AgregarCatProducto = () => {
                       type="submit"
                       className="mt-4 mr-2 inline-flex items-center rounded-md border border-transparent bg-[#388C04] px-4 py-2 font-medium text-white shadow-sm"
                     >
-                      Agregar Categoria Producto
+                      Agregar Subcategoria Producto
                       <PlusCircleIcon
                         className="ml-2 -mr-1 h-5 w-5"
                         aria-hidden="true"

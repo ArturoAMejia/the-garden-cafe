@@ -2,14 +2,13 @@ import { FC, Fragment, useState } from "react";
 
 import { Combobox, Dialog, Transition } from "@headlessui/react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import toast from "react-hot-toast";
 
 import { ProductoFiltrado } from "./ProductoFiltrado";
-import { IMenu } from "../../../interfaces";
+import { IProducto } from "../../../interfaces";
 import { IProductoCart } from "../../../interfaces/producto";
 
 interface Props {
-  productos: IMenu[];
+  productos: IProducto[];
   añadirProductoOrden: (producto: IProductoCart) => void;
 }
 
@@ -23,7 +22,7 @@ export const FilterBar: FC<Props> = ({ productos, añadirProductoOrden }) => {
   const filteredproductos =
     query === ""
       ? []
-      : productos.filter((producto: IMenu) => {
+      : productos.filter((producto: IProducto) => {
           return producto.nombre.toLowerCase().includes(query.toLowerCase());
         });
 
@@ -90,7 +89,7 @@ export const FilterBar: FC<Props> = ({ productos, añadirProductoOrden }) => {
                   static
                   className="max-h-72 scroll-py-2 overflow-y-auto py-2 text-sm text-gray-800"
                 >
-                  {filteredproductos.map((producto: IMenu) => (
+                  {filteredproductos.map((producto: IProducto) => (
                     <ProductoFiltrado
                       key={producto.imagen}
                       producto={producto}

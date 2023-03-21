@@ -1,33 +1,52 @@
-import { FC, Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import {
   ExclamationCircleIcon,
   XCircleIcon,
 } from "@heroicons/react/24/outline";
+import { FC, Fragment, useState } from "react";
 
+import {
+  useDesactivarProductoMutation,
+  useDesactivarIngredienteMutation,
+} from "@/store/slices/inventario";
 import toast from "react-hot-toast";
-import { useDesactivarCategoriaMutation } from "@/store/slices/inventario";
 
 interface Props {
   id: number;
+  isIngredient?: boolean;
+  isProduct?: boolean;
 }
 
-export const DesactivarCategoriaProducto: FC<Props> = ({ id }) => {
-  // const { desactivarCategoria } = useContext(AdminContext);
+export const DesactivarProducto: FC<Props> = ({
+  id,
+  isProduct,
+  isIngredient,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  const [desactivarCategoria] = useDesactivarCategoriaMutation();
+  const [desactivarProducto] = useDesactivarProductoMutation();
+  const [desactivarIngrediente] = useDesactivarIngredienteMutation();
 
-  const onDesactivarCategoriaProducto = async () => {
-    desactivarCategoria({ id })
-      .unwrap()
-      .then((res) => {
-        toast.success("Categorias desactivada correctamente.");
-        closeModal();
-      })
-      .catch((error) => toast.error(error.data.message));
+  const onDesactivarProducto = async () => {
+    if (isProduct) {
+      desactivarProducto({ id })
+        .unwrap()
+        .then((res) => {
+          toast.success("Producto desactivado correctamente.");
+          closeModal();
+        })
+        .catch((error) => toast.error(error.data.message));
+    } else if (isIngredient) {
+      desactivarIngrediente({ id })
+        .unwrap()
+        .then((res) => {
+          toast.success("Ingrediente desactivado correctamente.");
+          closeModal();
+        })
+        .catch((error) => toast.error(error.data.message));
+    }
   };
 
   return (
@@ -100,11 +119,19 @@ export const DesactivarCategoriaProducto: FC<Props> = ({ id }) => {
                       as="h3"
                       className="text-lg font-medium leading-6 text-gray-900"
                     >
-                      Desactivar categoria
+                      {isProduct
+                        ? "Desactivar producto"
+                        : isIngredient
+                        ? "Desactivar ingrediente"
+                        : ""}
                     </Dialog.Title>
                     <div className="mt-2">
                       <p className="text-sm text-gray-500">
-                        ¿Está seguro que quiere desactivar la categoria?
+                        {isProduct
+                          ? "¿Está seguro que quiere desactivar el producto?"
+                          : isIngredient
+                          ? "¿Está seguro que quiere desactivar el ingrediente"
+                          : ""}
                       </p>
                     </div>
                   </div>
@@ -113,7 +140,7 @@ export const DesactivarCategoriaProducto: FC<Props> = ({ id }) => {
                   <button
                     type="button"
                     className="inline-flex w-full justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
-                    onClick={() => onDesactivarCategoriaProducto()}
+                    onClick={() => onDesactivarProducto()}
                   >
                     Desactivar
                   </button>

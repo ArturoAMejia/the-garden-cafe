@@ -1,71 +1,67 @@
-import { FC, Fragment, useContext, useState } from "react";
-import { useRouter } from "next/router";
+import { FC, Fragment, useState } from "react";
+
 import { Dialog, Transition } from "@headlessui/react";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { ICatEstado } from "../../../../../interfaces";
-import { AdminContext } from "../../../../../context";
+
+import { ICategoriaProducto, ISubCategoriaProducto } from "../../../../../interfaces";
 import {
-  useCrearCategoriaMutation,
-  useObtenerTiposCategoriaQuery,
+  useActualizarSubcategoriaMutation,
+  useObtenerCategoriasQuery,
 } from "@/store/slices/inventario";
 
 interface Props {
-  estados: ICatEstado[];
+  sub_categoria_producto: ISubCategoriaProducto;
 }
 
 type FormData = {
   id: number;
   nombre: string;
-  descripcion: string;
+  id_categoria_producto: number;
   id_estado: number;
-  id_tipo_categoria: number;
 };
-export const AgregarCatProducto = () => {
-  // const { crearCategoria } = useContext(AdminContext);
+export const EditarSubCategoriaProducto: FC<Props> = ({
+  sub_categoria_producto,
+}) => {
   const { register, handleSubmit, reset } = useForm<FormData>();
-
-  const { data: tipo_categorias, isLoading } = useObtenerTiposCategoriaQuery();
-  const [crearCategoria] = useCrearCategoriaMutation();
 
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  const onCrearCategoria = async ({
+  const { data: categorias } = useObtenerCategoriasQuery();
+
+  const [actualizarSubcategoria] = useActualizarSubcategoriaMutation();
+
+  const onActualizarSubCategoria = async ({
+    id = sub_categoria_producto.id,
     nombre,
-    descripcion,
-    id_estado,
-    id,
-    id_tipo_categoria,
+    id_categoria_producto,
   }: FormData) => {
-    crearCategoria({
+    actualizarSubcategoria({
+      id: sub_categoria_producto.id,
       nombre,
-      descripcion,
-      id_estado,
-      id,
-      id_tipo_categoria,
+      id_categoria_producto,
+      id_estado: sub_categoria_producto.id_estado,
     })
       .unwrap()
       .then((res) => {
-        toast.success("Categoría agregada correctamente.");
+        toast.success("Subcategoria actualizada correctamente");
         closeModal();
         reset();
       })
       .catch((error) => toast.error(error.data.message));
   };
-
-  if (isLoading) return <>Cargando...</>;
   return (
     <>
       <div className="mx-2">
         <button
           type="button"
           onClick={openModal}
-          className="inline-flex items-center justify-center rounded-md border border-transparent bg-[#388C04] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#8CA862] sm:w-auto"
+          className="inline-flex items-center justify-center rounded-lg border border-transparent bg-lime-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#8CA862] sm:w-auto"
         >
-          Agregar Categoria de Producto
+          Editar
         </button>
       </div>
 
@@ -94,17 +90,17 @@ export const AgregarCatProducto = () => {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="h-auto w-full max-w-max transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="h-auto w-full max-w-lg transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title
                     as="h3"
                     className="text-xl font-bold leading-6 text-gray-900"
                   >
-                    Agregar Categoria de Producto
+                    Actualizar Subcategoria de Producto
                   </Dialog.Title>
 
                   <form
                     className="h-3/4 w-full"
-                    onSubmit={handleSubmit(onCrearCategoria)}
+                    onSubmit={handleSubmit(onActualizarSubCategoria)}
                   >
                     <div className="grid grid-cols-2 gap-4">
                       {/* Nombre */}
@@ -121,49 +117,56 @@ export const AgregarCatProducto = () => {
                             id="nombre"
                             {...register("nombre")}
                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            defaultValue={sub_categoria_producto.nombre}
                           />
                         </div>
                       </div>
-                      {/* Tipo de categoria */}
+                      {/* Categorias */}
                       <div className="mt-2">
                         <label
-                          htmlFor="tipo_categoria"
+                          htmlFor="categorias"
                           className="block font-medium text-gray-700"
                         >
-                          Tipo de Categoría
-                        </label>
-                        <select
-                          {...register("id_tipo_categoria", {
-                            valueAsNumber: true,
-                          })}
-                          id=""
-                          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                        >
-                          {tipo_categorias?.map((tipo_categoria) => (
-                            <option
-                              key={tipo_categoria.id}
-                              value={tipo_categoria.id}
-                            >
-                              {tipo_categoria.nombre}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      {/* Descripcion */}
-                      <div className="mt-2">
-                        <label
-                          htmlFor="descripcion"
-                          className="block font-medium text-gray-700"
-                        >
-                          Descripción
+                          Categoría
                         </label>
                         <div className="mt-1">
-                          <input
-                            type="text"
-                            id="descripcion"
-                            {...register("descripcion")}
+                          <select
+                            id="categorias"
+                            {...register("id_categoria_producto", {
+                              valueAsNumber: true,
+                            })}
                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                          />
+                          >
+                            {categorias?.map((categoria) => (
+                              <option
+                                key={categoria.id}
+                                value={categoria.id}
+                              >{`${categoria.nombre}`}</option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                      {/* Estado */}
+                      <div className="mt-2">
+                        <label
+                          htmlFor="nombre"
+                          className="block font-medium text-gray-700"
+                        >
+                          Estado
+                        </label>
+                        <div className="mt-1">
+                          <select
+                            id="estado"
+                            {...register("id_estado")}
+                            className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+                          >
+                            <option
+                              key={sub_categoria_producto.id}
+                              value={sub_categoria_producto.cat_estado?.nombre}
+                            >
+                              {sub_categoria_producto.cat_estado?.nombre}
+                            </option>
+                          </select>
                         </div>
                       </div>
                     </div>
@@ -171,7 +174,7 @@ export const AgregarCatProducto = () => {
                       type="submit"
                       className="mt-4 mr-2 inline-flex items-center rounded-md border border-transparent bg-[#388C04] px-4 py-2 font-medium text-white shadow-sm"
                     >
-                      Agregar Categoria Producto
+                      Actualizar 
                       <PlusCircleIcon
                         className="ml-2 -mr-1 h-5 w-5"
                         aria-hidden="true"

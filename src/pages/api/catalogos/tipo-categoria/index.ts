@@ -5,13 +5,14 @@ import {
   ICategoriaProducto,
   ISubCategoriaProducto,
 } from "../../../../interfaces";
+import { ITipoCategoria } from "@/interfaces/inventario/tipo-categoria";
 
 type Data =
   | {
       message: string;
     }
-  | ISubCategoriaProducto
-  | ISubCategoriaProducto[];
+  | ITipoCategoria
+  | ITipoCategoria[];
 
 export default function handler(
   req: NextApiRequest,
@@ -19,25 +20,23 @@ export default function handler(
 ) {
   switch (req.method) {
     case "GET":
-      return obtenerSubCategoriaProducto(res);
+      return obtenerTipoCategoria(res);
     case "POST":
-      return crearSubCategoriaProducto(req, res);
+      return crearTipoCategoria(req, res);
     case "PUT":
-      return actualizarSubCategoriaProducto(req, res);
+      return actualizarTipoCategoria(req, res);
     case "PATCH":
-      return desactivarSubCategoria(req, res);
+      return desactivarTipoCategoria(req, res);
     default:
       return res.status(400).json({ message: "Método no soportado." });
   }
 }
 
-const obtenerSubCategoriaProducto = async (res: NextApiResponse<Data>) => {
+const obtenerTipoCategoria = async (res: NextApiResponse<Data>) => {
   await prisma.$connect();
-  const categorias = await prisma.sub_categoria_producto.findMany({
+  const tipo_categoria = await prisma.tipo_categoria.findMany({
     select: {
       id: true,
-      id_categoria_producto: true,
-      categoria_producto: true,
       nombre: true,
       id_estado: true,
       cat_estado: true,
@@ -47,43 +46,42 @@ const obtenerSubCategoriaProducto = async (res: NextApiResponse<Data>) => {
     },
   });
   await prisma.$disconnect();
-  res.status(200).json(categorias);
+  res.status(200).json(tipo_categoria);
 };
-const crearSubCategoriaProducto = async (
+const crearTipoCategoria = async (
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) => {
-  const { nombre, id_categoria_producto } = req.body;
+  const { nombre } = req.body;
 
-  if (!nombre || !id_categoria_producto)
+  if (!nombre)
     return res
       .status(400)
       .json({ message: "Todos los campos son obligatorios" });
 
   await prisma.$connect();
-  const categoria = await prisma.sub_categoria_producto.create({
+  const tipo_categoria = await prisma.tipo_categoria.create({
     data: {
       nombre,
-      id_categoria_producto,
       id_estado: 1,
     },
   });
   await prisma.$disconnect();
-  res.status(201).json(categoria);
+  res.status(201).json(tipo_categoria);
 };
 
-const actualizarSubCategoriaProducto = async (
+const actualizarTipoCategoria = async (
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) => {
-  const { id, nombre, id_categoria_producto, id_estado } = req.body;
+  const { id, nombre } = req.body;
 
   if (!id)
     return res
       .status(400)
       .json({ message: "El id es necesario para actualizar la categoría." });
 
-  if (!nombre || !id_estado || !id_categoria_producto) {
+  if (!nombre ) {
     return res
       .status(400)
       .json({ message: "Todos los campos son obligatorios" });
@@ -99,14 +97,12 @@ const actualizarSubCategoriaProducto = async (
   if (!prod) {
     return res
       .status(400)
-      .json({ message: "No se encontró la categoria a actualizar" });
+      .json({ message: "No se encontró el tipo de categoria a actualizar" });
   }
 
-  const categoria = await prisma.sub_categoria_producto.update({
+  const tipo_categoria = await prisma.tipo_categoria.update({
     data: {
       nombre,
-      id_categoria_producto,
-      id_estado,
     },
     where: {
       id,
@@ -114,9 +110,9 @@ const actualizarSubCategoriaProducto = async (
   });
 
   await prisma.$disconnect();
-  res.status(200).json(categoria);
+  res.status(200).json(tipo_categoria);
 };
-const desactivarSubCategoria = async (
+const desactivarTipoCategoria = async (
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) => {
@@ -127,10 +123,10 @@ const desactivarSubCategoria = async (
   if (!id)
     return res
       .status(400)
-      .json({ message: "El id es necesario para desactivar la categoría." });
+      .json({ message: "El id es necesario para desactivar el tipo categoría." });
 
   await prisma.$connect();
-  const c = await prisma.sub_categoria_producto.findFirst({
+  const c = await prisma.tipo_categoria.findFirst({
     where: {
       id,
     },
@@ -139,9 +135,9 @@ const desactivarSubCategoria = async (
   if (!c)
     return res
       .status(400)
-      .json({ message: "No se encontró la categoría a desactivar." });
+      .json({ message: "No se encontró el tipo de categoría a desactivar." });
 
-  const categoria = await prisma.sub_categoria_producto.update({
+  const categoria = await prisma.tipo_categoria.update({
     data: {
       id_estado: 2,
     },

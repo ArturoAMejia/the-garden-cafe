@@ -5,3 +5,6 @@ export * from './producto'
 export * from './transaccion'
 export * from './unidad-medida'
 export * from './menu'
+
+export * from './tipo-categoria'
+export * from './tipo-producto'

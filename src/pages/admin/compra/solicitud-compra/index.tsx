@@ -1,5 +1,4 @@
-import React, { FC, useContext, useState } from "react";
-import { GetServerSideProps } from "next";
+import { useContext } from "react";
 
 import { AdminLayout } from "../../../../components/Layout/AdminLayout";
 import {
@@ -9,19 +8,10 @@ import {
 } from "../../../../components";
 
 import { AdminContext } from "../../../../context";
-import { useMenu } from "../../../../hooks";
+import { useObtenerIngredientesQuery } from "@/store/slices/inventario";
+import { ResumenSolicitud } from "@/components/admin/compra/solicitud-compra/ResumenSolicitud";
 
-import { prisma } from "../../../../database";
-import { ICatEstado, ITipoOrdenCompra } from "../../../../interfaces";
-
-interface Props {
-  tipos_orden_compra: ITipoOrdenCompra[];
-  estados: ICatEstado[];
-}
-
-const NuevaOrdenCompraPage: FC<Props> = ({ tipos_orden_compra, estados }) => {
-  const [open, setOpen] = useState(false);
-
+const NuevaOrdenCompraPage = () => {
   const {
     productos,
     actualizarCantidadProducto,
@@ -31,10 +21,8 @@ const NuevaOrdenCompraPage: FC<Props> = ({ tipos_orden_compra, estados }) => {
     total,
     añadirProductoOrden,
   } = useContext(AdminContext);
-  const { productos: prod } = useMenu();
 
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const { data: prod, isLoading } = useObtenerIngredientesQuery();
 
   return (
     <AdminLayout title="Nueva Solicitud de Compra">
@@ -48,38 +36,34 @@ const NuevaOrdenCompraPage: FC<Props> = ({ tipos_orden_compra, estados }) => {
           </p>
         </div>
         <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-          <FilterBar
-            productos={prod}
-            añadirProductoOrden={añadirProductoOrden}
-          />
+          {isLoading ? (
+            <>Cargando...</>
+          ) : (
+            <FilterBar
+              productos={prod!}
+              añadirProductoOrden={añadirProductoOrden}
+            />
+          )}
         </div>
       </div>
-      <ResumenPedido
-        productos={productos}
-        actualizarCantidadProducto={actualizarCantidadProducto}
-        quitarProducto={quitarProducto}
-        subtotal={subtotal}
-        total={total}
-        tax={tax}
-      />
+      <div className="md:flex gap-4 flex-row">
+        <div className="w-3/4">
+          <ResumenPedido
+            productos={productos}
+            actualizarCantidadProducto={actualizarCantidadProducto}
+            quitarProducto={quitarProducto}
+            subtotal={subtotal}
+            total={total}
+            tax={tax}
+          />
+        </div>
+        <div className="w-1/4">
+          <ResumenSolicitud />
+        </div>
+      </div>
       <AgregarSolicitudCompra />
     </AdminLayout>
   );
 };
 
 export default NuevaOrdenCompraPage;
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  await prisma.$connect();
-
-  const estados = await prisma.cat_estado.findMany();
-  const tipos_orden_compra = await prisma.tipo_orden_compra.findMany();
-  await prisma.$disconnect();
-
-  return {
-    props: {
-      tipos_orden_compra: JSON.parse(JSON.stringify(tipos_orden_compra)),
-      estados,
-    },
-  };
-};

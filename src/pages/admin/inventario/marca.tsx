@@ -26,7 +26,7 @@ const MarcaInventario: FC<Props> = ({ marcas, estados }) => {
           </p>
         </div>
         <div className="mt-4 mb-4 px-1 sm:mt-0 sm:ml-16 sm:flex-none">
-          <AgregarMarca estados={estados} />
+          <AgregarMarca/>
         </div>
       </div>
 
