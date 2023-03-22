@@ -1,13 +1,54 @@
-import React from "react";
+import { AdminContext, AuthContext } from "@/context";
+import { useCrearSolicitudCompraMutation } from "@/store/slices/compra";
+import { useContext } from "react";
+import { useForm } from "react-hook-form";
+import toast from "react-hot-toast";
+
+type FormData = {
+  fecha_vigencia: Date;
+  motivo: string;
+  id_tipo_orden_compra: number;
+};
 
 export const ResumenSolicitud = () => {
+  const { user } = useContext(AuthContext);
+  const trabajador_id = Number(user?.id);
+
+  const { productos, subtotal, solicitudCompleta, total, tax } =
+    useContext(AdminContext);
+
+  const { register, handleSubmit, reset } = useForm<FormData>();
+
+  const [crearSolicitudCompra] = useCrearSolicitudCompraMutation();
+
+  const onCrearSolicitudCompra = async ({
+    fecha_vigencia,
+    id_tipo_orden_compra,
+    motivo,
+  }: FormData) => {
+    crearSolicitudCompra({
+      fecha_vigencia,
+      motivo,
+      productos,
+      id_trabajador: trabajador_id,
+      impuesto: tax,
+      subtotal,
+      total,
+    })
+      .unwrap()
+      .then((res) => {
+        toast.success("Solicitud de Compra realizada correctamente.");
+        reset();
+        solicitudCompleta();
+      })
+      .catch((error) => toast.error(error.data.message));
+  };
+
   return (
     <>
-      <div
-        className="w-max rounded-md bg-gray-100 p-8 pt-4 shadow-md"
-        aria-modal="true"
-        role="dialog"
-        tabIndex={-1}
+      <form
+        className="mt-8 w-max rounded-md bg-gray-100 p-8 pt-4 first-letter:shadow-md"
+        onSubmit={handleSubmit(onCrearSolicitudCompra)}
       >
         <div className="mt-6 space-y-6">
           <ul className="space-y-4">
@@ -20,10 +61,10 @@ export const ResumenSolicitud = () => {
               </label>
               <div className="mt-1">
                 <textarea
-                  rows={2}
+                  rows={6}
                   id="direccion"
                   className="block w-full resize-none rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                  // {...register("motivo")}
+                  {...register("motivo")}
                 />
               </div>
             </div>
@@ -40,33 +81,22 @@ export const ResumenSolicitud = () => {
                   className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                   type="date"
                   id="fecha_vigencia"
-                  // {...register("fecha_vigencia")}
+                  {...register("fecha_vigencia")}
                 />
               </div>
             </div>
           </ul>
-          <div className="space-y-4 text-center">
-            <a
-              href="#"
-              className="block rounded border border-gray-600 px-5 py-3 text-sm text-gray-600 transition hover:ring-1 hover:ring-gray-400"
+          <div className="flex justify-center space-y-4">
+            <button
+              disabled={productos.length === 0 ? true : false}
+              type="submit"
+              className="mt-4 w-full items-center rounded-md border border-transparent bg-[#388C04] px-4 py-1 text-center font-medium text-white shadow-sm"
             >
-              View my cart (2)
-            </a>
-            <a
-              href="#"
-              className="block rounded bg-gray-700 px-5 py-3 text-sm text-gray-100 transition hover:bg-gray-600"
-            >
-              Checkout
-            </a>
-            <a
-              href="#"
-              className="inline-block text-sm text-gray-500 underline underline-offset-4 transition hover:text-gray-600"
-            >
-              Continue shopping
-            </a>
+              Realizar Solicitud
+            </button>
           </div>
         </div>
-      </div>
+      </form>
     </>
   );
 };

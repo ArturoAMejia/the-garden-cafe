@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from "react";
+import React, { useMemo } from "react";
 import { DesactivarProveedor, EditarProveedor } from "../..";
 import {
   ColumnDef,
@@ -9,12 +9,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { ICatEstado, IPersona, IProveedor } from "../../../interfaces";
-import { AdminContext } from "../../../context";
-import {
-  useObtenerProveedoresQuery,
-  useObtenerComprasQuery,
-  useObtenerSolicitudesCompraQuery,
-} from "@/store/slices/compra/compraApi";
+import { useObtenerProveedoresQuery } from "@/store/slices/compra/compraApi";
 
 const columHelper = createColumnHelper<IProveedor>();
 
@@ -76,11 +71,7 @@ export const ProveedorTable = () => {
     []
   );
 
-  const {
-    data: proveedores,
-    isLoading,
-    isError,
-  } = useObtenerProveedoresQuery();
+  const { data: proveedores, isLoading } = useObtenerProveedoresQuery();
 
   const table = useReactTable({
     data: proveedores!,
@@ -89,18 +80,7 @@ export const ProveedorTable = () => {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  if (isLoading)
-    return (
-      <>
-        <button type="button" className="... bg-indigo-500" disabled>
-          <svg
-            className="... mr-3 h-5 w-5 animate-spin"
-            viewBox="0 0 24 24"
-          ></svg>
-          Processing...
-        </button>
-      </>
-    );
+  if (isLoading) return <>Cargando...</>;
   return (
     <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
       <table className="min-w-full divide-y divide-gray-300">

@@ -26,7 +26,6 @@ export const ResumenPedido: FC<Props> = ({
     product: IProductoCart,
     newQuantityValue: number
   ) => {
-
     product.cantidad = newQuantityValue;
     actualizarCantidadProducto(product);
   };
@@ -57,6 +56,12 @@ export const ResumenPedido: FC<Props> = ({
                       className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900"
                     >
                       Descripción
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900"
+                    >
+                      Unidad de Medida
                     </th>
                     <th
                       scope="col"
@@ -102,8 +107,11 @@ export const ResumenPedido: FC<Props> = ({
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-center text-sm font-medium text-gray-900 sm:pl-6">
                         {producto.nombre}
                       </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-center text-sm text-gray-500">
+                      <td className="text-clip overflow-hidden  px-3 py-4 text-center text-sm text-gray-500">
                         {producto.descripcion}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-center text-sm text-gray-500">
+                        {producto.unidad_medida}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-center text-sm text-gray-500">
                         ${producto!.precio}

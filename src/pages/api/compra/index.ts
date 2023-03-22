@@ -133,6 +133,15 @@ const crearCompra = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
       precio: producto.precio,
     })),
   });
+
+  await prisma.orden_compra.update({
+    data: {
+      id_estado: 2,
+    },
+    where: {
+      id: id_orden_compra,
+    },
+  });
   await prisma.$disconnect();
   return res.status(201).json(compra);
 };

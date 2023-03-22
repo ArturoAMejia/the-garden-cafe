@@ -25,6 +25,7 @@ import {
 import { marca } from "./data/marca";
 import { monedas } from "./data/monedas";
 import { cajas } from "./data/caja";
+import { tipo_orden_compra } from "./data/tipo-orden-compra";
 
 const main = async (): Promise<void> => {
   await prisma.$connect();
@@ -35,9 +36,12 @@ const main = async (): Promise<void> => {
     await prisma.cat_estado.createMany({
       data: estados,
     });
-    await prisma.cat_estado_civil.createMany({
-      data: estado_civil,
-    });
+    await prisma.tipo_orden_compra.createMany({
+      data: tipo_orden_compra,
+    }),
+      await prisma.cat_estado_civil.createMany({
+        data: estado_civil,
+      });
     await prisma.persona.createMany({
       data: personas,
     });
@@ -85,7 +89,7 @@ const main = async (): Promise<void> => {
     });
     await prisma.tipo_categoria.createMany({
       data: tipo_categoria,
-    })
+    });
     await prisma.categoria_producto.createMany({
       data: categoria_producto,
     });

@@ -151,6 +151,14 @@ const crearOrdenCompra = async (
       precio_unitario: detalle.precio_unitario,
     })),
   });
+  await prisma.solicitud_compra.update({
+    data: {
+      id_estado: 9,
+    },
+    where: {
+      id: id_solicitud_compra,
+    },
+  });
   await prisma.$disconnect();
   return res.status(201).json(orden_compra);
 };

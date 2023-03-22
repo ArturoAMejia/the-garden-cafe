@@ -1,11 +1,9 @@
-import React, { FC, useContext, useEffect } from "react";
+import React, { FC, useContext } from "react";
 
 import { GetServerSideProps } from "next";
 import { prisma } from "../../../../../database";
 import { IPedido } from "../../../../../interfaces";
 import {
-  DetalleOrden,
-  DetallePedido,
   FilterBar,
   ResumenPedido,
 } from "../../../../../components";
@@ -14,8 +12,8 @@ import { AdminLayout } from "../../../../../components/Layout/AdminLayout";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { CartContext } from "../../../../../context";
-import { useMenu } from "../../../../../hooks";
 import { EditarPedido } from "../../../../../components/admin/pedido/EditarPedido";
+import { useObtenerPlatillosQuery } from "@/store/slices/inventario";
 
 interface Props {
   detalle: IPedido;
@@ -31,7 +29,9 @@ const DetallePedidoRealizadoPage: FC<Props> = ({ detalle }) => {
     tax,
     total,
   } = useContext(CartContext);
-  const { productos } = useMenu();
+
+  const { data: platillos } = useObtenerPlatillosQuery();
+
 
   return (
     <AdminLayout title={`Detalle del Pedido - ${detalle.id}`}>
@@ -77,7 +77,7 @@ const DetallePedidoRealizadoPage: FC<Props> = ({ detalle }) => {
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto"></div>
         <FilterBar
-          productos={productos}
+          productos={platillos!}
           añadirProductoOrden={addProductToCart}
         />
       </div>

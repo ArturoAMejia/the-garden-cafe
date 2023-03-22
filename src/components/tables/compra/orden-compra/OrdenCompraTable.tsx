@@ -89,7 +89,9 @@ export const OrdenCompraTable = () => {
     useObtenerSolicitudesCompraQuery();
 
   const table = useReactTable({
-    data: solicitudes_compra!,
+    data: solicitudes_compra?.filter((solicitud: ISolicitudCompra) => {
+      return solicitud.id_estado === 8;
+    })!,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),

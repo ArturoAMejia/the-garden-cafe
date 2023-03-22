@@ -8,7 +8,7 @@ import { AdminLayout } from "../../../../components/Layout/AdminLayout";
 import { prisma } from "./../../../../database";
 import { ICatEstado } from "../../../../interfaces";
 import { CartContext } from "../../../../context";
-import { useMenu } from "../../../../hooks";
+import { useObtenerPlatillosQuery } from "@/store/slices/inventario";
 
 interface Props {
   estados: ICatEstado[];
@@ -24,7 +24,7 @@ const NuevoPedidoPage: FC<Props> = ({ estados }) => {
     addProductToCart,
   } = useContext(CartContext);
 
-  const { productos } = useMenu();
+  const { data: platillos } = useObtenerPlatillosQuery();
 
   return (
     <AdminLayout title="Nuevo Pedido">
@@ -38,7 +38,7 @@ const NuevoPedidoPage: FC<Props> = ({ estados }) => {
           </p>
         </div>
         <FilterBar
-          productos={productos}
+          productos={platillos!}
           añadirProductoOrden={addProductToCart}
         />
       </div>
@@ -57,24 +57,14 @@ const NuevoPedidoPage: FC<Props> = ({ estados }) => {
 
 export default NuevoPedidoPage;
 
-
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   await prisma.$connect();
-  const productos = await prisma.producto.findMany();
-  const clientes = await prisma.cliente.findMany({
-    select: {
-      id: true,
-      tipo_cliente: true,
-      persona: true,
-    },
-  });
+
   const estados = await prisma.cat_estado.findMany();
   await prisma.$disconnect();
 
   return {
     props: {
-      productos: JSON.parse(JSON.stringify(productos)),
-      clientes: JSON.parse(JSON.stringify(clientes)),
       estados,
     },
   };

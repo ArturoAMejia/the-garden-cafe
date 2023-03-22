@@ -6,7 +6,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import React, { FC, useContext, useMemo } from "react";
+import React, { useMemo } from "react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import Link from "next/link";
@@ -17,10 +17,8 @@ import {
   ICompra,
   IProveedor,
 } from "../../../../interfaces";
-import { AnularVenta } from "../../ventas";
 
 import { AnularCompra } from "../nueva-compra/AnularCompra";
-import { AdminContext } from "@/context";
 import { useObtenerComprasQuery } from "@/store/slices/compra";
 
 const columunHelper = createColumnHelper<ICompra>();
@@ -28,6 +26,10 @@ const columunHelper = createColumnHelper<ICompra>();
 export const ComprasTable = () => {
   const columns = useMemo<ColumnDef<ICompra, any>[]>(
     () => [
+      columunHelper.accessor<"id", number>("id", {
+        header: "Num. Compra",
+        cell: (info) => `NC- ${info.getValue()}`,
+      }),
       columunHelper.accessor<"proveedor", IProveedor>("proveedor", {
         header: "Proveedor",
         cell: (info) => `${info.getValue().persona?.nombre}
@@ -115,7 +117,6 @@ export const ComprasTable = () => {
   });
 
   if (isLoading) return <>Cargando...</>;
-
 
   return (
     <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">

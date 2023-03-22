@@ -100,7 +100,7 @@ export const compraApi = createApi({
         method: "POST",
         body: compra,
       }),
-      invalidatesTags: ["Compras"],
+      invalidatesTags: ["Compras", "Ordenes"],
     }),
     anularCompra: builder.mutation<ICompra, number>({
       query: (id) => ({
@@ -130,5 +130,5 @@ export const {
   // Compra
   useObtenerComprasQuery,
   useCrearCompraMutation,
-  useAnularCompraMutation
+  useAnularCompraMutation,
 } = compraApi;

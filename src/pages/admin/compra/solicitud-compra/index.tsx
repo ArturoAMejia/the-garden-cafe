@@ -20,6 +20,7 @@ const NuevaOrdenCompraPage = () => {
     tax,
     total,
     añadirProductoOrden,
+    unidades_medidas,
   } = useContext(AdminContext);
 
   const { data: prod, isLoading } = useObtenerIngredientesQuery();
@@ -46,7 +47,7 @@ const NuevaOrdenCompraPage = () => {
           )}
         </div>
       </div>
-      <div className="md:flex gap-4 flex-row">
+      <div className="flex-row gap-4 md:flex">
         <div className="w-3/4">
           <ResumenPedido
             productos={productos}
@@ -61,7 +62,6 @@ const NuevaOrdenCompraPage = () => {
           <ResumenSolicitud />
         </div>
       </div>
-      <AgregarSolicitudCompra />
     </AdminLayout>
   );
 };
