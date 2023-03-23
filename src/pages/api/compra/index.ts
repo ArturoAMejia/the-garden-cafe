@@ -134,6 +134,18 @@ const crearCompra = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     })),
   });
 
+
+  await prisma.inventario.updateMany({
+    data: productos.map((producto: any) => ({
+      stock_actual: {
+        increment: producto.cantidad,
+      },
+    })),
+    where: productos.map((producto: any) => ({
+      id_producto: producto.id,
+    })),
+  });
+
   await prisma.orden_compra.update({
     data: {
       id_estado: 2,

@@ -34,8 +34,6 @@ export const EditarProveedor: FC<Props> = ({ proveedor }) => {
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  // const { actualizarProveedor } = useContext(AdminContext);
-
   const [actualizarProveedor, { isError, error }] =
     useActualizarProveeedorMutation();
   const { register, handleSubmit, reset } = useForm<FormData>();
@@ -76,11 +74,6 @@ export const EditarProveedor: FC<Props> = ({ proveedor }) => {
         reset();
       })
       .catch((error) => toast.error(error.data.message));
-
-    // if (hasError) {
-    //   toast.error(message!);
-    //   return;
-    // }
   };
 
   return (

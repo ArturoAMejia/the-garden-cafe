@@ -55,6 +55,18 @@ const crearInventario = async (
       .json({ message: "Todos los campos son obligatorios" });
 
   await prisma.$connect();
+
+  const i = await prisma.inventario.findFirst({
+    where: {
+      id_producto,
+    },
+  });
+
+  if (i)
+    return res
+      .status(400)
+      .json({ message: "El producto ya posee un inventario" });
+      
   const inventario = await prisma.inventario.create({
     data: {
       id_producto,

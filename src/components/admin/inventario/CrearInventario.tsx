@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { AdminContext } from "../../../context";
 
-import { IInventario, ICatEstado } from "../../../interfaces";
+import { IInventario } from "../../../interfaces";
 
 type FormData = IInventario;
 
@@ -81,7 +81,7 @@ export const AgregarInventario = () => {
                     as="h3"
                     className="text-xl font-bold leading-6 text-gray-900"
                   >
-                    Agregar Producto
+                    Crear Inventario
                   </Dialog.Title>
 
                   <form
@@ -89,6 +89,30 @@ export const AgregarInventario = () => {
                     onSubmit={handleSubmit(onCrearInventario)}
                   >
                     <div className="grid grid-cols-4 gap-4">
+                      {/* Producto */}
+                      <div className="mt-2">
+                        <label
+                          htmlFor="categoria"
+                          className="block font-medium text-gray-700"
+                        >
+                          Producto
+                        </label>
+                        <div className="mt-1">
+                          <select
+                            id="categoria"
+                            {...register("id_producto", {
+                              valueAsNumber: true,
+                            })}
+                            className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+                          >
+                            {productos_inventario.map((prod) => (
+                              <option key={prod.nombre} value={prod.id}>
+                                {prod.nombre}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
                       {/* Stock Mínimo */}
                       <div className="mt-2">
                         <label
@@ -144,30 +168,6 @@ export const AgregarInventario = () => {
                             })}
                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                           />
-                        </div>
-                      </div>
-                      {/* Producto */}
-                      <div className="mt-2">
-                        <label
-                          htmlFor="categoria"
-                          className="block font-medium text-gray-700"
-                        >
-                          Producto
-                        </label>
-                        <div className="mt-1">
-                          <select
-                            id="categoria"
-                            {...register("id_producto", {
-                              valueAsNumber: true,
-                            })}
-                            className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
-                          >
-                            {productos_inventario.map((prod) => (
-                              <option key={prod.nombre} value={prod.id}>
-                                {prod.nombre}
-                              </option>
-                            ))}
-                          </select>
                         </div>
                       </div>
                     </div>
