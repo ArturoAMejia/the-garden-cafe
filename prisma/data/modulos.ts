@@ -131,6 +131,11 @@ export const sub_modulos = [
     nombre: "Producto",
     url: "/admin/inventario/productos",
   },
+  {
+    id_modulo: 3,
+    nombre: "Inventario",
+    url: "/admin/inventario/", 
+  },
   // Módulo de Pedidos
   {
     id_modulo: 4,

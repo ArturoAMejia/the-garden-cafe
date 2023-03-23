@@ -72,7 +72,8 @@ const crearProveedor = async (
     sector_comercial,
     nacionalidad,
   } = req.body;
-  await prisma.$connect();
+
+  console.log(req.body);
 
   if (
     !cedula_ruc ||

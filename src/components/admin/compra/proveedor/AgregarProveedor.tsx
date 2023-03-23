@@ -26,7 +26,11 @@ type FormData = {
 };
 
 const schema = z.object({
-  cedula_ruc: z.string().regex(new RegExp("^[0-9]{3}-[0-9]{6}-[0-9]{4}[aA-zZ]{1}$"), {message:"Formato de cédula no válido"}),
+  cedula_ruc: z
+    .string()
+    .regex(new RegExp("^[0-9]{3}-[0-9]{6}-[0-9]{4}[aA-zZ]{1}$"), {
+      message: "Formato de cédula no válido",
+    }),
   nombre: z.string().regex(new RegExp("^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑs]{2,50}$")),
   correo: z.string(),
   apellido_razon_social: z
@@ -70,6 +74,7 @@ export const AgregarProveedor = () => {
     sector_comercial,
     nacionalidad,
   }: FormData) => {
+    console.log("test");
     crearProveedor({
       cedula_ruc,
       nombre,
@@ -179,7 +184,7 @@ export const AgregarProveedor = () => {
                             {...register("nombre")}
                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                           />
-                                      {errors.nombre && (
+                          {errors.nombre && (
                             <Error error={errors.nombre.message} />
                           )}
                         </div>
