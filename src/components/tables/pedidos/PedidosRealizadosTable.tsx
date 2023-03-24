@@ -27,6 +27,8 @@ interface Props {
   pedidos: IPedido[];
 }
 export const PedidosRealizadosTable: FC<Props> = ({ pedidos }) => {
+  console.log(pedidos);
+
   const { cargarPedido } = useContext(CartContext);
 
   const columns = useMemo<ColumnDef<IPedido, any>[]>(
@@ -76,7 +78,6 @@ export const PedidosRealizadosTable: FC<Props> = ({ pedidos }) => {
         header: () => <span>Acciones</span>,
         cell: (props) => (
           <div className="flex justify-center gap-2">
-            {/* // TODO Anular Pedido */}
             <EditarPedido pedido={props.row.original} />
             <AnularPedido
               id={props.row.original.id}
@@ -89,18 +90,18 @@ export const PedidosRealizadosTable: FC<Props> = ({ pedidos }) => {
               onClick={() =>
                 cargarPedido(
                   props.row.original.detalle_pedido.map((producto: any) => ({
-                    id: producto.id_producto,
+                    id: producto.id_producto_elaborado,
                     precio: producto.precio,
-                    nombre: producto.producto.nombre,
-                    descripcion: producto.producto.descripcion,
-                    imagen: producto.producto.imagen,
+                    nombre: producto.producto_elaborado.nombre,
+                    descripcion: producto.producto_elaborado.descripcion,
+                    imagen: producto.producto_elaborado.imagen,
                     cantidad: producto.cantidad,
                   }))
                 )
               }
             >
-                <IdentificationIcon className="h-6 w-6 text-black" />
-                Ver Detalles
+              <IdentificationIcon className="h-6 w-6 text-black" />
+              Ver Detalles
             </Link>
           </div>
         ),
@@ -115,6 +116,7 @@ export const PedidosRealizadosTable: FC<Props> = ({ pedidos }) => {
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
+
   return (
     <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
       <table className="min-w-full divide-y divide-gray-300">

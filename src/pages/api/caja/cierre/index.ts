@@ -8,7 +8,8 @@ type Data =
       message: string;
     }
   | ICierreCaja
-  | ICierreCaja[] | any;
+  | ICierreCaja[]
+  | any;
 
 export default function handler(
   req: NextApiRequest,
@@ -69,6 +70,21 @@ const crearCierreCaja = async (
       id_trabajador,
       total: Number(total),
       id_estado: 1,
+    },
+  });
+
+  const a = await prisma.apertura_caja.findFirst({
+    where: {
+      id_caja,
+    },
+  });
+
+  await prisma.apertura_caja.update({
+    data: {
+      id_estado: 2,
+    },
+    where: {
+      id: a?.id,
     },
   });
   await prisma.$disconnect();

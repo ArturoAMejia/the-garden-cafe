@@ -37,7 +37,6 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
       Cookies.set("modulos", JSON.parse(JSON.stringify(modulos)));
       dispatch({ type: "[Auth] - Login", payload: user });
       dispatch({ type: "[Auth] - Obtener Modulos", payload: modulos });
-
     } catch (error) {
       Cookies.remove("token");
     }
@@ -62,6 +61,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
       Cookies.set("nombre", user.nombre);
       Cookies.set("apellido", user.apellido_razon_social);
       Cookies.set("direccion", user.direccion_domicilio);
+      Cookies.set("id_cliente", user.id_cliente);
       dispatch({ type: "[Auth] - Login", payload: user });
       dispatch({ type: "[Auth] - Obtener Modulos", payload: modulos });
       return true;

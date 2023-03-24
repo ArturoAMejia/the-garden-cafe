@@ -3,19 +3,25 @@ import { Card } from "../../components/landing/Card";
 import Layout from "../../components/Layout/Layout";
 
 import { FilterItem } from "../../components/menu";
-
+import {
+  useObtenerCategoriasQuery,
+  useObtenerPlatillosQuery,
+} from "@/store/slices/inventario";
 
 const Menu = () => {
-  const { productos, categoriaProductos, filtro, setFiltro, menuFiltrado } =
-    useMenu();
-    
+  const { filtro, setFiltro, menuFiltrado } = useMenu();
+
+  const { data: productos, isLoading } = useObtenerPlatillosQuery();
+  const { data: categoriaProductos, isLoading: isLoadingCategorias } =
+    useObtenerCategoriasQuery();
+
   return (
     <Layout title="Menú - The Garden Cafe" pageDescription="Página de Menú">
       <>
         <section>
           <div className="mx-auto max-w-screen-xl px-4 py-12 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-4 lg:items-start">
-              <div className="lg:sticky lg:top-4 bg-[#FFF9EA]">
+              <div className="bg-[#FFF9EA] lg:sticky lg:top-4">
                 <details
                   open={true}
                   className="overflow-hidden rounded border border-gray-200"
@@ -41,12 +47,13 @@ const Menu = () => {
                     </svg>
                   </summary>
                   <form className="border-t border-gray-200 lg:border-t-0">
+                    {isLoadingCategorias && <>Cargando...</>}
                     <fieldset>
                       <legend className="block w-full bg-[#FFF9EA] px-5 py-3 text-xs font-medium">
                         Categorías
                       </legend>
                       <div className="space-y-2 px-5 py-6">
-                        {categoriaProductos.map((categoria) => (
+                        {categoriaProductos?.map((categoria) => (
                           <FilterItem
                             key={`${categoria.nombre}-${categoria.id}`}
                             categoria={categoria}
@@ -63,21 +70,21 @@ const Menu = () => {
                         >
                           Borrar filtro
                         </button>
- 
                       </div>
                     </fieldset>
                   </form>
                 </details>
               </div>
               <div className="lg:col-span-3">
+                {isLoading && <>Cargando...</>}
                 <div className="flex items-center justify-between">
-                  <p className="text-sm text-[#FFF9EA]0">
+                  <p className="text-[#FFF9EA]0 text-sm">
                     <span className="hidden sm:inline"> Mostrando </span>
                     {filtro ? menuFiltrado?.length : productos?.length} de{" "}
                     {productos?.length} productos
                   </p>
                 </div>
-                <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
                   {filtro
                     ? menuFiltrado?.map((prod) => (
                         <Card key={prod.id} producto={prod} />

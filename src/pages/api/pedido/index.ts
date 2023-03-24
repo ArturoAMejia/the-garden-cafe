@@ -68,6 +68,8 @@ const obtenerPedidos = async (res: NextApiResponse<Data>) => {
       detalle_pedido: {
         select: {
           id_producto: true,
+          id_producto_elaborado: true,
+          producto_elaborado: true,
           producto: true,
           monto: true,
           cantidad: true,
@@ -90,7 +92,7 @@ const registerPedido = async (
   res: NextApiResponse<Data>
 ) => {
   const {
-    id_cliente,
+    id_usuario,
     id_trabajador = 1,
     tipo_pedido,
     ubicacion_entrega = "",
@@ -98,14 +100,41 @@ const registerPedido = async (
     productos,
   } = req.body;
 
-  if (!id_cliente || !tipo_pedido || !productos)
+  console.log(req.body);
+
+  if (!id_usuario || !tipo_pedido || !productos)
     return res.status(400).json({ message: "Dichos campos son obligatorios" });
 
   await prisma.$connect();
 
+  const user = await prisma.usuario.findFirst({
+    where: {
+      id: Number(id_usuario),
+    },
+  });
+
+  const p = await prisma.persona.findFirst({
+    where: {
+      usuario: {
+        id: user!.id,
+      },
+    },
+  });
+
+  const c = await prisma.cliente.findFirst({
+    where: {
+      id_persona: p?.id,
+    },
+  });
+
+  if (!c)
+    return res
+      .status(400)
+      .json({ message: "No se encontró registro de este cliente." });
+
   const pedido = await prisma.pedido.create({
     data: {
-      id_cliente: Number(id_cliente),
+      id_cliente: c!.id,
       id_trabajador,
       tipo_pedido,
       fecha_pedido: new Date(),
@@ -119,7 +148,7 @@ const registerPedido = async (
   await prisma.detalle_pedido.createMany({
     data: productos.map((producto: any) => ({
       id_pedido: pedido.id,
-      id_producto: producto.id,
+      id_producto_elaborado: producto.id,
       cantidad: producto.cantidad,
       monto: producto.cantidad * producto.precio,
       precio: producto.precio,
@@ -177,7 +206,7 @@ const actualizarPedido = async (
   await prisma.detalle_pedido.createMany({
     data: productos.map((producto: any) => ({
       id_pedido: pedido.id,
-      id_producto: producto.id,
+      id_producto_elaborado: producto.id,
       cantidad: producto.cantidad,
       monto: producto.cantidad * producto.precio,
       precio: producto.precio,

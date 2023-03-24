@@ -41,6 +41,8 @@ const NuevaOrdenCompraPage = () => {
             <>Cargando...</>
           ) : (
             <FilterBar
+              isIngredient={true}
+              isPlate={false}
               productos={prod!}
               añadirProductoOrden={añadirProductoOrden}
             />

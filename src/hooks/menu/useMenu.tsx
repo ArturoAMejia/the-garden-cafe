@@ -1,41 +1,23 @@
 import { useEffect, useState } from "react";
-import { ICategoriaProducto, IMenu } from "../../interfaces";
+import { ICategoriaProducto, IMenu, IProducto } from "../../interfaces";
 import tgcApi from "../../api/tgcApi";
+import { useObtenerPlatillosQuery } from "@/store/slices/inventario";
 
 export const useMenu = () => {
-  const [productos, setProductos] = useState<IMenu[]>([]);
   const [categoriaProductos, setCategoriaProductos] = useState<
     ICategoriaProducto[]
   >([]);
 
-  const [menuFiltrado, setMenuFiltrado] = useState<IMenu[]>()
+  const [menuFiltrado, setMenuFiltrado] = useState<IProducto[]>();
 
   const [filtro, setFiltro] = useState("");
 
-  const obtenerProductos = async () => {
-    const { data } = await tgcApi.get<IMenu[]>("api/inventario/producto/menu");
-    setProductos(data);
-  };
-
-  // const obtenerCategoriasProductos = async () => {
-  //   const { data } = await tgcApi.get<ICategoriaProducto[]>(
-  //     "/catalogos/categoria-producto"
-  //   );
-  //   setCategoriaProductos(data);
-  // };
-
-  useEffect(() => {
-    obtenerProductos();
-  }, []);
-
-  // useEffect(() => {
-  //   obtenerCategoriasProductos();
-  // }, []);
+  const { data: productos } = useObtenerPlatillosQuery();
 
   useEffect(() => {
     if (filtro) {
       const menuFiltrado = productos?.filter(
-        (producto) => producto.categoria_producto.nombre === filtro
+        (producto) => producto!.categoria_producto!.nombre === filtro
       );
       setMenuFiltrado(menuFiltrado);
     }
@@ -46,6 +28,6 @@ export const useMenu = () => {
     filtro,
     setFiltro,
     categoriaProductos,
-    menuFiltrado
+    menuFiltrado,
   };
 };

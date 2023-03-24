@@ -37,11 +37,11 @@ export const RealizarVenta: FC<Props> = ({ pedido }) => {
   const openModal = () => {
     cargarPedido(
       pedido.detalle_pedido.map((producto: any) => ({
-        id: producto.id_producto,
+        id: producto.id_producto_elaborado,
         precio: producto.precio,
-        nombre: producto.producto.nombre,
-        descripcion: producto.producto.descripcion,
-        imagen: producto.producto.imagen,
+        nombre: producto.producto_elaborado.nombre,
+        descripcion: producto.producto_elaborado.descripcion,
+        imagen: producto.producto_elaborado.imagen,
         cantidad: producto.cantidad,
       }))
     );

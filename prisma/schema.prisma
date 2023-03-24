@@ -385,6 +385,8 @@ model producto_elaborado {
   fecha_ingreso              DateTime                     @default(now())
   detalle_producto_elaborado detalle_producto_elaborado[]
   coste_producto_elaborado   coste_producto_elaborado[]
+  detalle_pedido             detalle_pedido[]
+  detalle_venta              detalle_venta[]
 }
 
 model detalle_producto_elaborado {
@@ -599,15 +601,17 @@ model pedido {
 }
 
 model detalle_pedido {
-  pedido      pedido   @relation(fields: [id_pedido], references: [id])
-  id_pedido   Int
-  producto    producto @relation(fields: [id_producto], references: [id])
-  id_producto Int
-  cantidad    Int
-  precio      Float
-  monto       Float
+  pedido                pedido             @relation(fields: [id_pedido], references: [id])
+  id_pedido             Int
+  producto              producto?          @relation(fields: [id_producto], references: [id])
+  id_producto           Int?
+  producto_elaborado    producto_elaborado @relation(fields: [id_producto_elaborado], references: [id])
+  id_producto_elaborado Int
+  cantidad              Int
+  precio                Float
+  monto                 Float
 
-  @@id([id_pedido, id_producto])
+  @@id([id_pedido, id_producto_elaborado])
 }
 
 // *        Reservación        //
@@ -662,15 +666,17 @@ model venta {
 }
 
 model detalle_venta {
-  venta       venta    @relation(fields: [id_venta], references: [id])
-  id_venta    Int
-  producto    producto @relation(fields: [id_producto], references: [id])
-  id_producto Int
-  cantidad    Int
-  precio      Float
-  monto       Float
+  venta                 venta              @relation(fields: [id_venta], references: [id])
+  id_venta              Int
+  producto              producto?          @relation(fields: [id_producto], references: [id])
+  id_producto           Int?
+  producto_elaborado    producto_elaborado @relation(fields: [id_producto_elaborado], references: [id])
+  id_producto_elaborado Int
+  cantidad              Int
+  precio                Float
+  monto                 Float
 
-  @@id([id_venta, id_producto])
+  @@id([id_venta, id_producto_elaborado])
 }
 
 model tipo_bodega {

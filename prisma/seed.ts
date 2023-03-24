@@ -1,8 +1,13 @@
 import { formas_pago } from "./data/forma-pago";
 import { categoria_estados, estados } from "./data/estados";
-import { prisma } from "../src/database";
 
-import { precio_productos, productos, unidad_medida } from "./data/productos";
+import {
+  precio_productos,
+  productos,
+  productos_elaborados,
+  unidad_medida,
+  zona_preparacion,
+} from "./data/productos";
 import { roles } from "./data/roles";
 import { modulos, roles_modulos, sub_modulos } from "./data/modulos";
 import { permisos } from "./data/permisos";
@@ -26,6 +31,7 @@ import { marca } from "./data/marca";
 import { monedas } from "./data/monedas";
 import { cajas } from "./data/caja";
 import { tipo_orden_compra } from "./data/tipo-orden-compra";
+import { prisma } from "../database";
 
 const main = async (): Promise<void> => {
   await prisma.$connect();
@@ -104,6 +110,13 @@ const main = async (): Promise<void> => {
     });
     await prisma.precio_producto.createMany({
       data: precio_productos,
+    });
+    await prisma.zona_preparacion.createMany({
+      data: zona_preparacion,
+    });
+
+    await prisma.producto_elaborado.createMany({
+      data: productos_elaborados,
     });
     await prisma.moneda.createMany({
       data: monedas,

@@ -8,6 +8,7 @@ import { IProductoCart } from "../producto";
 export interface IPedido {
   id: number;
   id_cliente: number;
+  id_usuario?: number;
   cliente?: ICliente;
   id_trabajador: number;
   trabajador?: ITrabajador;
@@ -19,5 +20,5 @@ export interface IPedido {
   observacion: string;
   vigencia: Date;
   productos?: IProducto[] | IProductoCart[];
-  detalle_pedido?: any; 
+  detalle_pedido?: any;
 }

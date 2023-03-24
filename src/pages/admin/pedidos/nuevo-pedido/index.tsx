@@ -40,6 +40,8 @@ const NuevoPedidoPage: FC<Props> = ({ estados }) => {
         <FilterBar
           productos={platillos!}
           añadirProductoOrden={addProductToCart}
+          isIngredient={false}
+          isPlate={true}
         />
       </div>
       <ResumenPedido

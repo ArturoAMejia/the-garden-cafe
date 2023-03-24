@@ -9,6 +9,8 @@ import { IProductoCart } from "../../../interfaces/producto";
 interface Props {
   producto: any;
   añadirProductoOrden: (producto: IProductoCart) => void;
+  isIngredient: boolean;
+  isPlate: boolean;
 }
 
 function classNames(...classes: any) {
@@ -18,6 +20,8 @@ function classNames(...classes: any) {
 export const ProductoFiltrado: FC<Props> = ({
   producto,
   añadirProductoOrden,
+  isIngredient,
+  isPlate,
 }) => {
   const [tempCartProducto, setTempCartProducto] = useState<any>({
     id: Number(producto.id),
@@ -26,10 +30,11 @@ export const ProductoFiltrado: FC<Props> = ({
     categoria: producto?.categoria_producto.nombre,
     unidad_medida: producto?.unidad_medida.siglas,
     cantidad: 1,
-    precio: producto.precio_producto![0].precio_venta,
+    precio: isIngredient
+      ? producto.precio_producto![0].precio_venta
+      : producto.precio_producto,
     imagen: producto.imagen,
   });
-
 
   const onAddProduct = () => {
     toast.success("Producto añadido al carrito!");
@@ -50,7 +55,7 @@ export const ProductoFiltrado: FC<Props> = ({
         <p className="mt-2">{producto.nombre}</p>
         <button
           type="submit"
-          className="w-auto whitespace-nowrap inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-full shadow-sm text-xs font-medium text-white bg-[#388C04] hover:bg-[#8CA862]"
+          className="inline-flex w-auto items-center justify-center whitespace-nowrap rounded-full border border-transparent bg-[#388C04] px-4 py-2 text-xs font-medium text-white shadow-sm hover:bg-[#8CA862]"
           onClick={onAddProduct}
         >
           <span>Añadir</span>

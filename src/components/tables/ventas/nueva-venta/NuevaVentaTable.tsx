@@ -71,7 +71,6 @@ export const NuevaVentaTable = () => {
         header: () => <span>Acciones</span>,
         cell: (props) => (
           <div className="flex justify-center gap-2">
-            {/* // TODO Anular Pedido */}
             <RealizarVenta pedido={props.row.original} />
             <Link
               className="flex flex-row items-center gap-2 pt-1 text-center text-black"
@@ -89,6 +88,8 @@ export const NuevaVentaTable = () => {
   );
 
   const { pedidos } = useContext(AdminContext);
+
+  console.log(pedidos);
 
   const table = useReactTable({
     data: pedidos,

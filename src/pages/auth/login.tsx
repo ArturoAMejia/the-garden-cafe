@@ -1,10 +1,10 @@
-import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Error } from "../../components/landing/Error";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { AuthContext } from "@/context";
+import { useContext, useState } from "react";
 
 type FormData = {
   username: string;
@@ -16,9 +16,8 @@ const Login = () => {
   const { loginUser, isLoggedIn } = useContext(AuthContext);
   const [showError, setShowError] = useState(false);
 
-
   if (isLoggedIn) router.replace("/");
-  
+
   const {
     register,
     handleSubmit,
@@ -42,7 +41,7 @@ const Login = () => {
   return (
     <>
       <section className="bg-[#FFF9EA]">
-        <div className="lg:grid lg:min-h-screen h-screen lg:grid-cols-12">
+        <div className="h-screen lg:grid lg:min-h-screen lg:grid-cols-12">
           <aside className="relative block h-16 lg:order-last lg:col-span-5 lg:h-full xl:col-span-6">
             <Image
               layout="fill"
@@ -73,7 +72,7 @@ const Login = () => {
                   <input
                     type="text"
                     id="usuario"
-                    className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm mb-4"
+                    className="mt-1 mb-4 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
                     {...register("username", {
                       required: "Este campo es requerido",
                     })}
@@ -92,7 +91,7 @@ const Login = () => {
                   <input
                     type="password"
                     id="contraseña"
-                    className="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm my-4"
+                    className="my-4 mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm"
                     {...register("password", {
                       required: "Este campo es requerido",
                       minLength: { value: 8, message: "Mínimo 8 caracteres" },
@@ -111,7 +110,7 @@ const Login = () => {
                     ¿No tienes una cuenta?
                     <Link
                       href="/auth/register"
-                      className="text-gray-700 underline ml-1"
+                      className="ml-1 text-gray-700 underline"
                     >
                       Registrate!
                     </Link>

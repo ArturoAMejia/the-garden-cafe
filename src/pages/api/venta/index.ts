@@ -130,7 +130,7 @@ const crearVenta = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   await prisma.detalle_venta.createMany({
     data: productos.map((producto: any) => ({
       id_venta: venta.id,
-      id_producto: producto.id,
+      id_producto_elaborado: producto.id,
       cantidad: producto.cantidad,
       monto: producto.cantidad * producto.precio,
       precio: producto.precio,
@@ -200,21 +200,21 @@ const actualizarVenta = async (
     productos.map((producto: any) =>
       prisma.detalle_venta.upsert({
         where: {
-          id_venta_id_producto: {
+          id_venta_id_producto_elaborado: {
             id_venta: id,
-            id_producto: producto.id,
+            id_producto_elaborado: producto.id,
           },
         },
         create: {
           id_venta: venta.id,
-          id_producto: producto.id,
+          id_producto_elaborado: producto.id,
           cantidad: producto.cantidad,
           monto: producto.cantidad * producto.precio,
           precio: producto.precio,
         },
         update: {
           id_venta: venta.id,
-          id_producto: producto.id,
+          id_producto_elaborado: producto.id,
           cantidad: producto.cantidad,
           monto: producto.cantidad * producto.precio,
           precio: producto.precio,
