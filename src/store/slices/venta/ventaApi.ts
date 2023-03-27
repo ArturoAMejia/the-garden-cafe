@@ -84,6 +84,22 @@ export const ventaApi = createApi({
       }),
       invalidatesTags: ["Reservaciones"],
     }),
+    actualizarReservacion: builder.mutation<IReservacion, any>({
+      query: (reservacion) => ({
+        url: "/venta/reservacion",
+        method: "PUT",
+        body: reservacion,
+      }),
+      invalidatesTags: ["Reservaciones"],
+    }),
+    anularReservacion: builder.mutation<IReservacion, any>({
+      query: (id) => ({
+        url: "/venta/reservacion",
+        method: "PATCH",
+        body: id,
+      }),
+      invalidatesTags: ["Reservaciones"],
+    }),
   }),
 });
 
@@ -102,4 +118,6 @@ export const {
   // Reservacion
   useObtenerReservacionesQuery,
   useCrearReservacionMutation,
+  useActualizarReservacionMutation,
+  useAnularReservacionMutation,
 } = ventaApi;

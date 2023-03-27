@@ -26,7 +26,7 @@ export const AceptarOrden: FC<Props> = ({ solicitud_compra }) => {
 
   const { tipos_orden_compra } = useContext(AdminContext);
 
-  const { data: proveedores } = useObtenerProveedoresQuery();
+  const { data: proveedores, isLoading } = useObtenerProveedoresQuery();
 
   const [crearOrdenCompra] = useCrearOrdenCompraMutation();
 
@@ -37,36 +37,36 @@ export const AceptarOrden: FC<Props> = ({ solicitud_compra }) => {
     id_proveedor,
     id_tipo_orden_compra,
   }: FormData) => {
-    // if (hasError) {
-    //   toast.error(message!);
-    //   return;
-    // }
+    try {
+      await crearOrdenCompra({
+        id: 1,
+        id_comprobante: solicitud_compra.id_comprobante,
+        id_estado: 8,
+        descuento: solicitud_compra.descuento,
+        id_proveedor,
+        id_tipo_orden_compra,
+        impuesto: solicitud_compra.impuesto,
+        subtotal: solicitud_compra.subtotal,
+        total: solicitud_compra.total,
+        fecha_orden: new Date(),
+        id_solicitud_compra: solicitud_compra.id,
+        autorizado_por: Number(user!.id),
+        detalle_orden_compra: solicitud_compra.detalle_solicitud_compra,
+        motivo: solicitud_compra.motivo,
+      }).unwrap();
 
-    crearOrdenCompra({
-      id: 1,
-      id_comprobante: solicitud_compra.id_comprobante,
-      id_estado: 8,
-      descuento: solicitud_compra.descuento,
-      id_proveedor,
-      id_tipo_orden_compra,
-      impuesto: solicitud_compra.impuesto,
-      subtotal: solicitud_compra.subtotal,
-      total: solicitud_compra.total,
-      fecha_orden: new Date(),
-      id_solicitud_compra: solicitud_compra.id,
-      autorizado_por: Number(user!.id),
-      detalle_orden_compra: solicitud_compra.detalle_solicitud_compra,
-      motivo: solicitud_compra.motivo,
-    })
-      .unwrap()
-      .then((res) => {
-        toast.success("Solicitud aceptada correctamente.");
+      toast.success("Solicitud aceptada correctamente.");
 
-        closeModal();
-        reset();
-      })
-      .catch((error) => toast.error(error.data.message));
+      closeModal();
+      reset();
+    } catch (error: any) {
+      toast.error(error.data.message);
+    }
   };
+
+  console.log(tipos_orden_compra);
+
+  if (isLoading) return <>Cargando...</>;
 
   return (
     <>

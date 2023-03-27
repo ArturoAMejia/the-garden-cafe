@@ -1,13 +1,8 @@
 import { useEffect, useState } from "react";
-import { ICategoriaProducto, IMenu, IProducto } from "../../interfaces";
-import tgcApi from "../../api/tgcApi";
+import { IProducto } from "../../interfaces";
 import { useObtenerPlatillosQuery } from "@/store/slices/inventario";
 
 export const useMenu = () => {
-  const [categoriaProductos, setCategoriaProductos] = useState<
-    ICategoriaProducto[]
-  >([]);
-
   const [menuFiltrado, setMenuFiltrado] = useState<IProducto[]>();
 
   const [filtro, setFiltro] = useState("");
@@ -27,7 +22,6 @@ export const useMenu = () => {
     productos,
     filtro,
     setFiltro,
-    categoriaProductos,
     menuFiltrado,
   };
 };

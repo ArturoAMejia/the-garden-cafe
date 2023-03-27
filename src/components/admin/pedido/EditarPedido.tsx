@@ -11,6 +11,7 @@ import { toast } from "react-hot-toast";
 import { IProductoCart } from "../../../interfaces/producto";
 import { ItemCounter } from "./ItemCounter";
 import Image from "next/image";
+import { useObtenerClientesQuery } from "@/store/slices/venta";
 
 type FormData = IPedido;
 interface Props {
@@ -18,7 +19,6 @@ interface Props {
 }
 
 export const EditarPedido: FC<Props> = ({ pedido }) => {
-
   const { register, handleSubmit, reset } = useForm<FormData>();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -27,7 +27,7 @@ export const EditarPedido: FC<Props> = ({ pedido }) => {
 
   const { cart, actualizarPedido } = useContext(CartContext);
 
-  const { clientes } = useContext(AdminContext);
+  const { data: clientes, isLoading } = useObtenerClientesQuery();
   const { user } = useContext(AuthContext);
 
   const onActualizarPedido = async (data: FormData) => {
@@ -49,6 +49,8 @@ export const EditarPedido: FC<Props> = ({ pedido }) => {
     closeModal();
     reset();
   };
+
+  if (isLoading) return <>Cargando...</>;
   return (
     <>
       <div className="mx-2">
@@ -113,7 +115,7 @@ export const EditarPedido: FC<Props> = ({ pedido }) => {
                             className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
                             {...register("id_cliente")}
                           >
-                            {clientes.map((cliente) => (
+                            {clientes?.map((cliente) => (
                               <option
                                 key={`${cliente.tipo_cliente} ${cliente.id_persona}`}
                                 value={cliente.id}

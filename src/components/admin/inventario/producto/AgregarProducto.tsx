@@ -3,12 +3,9 @@ import { Dialog, Transition } from "@headlessui/react";
 import React, { ChangeEvent, FC, Fragment, useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import tgcApi from "../../../../api/tgcApi";
-import { ICatEstado, IProducto } from "../../../../interfaces";
-import { AdminContext } from "../../../../context";
+import { IProducto } from "../../../../interfaces";
 import {
   useCrearIngredienteMutation,
-  useCrearPlatilloMutation,
   useCrearProductoMutation,
   useObtenerCategoriasQuery,
   useObtenerMarcasQuery,
@@ -68,23 +65,24 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
 
   const onCrearProducto = async (data: FormData) => {
     if (isIngredient) {
-      crearIngrediente({ ...data, id_tipo_producto: 1 })
-        .unwrap()
-        .then((res) => {
-          toast.success("Ingrediente agregado correctamente");
-          closeModal();
-          reset();
-        })
-        .catch((error) => toast.error(error.data.message));
+      try {
+        await crearIngrediente({ ...data, id_tipo_producto: 1 }).unwrap();
+
+        toast.success("Ingrediente agregado correctamente");
+        closeModal();
+        reset();
+      } catch (error: any) {
+        toast.error(error.data.message);
+      }
     } else if (isProduct) {
-      crearProducto({ ...data, id_tipo_producto: 2 })
-        .unwrap()
-        .then((res) => {
-          toast.success("Producto agregado correctamente");
-          closeModal();
-          reset();
-        })
-        .catch((error) => toast.error(error.data.message));
+      try {
+        crearProducto({ ...data, id_tipo_producto: 2 }).unwrap();
+        toast.success("Producto agregado correctamente");
+        closeModal();
+        reset();
+      } catch (error: any) {
+        toast.error(error.data.message);
+      }
     }
   };
 

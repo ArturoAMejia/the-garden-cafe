@@ -27,7 +27,7 @@ const DetallePedidoRealizadoPage: FC<Props> = ({ detalle }) => {
     total,
   } = useContext(CartContext);
 
-  const { data: platillos } = useObtenerPlatillosQuery();
+  const { data: platillos, isLoading } = useObtenerPlatillosQuery();
 
   return (
     <AdminLayout title={`Detalle del Pedido - ${detalle.id}`}>
@@ -72,6 +72,7 @@ const DetallePedidoRealizadoPage: FC<Props> = ({ detalle }) => {
       {/* <DetallePedido detalle={detalle.detalle_pedido} /> */}
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto"></div>
+        {isLoading && <>Cargando...</>}
         <FilterBar
           isIngredient={false}
           isPlate={true}

@@ -40,20 +40,22 @@ export const AgregarCatProducto = () => {
     id,
     id_tipo_categoria,
   }: FormData) => {
-    crearCategoria({
-      nombre,
-      descripcion,
-      id_estado,
-      id,
-      id_tipo_categoria,
-    })
-      .unwrap()
-      .then((res) => {
-        toast.success("Categoría agregada correctamente.");
-        closeModal();
-        reset();
-      })
-      .catch((error) => toast.error(error.data.message));
+    try {
+      await crearCategoria({
+        nombre,
+        descripcion,
+        id_estado,
+        id,
+        id_tipo_categoria,
+      }).unwrap();
+
+      toast.success("Categoría agregada correctamente.");
+      closeModal();
+      reset();
+      
+    } catch (error: any) {
+      toast.error(error.data.message);
+    }
   };
 
   if (isLoading) return <>Cargando...</>;

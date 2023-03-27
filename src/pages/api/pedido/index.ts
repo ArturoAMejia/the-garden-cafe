@@ -93,6 +93,7 @@ const registerPedido = async (
 ) => {
   const {
     id_usuario,
+    id_cliente,
     id_trabajador = 1,
     tipo_pedido,
     ubicacion_entrega = "",
@@ -102,39 +103,49 @@ const registerPedido = async (
 
   console.log(req.body);
 
-  if (!id_usuario || !tipo_pedido || !productos)
+  if (!tipo_pedido || !productos)
     return res.status(400).json({ message: "Dichos campos son obligatorios" });
+
+  let client;
 
   await prisma.$connect();
 
-  const user = await prisma.usuario.findFirst({
-    where: {
-      id: Number(id_usuario),
-    },
-  });
-
-  const p = await prisma.persona.findFirst({
-    where: {
-      usuario: {
-        id: user!.id,
+  if (id_cliente) {
+    client = await prisma.cliente.findFirst({
+      where: {
+        id: id_cliente,
       },
-    },
-  });
+    });
+  } else if (id_usuario) {
+    const user = await prisma.usuario.findFirst({
+      where: {
+        id: Number(id_usuario),
+      },
+    });
 
-  const c = await prisma.cliente.findFirst({
-    where: {
-      id_persona: p?.id,
-    },
-  });
+    const p = await prisma.persona.findFirst({
+      where: {
+        usuario: {
+          id: user!.id,
+        },
+      },
+    });
 
-  if (!c)
+    client = await prisma.cliente.findFirst({
+      where: {
+        id_persona: p?.id,
+      },
+    });
+  }
+
+  if (!client)
     return res
       .status(400)
       .json({ message: "No se encontró registro de este cliente." });
 
   const pedido = await prisma.pedido.create({
     data: {
-      id_cliente: c!.id,
+      id_cliente: client!.id,
       id_trabajador,
       tipo_pedido,
       fecha_pedido: new Date(),

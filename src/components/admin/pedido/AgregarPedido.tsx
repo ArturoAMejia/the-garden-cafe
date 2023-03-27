@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 
 import { ICatEstado, IPedido } from "../../../interfaces";
 import { Transition, Dialog } from "@headlessui/react";
+import { useObtenerClientesQuery } from "@/store/slices/venta";
 
 interface Props {
   estados: ICatEstado[];
@@ -21,10 +22,13 @@ export const AgregarPedido: FC<Props> = ({ estados }) => {
 
   const { user } = useContext(AuthContext);
   const { register, handleSubmit, reset } = useForm<FormData>();
-  const { clientes, crearPedido } = useContext(AdminContext);
+  const { crearPedido } = useContext(AdminContext);
   const { cart, orderComplete } = useContext(CartContext);
 
+  const { data: clientes, isLoading } = useObtenerClientesQuery();
+
   const onCrearPedido = async (data: FormData) => {
+    // TODO Crear pedidoApi con redux
     const { hasError, message } = await crearPedido({
       ...data,
       id_trabajador: Number(user!.id),
@@ -42,6 +46,8 @@ export const AgregarPedido: FC<Props> = ({ estados }) => {
     closeModal();
     reset();
   };
+
+  if (isLoading) return <>Cargando...</>;
 
   return (
     <>
@@ -104,7 +110,7 @@ export const AgregarPedido: FC<Props> = ({ estados }) => {
                             className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
                             {...register("id_cliente")}
                           >
-                            {clientes.map((cliente) => (
+                            {clientes?.map((cliente) => (
                               <option
                                 key={`${cliente.tipo_cliente} ${cliente.id_persona}`}
                                 value={cliente.id}

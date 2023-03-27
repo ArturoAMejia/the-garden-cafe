@@ -1,14 +1,13 @@
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { Dialog, Transition } from "@headlessui/react";
-import React, { ChangeEvent, FC, Fragment, useContext, useState } from "react";
+import React, { ChangeEvent, FC, Fragment, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import tgcApi from "../../../../api/tgcApi";
-import { ICatEstado, IProducto } from "../../../../interfaces";
-import { AdminContext } from "../../../../context";
+import { IProducto } from "../../../../interfaces";
 import {
+  useActualizarIngredienteMutation,
+  useActualizarProductoMutation,
   useCrearIngredienteMutation,
-  useCrearPlatilloMutation,
   useCrearProductoMutation,
   useObtenerCategoriasQuery,
   useObtenerMarcasQuery,
@@ -38,9 +37,9 @@ export const EditarProducto: FC<Props> = ({
   const { data: sub_categorias, isLoading: isLoadingSubCat } =
     useObtenerSubcategoriasQuery();
 
-  const [crearIngrediente] = useCrearIngredienteMutation();
+  const [actualizarProducto] = useActualizarProductoMutation();
 
-  const [crearProducto] = useCrearProductoMutation();
+  const [actualizarIngrediente] = useActualizarIngredienteMutation();
 
   const { register, handleSubmit, reset } = useForm<FormData>();
 
@@ -73,23 +72,23 @@ export const EditarProducto: FC<Props> = ({
 
   const onCrearProducto = async (data: FormData) => {
     if (isIngredient) {
-      crearIngrediente(data)
-        .unwrap()
-        .then((res) => {
-          toast.success("Ingrediente agregado correctamente");
-          closeModal();
-          reset();
-        })
-        .catch((error) => toast.error(error.data.message));
+      try {
+        await actualizarIngrediente(data).unwrap();
+        toast.success("Ingrediente actualizado correctamente");
+        closeModal();
+        reset();
+      } catch (error: any) {
+        toast.error(error.data.message);
+      }
     } else if (isProduct) {
-      crearProducto(data)
-        .unwrap()
-        .then((res) => {
-          toast.success("Producto agregado correctamente");
-          closeModal();
-          reset();
-        })
-        .catch((error) => toast.error(error.data.message));
+      try {
+        await actualizarProducto(data).unwrap();
+        toast.success("Producto agregado correctamente");
+        closeModal();
+        reset();
+      } catch (error: any) {
+        toast.error(error.data.message);
+      }
     }
   };
 
@@ -109,11 +108,7 @@ export const EditarProducto: FC<Props> = ({
           onClick={openModal}
           className="inline-flex items-center justify-center rounded-md border border-transparent bg-[#388C04] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#8CA862] sm:w-auto"
         >
-          {isProduct
-            ? `Editar`
-            : isIngredient
-            ? `Editar`
-            : ""}
+          {isProduct ? `Editar` : isIngredient ? `Editar` : ""}
         </button>
       </div>
 
@@ -294,8 +289,10 @@ export const EditarProducto: FC<Props> = ({
                             className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
                           >
                             {unidades_medidas?.map((medida) => (
-                              <option key={medida.siglas} value={medida.id}
-                              defaultValue={producto.id_unidad_medida}
+                              <option
+                                key={medida.siglas}
+                                value={medida.id}
+                                defaultValue={producto.id_unidad_medida}
                               >
                                 {medida.siglas}
                               </option>

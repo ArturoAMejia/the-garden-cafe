@@ -5,7 +5,10 @@ import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
-import { ICategoriaProducto, ISubCategoriaProducto } from "../../../../../interfaces";
+import {
+  ICategoriaProducto,
+  ISubCategoriaProducto,
+} from "../../../../../interfaces";
 import {
   useActualizarSubcategoriaMutation,
   useObtenerCategoriasQuery,
@@ -30,7 +33,7 @@ export const EditarSubCategoriaProducto: FC<Props> = ({
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  const { data: categorias } = useObtenerCategoriasQuery();
+  const { data: categorias, isLoading } = useObtenerCategoriasQuery();
 
   const [actualizarSubcategoria] = useActualizarSubcategoriaMutation();
 
@@ -39,20 +42,21 @@ export const EditarSubCategoriaProducto: FC<Props> = ({
     nombre,
     id_categoria_producto,
   }: FormData) => {
-    actualizarSubcategoria({
-      id: sub_categoria_producto.id,
-      nombre,
-      id_categoria_producto,
-      id_estado: sub_categoria_producto.id_estado,
-    })
-      .unwrap()
-      .then((res) => {
-        toast.success("Subcategoria actualizada correctamente");
-        closeModal();
-        reset();
-      })
-      .catch((error) => toast.error(error.data.message));
+    try {
+      await actualizarSubcategoria({
+        id: sub_categoria_producto.id,
+        nombre,
+        id_categoria_producto,
+        id_estado: sub_categoria_producto.id_estado,
+      }).unwrap();
+      toast.success("Subcategoria actualizada correctamente");
+      closeModal();
+      reset();
+    } catch (error: any) {
+      toast.error(error.data.message);
+    }
   };
+  if (isLoading) return <>Cargando...</>;
   return (
     <>
       <div className="mx-2">
@@ -174,7 +178,7 @@ export const EditarSubCategoriaProducto: FC<Props> = ({
                       type="submit"
                       className="mt-4 mr-2 inline-flex items-center rounded-md border border-transparent bg-[#388C04] px-4 py-2 font-medium text-white shadow-sm"
                     >
-                      Actualizar 
+                      Actualizar
                       <PlusCircleIcon
                         className="ml-2 -mr-1 h-5 w-5"
                         aria-hidden="true"

@@ -8,24 +8,6 @@ export const adminReducer = (
   action: AdminActionType
 ): AdminState => {
   switch (action.type) {
-    case "[Admin] - Obtener Categorias":
-      return {
-        ...state,
-        categorias: action.payload,
-      };
-
-    case "[Admin] - Crear Categoria":
-      return {
-        ...state,
-        categorias: [...state.categorias, action.payload],
-      };
-
-    case "[Compra] - Obtener Ordenes de Compra":
-      return {
-        ...state,
-        ordenes_compra: action.payload,
-      };
-
     case "[Compra] - Actualizar productos en Orden":
       return {
         ...state,
@@ -40,6 +22,11 @@ export const adminReducer = (
           if (producto.cantidad !== action.payload.cantidad) return producto;
           return action.payload;
         }),
+      };
+    case "[Compra] - Obtener Tipos de Orden de Compra":
+      return {
+        ...state,
+        tipos_orden_compra: [...action.payload],
       };
 
     case "[Compra] - Quitar producto en Orden":
@@ -69,76 +56,10 @@ export const adminReducer = (
         total: 0,
         totalProductos: 0,
       };
-
-    case "[Compra] - Obtener Solicitudes Compra":
-      return {
-        ...state,
-        solicitudes_compra: [...action.payload],
-      };
-    case "[Compra] - Obtener Tipos de Orden de Compra":
-      return {
-        ...state,
-        tipos_orden_compra: [...action.payload],
-      };
-    case "[Compra] - Obtener Compras":
-      return {
-        ...state,
-        compras: [...action.payload],
-      };
     case "[Compra] - Cargar Orden compra":
       return {
         ...state,
         productos: action.payload,
-      };
-    case "[Inventario] - Obtener Inventario":
-      return {
-        ...state,
-        inventarios: [...action.payload],
-      };
-    case "[Inventario] - Obtener Unidad Medidas":
-      return {
-        ...state,
-        unidades_medidas: [...action.payload],
-      };
-    case "[Inventario] - Crear Unidad Medidas":
-      return {
-        ...state,
-        unidades_medidas: [...state.unidades_medidas, action.payload],
-      };
-    case "[Inventario] - Obtener Marca":
-      return {
-        ...state,
-        marcas: [...action.payload],
-      };
-    case "[Inventario] - Crear Marca":
-      return {
-        ...state,
-        marcas: [...state.marcas, action.payload],
-      };
-    case "[Inventario] - Obtener Productos":
-      return {
-        ...state,
-        productos_inventario: [...action.payload],
-      };
-    case "[Inventario] - Crear Producto":
-      return {
-        ...state,
-        productos_inventario: [...state.productos_inventario, action.payload],
-      };
-    case "[Ventas] - Obtener Clientes":
-      return {
-        ...state,
-        clientes: [...action.payload],
-      };
-    case "[Ventas] - Crear Cliente":
-      return {
-        ...state,
-        clientes: [...state.clientes, action.payload],
-      };
-    case "[Ventas] - Obtener Reservaciones":
-      return {
-        ...state,
-        reservaciones: [...action.payload],
       };
     case "[Ventas] - Obtener Monedas":
       return {
@@ -179,11 +100,6 @@ export const adminReducer = (
       return {
         ...state,
         formas_pago: [...state.formas_pago, action.payload],
-      };
-    case "[Ventas] - Obtener Ventas":
-      return {
-        ...state,
-        ventas: [...action.payload],
       };
     case "[Ventas] - Obtener Pedidos":
       return {

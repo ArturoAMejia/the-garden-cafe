@@ -1,15 +1,8 @@
 import { createContext } from "react";
 import {
-  IUser,
   IReservacion,
   IProducto,
-  ICategoriaProducto,
-  IProveedor,
-  IMenu,
   ITipoOrdenCompra,
-  IUnidadMedida,
-  IMarca,
-  ICliente,
   IPedido,
   IMoneda,
   ICatFormaPago,
@@ -23,20 +16,11 @@ import {
 import { IProductoCart } from "../../../interfaces/producto";
 
 interface ContextProps {
-  categorias: ICategoriaProducto[];
   productos: IProductoCart[];
   inventarios: IInventario[];
-
-  unidades_medidas: IUnidadMedida[];
-  clientes: ICliente[];
-  reservaciones: IReservacion[];
-
-  marcas: IMarca[];
   monedas: IMoneda[];
   formas_pago: ICatFormaPago[];
-  ventas: IVenta[];
   pedidos: IPedido[];
-
   trabajadores: ITrabajador[];
   productos_inventario: IProducto[];
   estado_civil: IEstadoCivil[];
@@ -56,71 +40,15 @@ interface ContextProps {
     hasError: boolean;
     message: string;
   }>;
-  crearCategoria: (categoria: ICategoriaProducto) => Promise<{
-    hasError: boolean;
-    message?: string;
-  }>;
-  actualizarCategorias: (categoria: ICategoriaProducto) => Promise<{
-    hasError: boolean;
-    message: string;
-  }>;
-  desactivarCategoria: (categoria: ICategoriaProducto) => Promise<void>;
   añadirProductoOrden: (producto: IProductoCart) => void;
   actualizarCantidadProducto: (producto: IProductoCart) => void;
   quitarProducto: (producto: IProductoCart) => void;
-  crearUnidadMedida: (unidad_medida: IUnidadMedida) => Promise<{
-    hasError: boolean;
-    message: string;
-  }>;
-  actualizarUnidadMedida: (unidad_medida: IUnidadMedida) => Promise<{
-    hasError: boolean;
-    message: string;
-  }>;
-  desactivarUnidadMedida: (id: number) => Promise<{
-    hasError: boolean;
-    message: string;
-  }>;
-  crearMarca: (unidad_medida: IMarca) => Promise<{
-    hasError: boolean;
-    message: string;
-  }>;
-  actualizarMarca: (unidad_medida: IMarca) => Promise<{
-    hasError: boolean;
-    message: string;
-  }>;
-  desactivarMarca: (id: number) => Promise<{
-    hasError: boolean;
-    message: string;
-  }>;
-  crearProducto: (producto: IProducto) => Promise<{
-    hasError: boolean;
-    message: string;
-  }>;
-  crearCliente: (cliente: ICliente) => Promise<{
-    hasError: boolean;
-    message: string;
-  }>;
-  actualizarCliente: (cliente: ICliente) => Promise<{
-    hasError: boolean;
-    message: string;
-  }>;
-  desactivarCliente: (id: number) => Promise<void>;
   crearPedido: (pedido: IPedido) => Promise<{
     hasError: boolean;
     message: string;
   }>;
   anularPedido: (id: number) => Promise<void>;
-  obtenerReservaciones: () => Promise<void>;
-  crearReservacion: (reservacion: IReservacion) => Promise<{
-    hasError: boolean;
-    message: string;
-  }>;
-  actualizarReservacion: (reservacion: IReservacion) => Promise<{
-    hasError: boolean;
-    message: string;
-  }>;
   solicitudCompleta: () => void;
-  anularReservacion: (id: number) => Promise<void>;
   crearMoneda: (moneda: IMoneda) => Promise<{
     hasError: boolean;
     message: string;
@@ -139,24 +67,7 @@ interface ContextProps {
     message: string;
   }>;
   desactivarFormaPago: (id: number) => Promise<void>;
-  realizarVenta: (
-    id_trabajador: number,
-    id_cliente: number,
-    id_pedido: number,
-    id_cat_forma_pago: number,
-    id_moneda: number,
-    subtotal: number,
-    descuento: number,
-    tipo_venta: string,
-    descripcion: string,
-    productos: []
-  ) => Promise<{
-    hasError: boolean;
-    message: string;
-  }>;
-  anularVenta: (id: number) => Promise<void>;
   cargarPedido: (productos: IProductoCart[]) => void;
-
   registrarTrabajador: (
     cedula_ruc: string,
     nombre: string,

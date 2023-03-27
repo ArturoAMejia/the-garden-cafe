@@ -12,7 +12,6 @@ interface Props {
 }
 
 const UnidadMedidaPage: FC<Props> = ({ estados }) => {
-  const { unidades_medidas } = useContext(AdminContext);
   return (
     <AdminLayout title="Unidad de Medida">
       <div className="sm:flex sm:items-center">
