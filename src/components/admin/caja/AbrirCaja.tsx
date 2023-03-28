@@ -7,6 +7,7 @@ import { AdminContext, AuthContext, CartContext } from "../../../context";
 import { ICaja, IMoneda, IPedido } from "../../../interfaces";
 import tgcApi from "../../../api/tgcApi";
 import axios from "axios";
+import { useCrearVentaMutation } from "@/store/slices/venta";
 
 type FormData = {
   id_caja: number;
@@ -21,8 +22,9 @@ interface Props {
 
 export const AbrirCaja: FC<Props> = ({ pedido, cajas }) => {
   const { cargarPedido, subtotal } = useContext(CartContext);
-  const { monedas, formas_pago, realizarVenta } = useContext(AdminContext);
+  const { monedas, formas_pago } = useContext(AdminContext);
 
+  const [crearVenta] = useCrearVentaMutation();
   const { user } = useContext(AuthContext);
 
   const [isOpen, setIsOpen] = useState(false);

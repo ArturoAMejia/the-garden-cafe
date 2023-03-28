@@ -24,7 +24,7 @@ type FormData = {
 export const AgregarSubCategoriaProducto = () => {
   const { register, handleSubmit, reset } = useForm<FormData>();
 
-  const { data: categorias } = useObtenerCategoriasQuery();
+  const { data: categorias, isLoading } = useObtenerCategoriasQuery();
 
   const [crearSubcategoria] = useCrearSubcategoriaMutation();
   const [isOpen, setIsOpen] = useState(false);
@@ -37,20 +37,24 @@ export const AgregarSubCategoriaProducto = () => {
     id_estado,
     id,
   }: FormData) => {
-    crearSubcategoria({
-      nombre,
-      id_categoria_producto,
-      id_estado,
-      id,
-    })
-      .unwrap()
-      .then((res) => {
-        toast.success("Subcategoría agregada correctamente.");
-        closeModal();
-        reset();
-      })
-      .catch((error) => toast.error(error.data.message));
+    try {
+      await crearSubcategoria({
+        nombre,
+        id_categoria_producto,
+        id_estado,
+        id,
+      }).unwrap();
+
+      toast.success("Subcategoría agregada correctamente.");
+      closeModal();
+      reset();
+    } catch (error: any) {
+      toast.error(error.data.message);
+    }
   };
+
+  if (isLoading) return <>Cargando...</>;
+
   return (
     <>
       <div className="mx-2">

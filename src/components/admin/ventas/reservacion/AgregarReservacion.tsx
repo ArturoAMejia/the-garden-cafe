@@ -1,9 +1,8 @@
 import { Transition, Dialog } from "@headlessui/react";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
-import React, { Fragment, useContext, useState } from "react";
+import React, { Fragment, useState } from "react";
 import { useForm } from "react-hook-form";
 import { IReservacion } from "../../../../interfaces";
-import { AdminContext } from "../../../../context";
 import { toast } from "react-hot-toast";
 import {
   useCrearReservacionMutation,
@@ -17,24 +16,25 @@ export const AgregarReservacion = () => {
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
   const { register, handleSubmit, reset } = useForm<FormData>();
-  // const { crearReservacion, clientes } = useContext(AdminContext);
 
   const { data: clientes, isLoading } = useObtenerClientesQuery();
 
   const [crearReservacion, { isError, error }] = useCrearReservacionMutation();
 
   const onRegistrarNuevaReservacion = async (data: FormData) => {
-    crearReservacion(data)
-      .unwrap()
-      .then((res) => {
-        toast.success("Reservación creada satisfactoriamente.");
-        closeModal();
-        reset();
-      })
-      .catch((error) => toast.error(error.data.message));
+    try {
+      await crearReservacion(data).unwrap();
+
+      toast.success("Reservación creada satisfactoriamente.");
+      closeModal();
+      reset();
+    } catch (error: any) {
+      toast.error(error.data.message);
+    }
   };
 
-  if (isLoading) return <>Cargando...</>
+  if (isLoading) return <>Cargando...</>;
+  
   return (
     <>
       <div className="mx-2">

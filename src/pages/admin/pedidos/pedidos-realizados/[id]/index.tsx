@@ -3,10 +3,7 @@ import React, { FC, useContext } from "react";
 import { GetServerSideProps } from "next";
 import { prisma } from "../../../../../database";
 import { IPedido } from "../../../../../interfaces";
-import {
-  FilterBar,
-  ResumenPedido,
-} from "../../../../../components";
+import { FilterBar, ResumenPedido } from "../../../../../components";
 import { AdminLayout } from "../../../../../components/Layout/AdminLayout";
 
 import { format } from "date-fns";
@@ -30,8 +27,7 @@ const DetallePedidoRealizadoPage: FC<Props> = ({ detalle }) => {
     total,
   } = useContext(CartContext);
 
-  const { data: platillos } = useObtenerPlatillosQuery();
-
+  const { data: platillos, isLoading } = useObtenerPlatillosQuery();
 
   return (
     <AdminLayout title={`Detalle del Pedido - ${detalle.id}`}>
@@ -76,7 +72,10 @@ const DetallePedidoRealizadoPage: FC<Props> = ({ detalle }) => {
       {/* <DetallePedido detalle={detalle.detalle_pedido} /> */}
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto"></div>
+        {isLoading && <>Cargando...</>}
         <FilterBar
+          isIngredient={false}
+          isPlate={true}
           productos={platillos!}
           añadirProductoOrden={addProductToCart}
         />
@@ -133,7 +132,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       observacion: true,
       detalle_pedido: {
         select: {
-          id_producto: true,
+          id_producto_elaborado: true,
           producto: true,
           monto: true,
           cantidad: true,

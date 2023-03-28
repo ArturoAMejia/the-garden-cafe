@@ -35,6 +35,7 @@ export default function handler(
 
 const loginUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   await prisma.$connect();
+
   const { username, password } = req.body;
 
   const user = await prisma.usuario.findUnique({
@@ -49,6 +50,12 @@ const loginUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     },
     where: {
       usuario: username,
+    },
+  });
+
+  const cliente = await prisma.cliente.findFirst({
+    where: {
+      id_persona: user?.persona.id,
     },
   });
 
@@ -82,8 +89,6 @@ const loginUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 
   const { id, usuario, id_rol, rol, persona, correo } = user;
 
-  
-
   const token = jwt.signToken(id.toString(), usuario);
 
   return res.status(200).json({
@@ -96,6 +101,6 @@ const loginUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
       rol,
       apellido_razon_social: persona.apellido_razon_social,
     },
-    modulos
+    modulos,
   });
 };

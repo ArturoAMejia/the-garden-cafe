@@ -71,6 +71,7 @@ const ResumenPage = () => {
       ...pro,
     };
   });
+
   const [metodoPagoSeleccionado, setMetodoPagoSeleccionado] =
     useState("Tarjeta de Crédito");
 
@@ -87,8 +88,8 @@ const ResumenPage = () => {
   const { user } = useContext(AuthContext);
 
   const onRegisterPedido = async () => {
-    const pedido = {
-      id_cliente: user?.id,
+    const pedido: any = {
+      id_usuario: user!.id,
       correo: getValues("correo"),
       tipo_pedido: tipoPedidoSeleccionado.title,
       ubicacion_entrega: getValues("direccion_domicilio"),

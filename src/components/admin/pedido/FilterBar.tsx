@@ -10,9 +10,11 @@ import { IProductoCart } from "../../../interfaces/producto";
 interface Props {
   productos: IProducto[];
   añadirProductoOrden: (producto: IProductoCart) => void;
+  isIngredient: boolean;
+  isPlate:boolean;
 }
 
-export const FilterBar: FC<Props> = ({ productos, añadirProductoOrden }) => {
+export const FilterBar: FC<Props> = ({ productos, añadirProductoOrden, isIngredient, isPlate }) => {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
 
@@ -94,6 +96,8 @@ export const FilterBar: FC<Props> = ({ productos, añadirProductoOrden }) => {
                       key={producto.imagen}
                       producto={producto}
                       añadirProductoOrden={añadirProductoOrden}
+                      isIngredient={isIngredient}
+                      isPlate={isPlate}
                     />
                   ))}
                 </Combobox.Options>

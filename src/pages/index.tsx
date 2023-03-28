@@ -16,7 +16,6 @@ interface Props {
 }
 
 const Home: FC<Props> = ({ productos }) => {
-
   return (
     <Layout title="Inicio" pageDescription="Pagina de Inicio">
       <Fade>
@@ -29,7 +28,7 @@ const Home: FC<Props> = ({ productos }) => {
               <h2 className="mt-1 text-4xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl">
                 Alimentación & vida consciente
               </h2>
-              <p className="max-w-xl mt-5 mx-auto text-xl text-gray-500">
+              <p className="mx-auto mt-5 max-w-xl text-xl text-gray-500">
                 Creemos que cada cuerpo y cada ser humano tiene necesidades y
                 elecciones alimenticias únicas. Como restaurante capacitamos a
                 nuestro equipo constantemente para respetar tu elección y apoyar
@@ -41,24 +40,24 @@ const Home: FC<Props> = ({ productos }) => {
       </Slide>
 
       <ProductCard productos={productos} />
-      <div className="relative py-16 bg-[#FFF9EA]">
+      <div className="relative bg-[#FFF9EA] py-16">
         <div
-          className="hidden absolute top-0 inset-x-0 h-1/2 bg-[#FFF9EA] lg:block"
+          className="absolute inset-x-0 top-0 hidden h-1/2 bg-[#FFF9EA] lg:block"
           aria-hidden="true"
         />
-        <div className="max-w-7xl mx-auto bg-[#FFF9EA] lg:bg-transparent lg:px-8">
+        <div className="mx-auto max-w-7xl bg-[#FFF9EA] lg:bg-transparent lg:px-8">
           <div className="lg:grid lg:grid-cols-12">
-            <div className="relative z-10 lg:col-start-1 lg:row-start-1 lg:col-span-4 lg:py-16 lg:bg-transparent">
+            <div className="relative z-10 lg:col-span-4 lg:col-start-1 lg:row-start-1 lg:bg-transparent lg:py-16">
               <div
                 className="absolute inset-x-0 h-1/2 bg-[#FFF9EA] lg:hidden"
                 aria-hidden="true"
               />
-              <div className="max-w-md mx-auto px-4 sm:max-w-3xl sm:px-6 lg:max-w-none lg:p-0">
+              <div className="mx-auto max-w-md px-4 sm:max-w-3xl sm:px-6 lg:max-w-none lg:p-0">
                 <div className="aspect-w-10 aspect-h-6 sm:aspect-w-2 sm:aspect-h-1 lg:aspect-w-1">
                   <Image
                     width={600}
                     height={800}
-                    className="relative object-cover object-center rounded-3xl shadow-2xl"
+                    className="relative rounded-3xl object-cover object-center shadow-2xl"
                     src="/img/work-with-us.jpeg"
                     alt="trabaja con nosotros"
                   />
@@ -66,13 +65,13 @@ const Home: FC<Props> = ({ productos }) => {
               </div>
             </div>
 
-            <div className="relative bg-[#388C04] text-black lg:col-start-3 lg:row-start-1 lg:col-span-10 lg:rounded-3xl lg:grid lg:grid-cols-10 lg:items-center shadow-2xl">
+            <div className="relative bg-[#388C04] text-black shadow-2xl lg:col-span-10 lg:col-start-3 lg:row-start-1 lg:grid lg:grid-cols-10 lg:items-center lg:rounded-3xl">
               <div
-                className="hidden absolute inset-0 overflow-hidden rounded-3xl lg:block"
+                className="absolute inset-0 hidden overflow-hidden rounded-3xl lg:block"
                 aria-hidden="true"
               >
                 <svg
-                  className="absolute bottom-full left-full transform translate-y-1/3 -translate-x-2/3 xl:bottom-auto xl:top-0 xl:translate-y-0"
+                  className="absolute bottom-full left-full translate-y-1/3 -translate-x-2/3 transform xl:bottom-auto xl:top-0 xl:translate-y-0"
                   width={404}
                   height={384}
                   fill="none"
@@ -105,7 +104,7 @@ const Home: FC<Props> = ({ productos }) => {
                   />
                 </svg>
                 <svg
-                  className="absolute top-full transform -translate-y-1/3 -translate-x-1/3 xl:-translate-y-1/2"
+                  className="absolute top-full -translate-y-1/3 -translate-x-1/3 transform xl:-translate-y-1/2"
                   width={404}
                   height={384}
                   fill="none"
@@ -138,7 +137,7 @@ const Home: FC<Props> = ({ productos }) => {
                   />
                 </svg>
               </div>
-              <div className="relative max-w-md mx-auto py-12 px-4 space-y-6 sm:max-w-3xl sm:py-16 sm:px-6 lg:max-w-none lg:p-0 lg:col-start-4 lg:col-span-6">
+              <div className="relative mx-auto max-w-md space-y-6 py-12 px-4 sm:max-w-3xl sm:py-16 sm:px-6 lg:col-span-6 lg:col-start-4 lg:max-w-none lg:p-0">
                 <h2
                   className="text-3xl font-extrabold text-white"
                   id="join-heading"
@@ -150,7 +149,7 @@ const Home: FC<Props> = ({ productos }) => {
                   sobre los puestos de trabajo en The Garden Cafe.
                 </p>
                 <a
-                  className="block w-full py-3 px-5 text-center bg-[#FFAC4B] border border-transparent rounded-full shadow-md text-base font-medium text-white hover:bg-[#f5b56a] sm:inline-block sm:w-auto"
+                  className="block w-full rounded-full border border-transparent bg-[#FFAC4B] py-3 px-5 text-center text-base font-medium text-white shadow-md hover:bg-[#f5b56a] sm:inline-block sm:w-auto"
                   href="#"
                 >
                   Ver más
@@ -168,33 +167,20 @@ export default Home;
 
 export const getStaticProps: GetStaticProps = async (ctx) => {
   await prisma.$connect();
-  const productos = await prisma.producto.findMany({
+  const productos = await prisma.producto_elaborado.findMany({
     select: {
       id: true,
       nombre: true,
       imagen: true,
       categoria_producto: true,
+      precio_producto: true,
       unidad_medida: {
         select: {
           siglas: true,
         },
       },
-      precio_producto: {
-        select: {
-          precio_venta: true,
-        },
-      },
-    },
-    where: {
-      id_estado: 5,
     },
     take: 4,
-  });
-  // TODO Crear cada precio para cada producto
-  const precio_producto = await prisma.precio_producto.findMany({
-    select: {
-      precio_venta: true,
-    },
   });
 
   await prisma.$disconnect();
@@ -202,7 +188,6 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
   return {
     props: {
       productos: JSON.parse(JSON.stringify(productos)),
-      precio_producto: JSON.parse(JSON.stringify(precio_producto)),
     },
   };
 };

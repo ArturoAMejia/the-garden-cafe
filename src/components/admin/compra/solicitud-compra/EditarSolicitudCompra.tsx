@@ -1,4 +1,4 @@
-import { Fragment, useContext, useState } from "react";
+import { FC, Fragment, useContext, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
 
@@ -7,6 +7,11 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { AdminContext, AuthContext } from "../../../../context";
 import { useCrearSolicitudCompraMutation } from "@/store/slices/compra/compraApi";
+import { ISolicitudCompra } from "@/interfaces";
+
+interface Props {
+  solicitud: ISolicitudCompra;
+}
 
 type FormData = {
   fecha_vigencia: Date;
@@ -14,10 +19,12 @@ type FormData = {
   id_tipo_orden_compra: number;
 };
 
-export const AgregarSolicitudCompra = () => {
+export const EditarSolicitudCompra: FC<Props> = ({ solicitud }) => {
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
+
+  console.log(solicitud);
 
   const { user } = useContext(AuthContext);
 
@@ -34,24 +41,23 @@ export const AgregarSolicitudCompra = () => {
     id_tipo_orden_compra,
     motivo,
   }: FormData) => {
-    try {
-      crearSolicitudCompra({
-        fecha_vigencia,
-        motivo,
-        productos,
-        id_trabajador: trabajador_id,
-        impuesto: tax,
-        subtotal,
-        total,
-      }).unwrap();
-
-      toast.success("Solicitud de Compra realizada correctamente.");
-      closeModal();
-      reset();
-      solicitudCompleta();
-    } catch (error: any) {
-      toast.error(error.data.message);
-    }
+    crearSolicitudCompra({
+      fecha_vigencia,
+      motivo,
+      productos,
+      id_trabajador: trabajador_id,
+      impuesto: tax,
+      subtotal,
+      total,
+    })
+      .unwrap()
+      .then((res) => {
+        toast.success("Solicitud de Compra realizada correctamente.");
+        closeModal();
+        reset();
+        solicitudCompleta();
+      })
+      .catch((error) => toast.error(error.data.message));
   };
 
   return (

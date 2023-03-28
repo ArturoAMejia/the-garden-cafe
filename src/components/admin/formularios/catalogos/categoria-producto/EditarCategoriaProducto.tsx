@@ -1,4 +1,4 @@
-import { FC, Fragment, useContext, useState } from "react";
+import { FC, Fragment, useState } from "react";
 
 import { Dialog, Transition } from "@headlessui/react";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
 import { ICategoriaProducto } from "../../../../../interfaces";
-import { AdminContext } from "../../../../../context";
 import { useActualizarCategoriaMutation } from "@/store/slices/inventario";
 
 interface Props {
@@ -25,8 +24,6 @@ export const EditarCatProducto: FC<Props> = ({ cat_producto }) => {
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
-
-  const { actualizarCategorias } = useContext(AdminContext);
 
   const [actualizarCategoria] = useActualizarCategoriaMutation();
 

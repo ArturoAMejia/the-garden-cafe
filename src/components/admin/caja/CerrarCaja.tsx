@@ -7,6 +7,7 @@ import { AdminContext, AuthContext, CartContext } from "../../../context";
 import { ICaja, IMoneda, IPedido } from "../../../interfaces";
 import tgcApi from "../../../api/tgcApi";
 import axios from "axios";
+import { useCrearVentaMutation } from "@/store/slices/venta";
 
 type FormData = {
   id_caja: number;
@@ -21,7 +22,9 @@ interface Props {
 
 export const CerrarCaja: FC<Props> = ({ pedido, cajas }) => {
   const { cargarPedido, subtotal } = useContext(CartContext);
-  const { monedas, formas_pago, realizarVenta } = useContext(AdminContext);
+  const { monedas, formas_pago } = useContext(AdminContext);
+
+  const [crearVenta] = useCrearVentaMutation();
 
   const { user } = useContext(AuthContext);
 
@@ -64,7 +67,7 @@ export const CerrarCaja: FC<Props> = ({ pedido, cajas }) => {
         return;
       }
 
-      toast.error("No se pudo abrir la caja.");
+      toast.error("No se pudo cerrar la caja.");
     }
 
     reset();
@@ -164,6 +167,7 @@ export const CerrarCaja: FC<Props> = ({ pedido, cajas }) => {
                             {monedas.map((moneda: IMoneda) => (
                               <option key={moneda.id} value={moneda.id}>
                                 {moneda.nombre}
+
                               </option>
                             ))}
                           </select>
@@ -194,7 +198,7 @@ export const CerrarCaja: FC<Props> = ({ pedido, cajas }) => {
                       type="submit"
                       className="mt-4 inline-flex items-center rounded-md border border-transparent bg-[#388C04] px-4 py-2 font-medium text-white shadow-sm"
                     >
-                      Abrir Caja
+                      Cerrar Caja
                       <PlusCircleIcon
                         className="ml-2 -mr-1 h-5 w-5"
                         aria-hidden="true"

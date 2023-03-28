@@ -1,11 +1,11 @@
-import { FC, Fragment, useContext, useState } from "react";
+import { FC, Fragment, useState } from "react";
 import { Transition, Dialog } from "@headlessui/react";
 import {
   XCircleIcon,
   ExclamationCircleIcon,
 } from "@heroicons/react/24/outline";
-import { AdminContext } from "../../../../context";
 import { toast } from "react-hot-toast";
+import { useAnularReservacionMutation } from "@/store/slices/venta";
 
 interface Props {
   id: number;
@@ -15,11 +15,15 @@ export const AnularReservacion: FC<Props> = ({ id }) => {
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  const { anularReservacion } = useContext(AdminContext);
+  const [anularReservacion] = useAnularReservacionMutation();
   const onAnularReservacion = async () => {
-    await anularReservacion(id);
-    closeModal();
-    toast.success("Reservación Anulada satisfactoriamente.")
+    try {
+      await anularReservacion(id);
+      closeModal();
+      toast.success("Reservación Anulada satisfactoriamente.");
+    } catch (error: any) {
+      toast.error(error.data.message);
+    }
   };
   return (
     <>

@@ -5,6 +5,10 @@ import { useForm } from "react-hook-form";
 import { IReservacion } from "../../../../interfaces";
 import { AdminContext } from "../../../../context";
 import { toast } from "react-hot-toast";
+import {
+  useActualizarReservacionMutation,
+  useObtenerClientesQuery,
+} from "@/store/slices/venta";
 
 type FormData = IReservacion;
 
@@ -17,21 +21,24 @@ export const EditarReservacion: FC<Props> = ({ reservacion }) => {
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
   const { register, handleSubmit, reset } = useForm<FormData>();
-  const { actualizarReservacion, clientes } = useContext(AdminContext);
+
+  const { data: clientes } = useObtenerClientesQuery();
+
+  const [actualizarReservacion, { isError, isLoading }] =
+    useActualizarReservacionMutation();
 
   const onActualizarReservacion = async (data: FormData) => {
-    const { hasError, message } = await actualizarReservacion({
-      ...data,
-      id: reservacion.id,
-    });
-
-    if (hasError) {
-      toast.error(message);
-      return;
+    try {
+      await actualizarReservacion({
+        ...data,
+        id: reservacion.id,
+      }).unwrap();
+      toast.success("Reservación actualizada satisfactoriamente.");
+      closeModal();
+      reset();
+    } catch (error: any) {
+      toast.error(error.data.message);
     }
-    toast.success("Reservación actualizada satisfactoriamente.");
-    closeModal();
-    reset();
   };
 
   return (
@@ -97,7 +104,7 @@ export const EditarReservacion: FC<Props> = ({ reservacion }) => {
                               valueAsNumber: true,
                             })}
                           >
-                            {clientes.map((cliente) => (
+                            {clientes?.map((cliente) => (
                               <option
                                 key={`${cliente.tipo_cliente} ${cliente.id_persona}`}
                                 value={cliente.id}

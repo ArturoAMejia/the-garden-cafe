@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren, useEffect, useReducer, useState } from "react";
+import { FC, PropsWithChildren, useEffect, useReducer } from "react";
 import tgcApi from "../../../api/tgcApi";
 import { AdminContext } from "./AdminContext";
 import { adminReducer } from "./adminReducer";
@@ -26,26 +26,16 @@ import {
 import { IProductoCart } from "../../../interfaces/producto";
 
 export interface AdminState {
-  categorias: ICategoriaProducto[] | [];
-  unidades_medidas: IUnidadMedida[] | [];
-
   productos: IProductoCart[];
   inventarios: IInventario[];
-  marcas: IMarca[] | [];
   monedas: IMoneda[] | [];
   formas_pago: ICatFormaPago[] | [];
-  ordenes_compra: IOrdenCompra[];
-  ventas: IVenta[];
   pedidos: IPedido[];
-  compras: ICompra[];
   tipos_orden_compra: ITipoOrdenCompra[];
-  solicitudes_compra: ISolicitudCompra[];
   productos_inventario: IProducto[];
-  clientes: ICliente[];
   trabajadores: ITrabajador[];
   estado_civil: IEstadoCivil[];
   grupos_usuarios: IGrupoUsuario[];
-  reservaciones: IReservacion[];
   totalProductos: number;
   subtotal: number;
   total: number;
@@ -53,26 +43,16 @@ export interface AdminState {
 }
 
 const ADMIN_INITIAL_STATE: AdminState = {
-  categorias: [],
-
   productos: [],
   inventarios: [],
-  unidades_medidas: [],
-  ordenes_compra: [],
-  marcas: [],
   monedas: [],
-  ventas: [],
   pedidos: [],
-  compras: [],
   formas_pago: [],
   tipos_orden_compra: [],
-  solicitudes_compra: [],
   productos_inventario: [],
-  clientes: [],
   trabajadores: [],
   estado_civil: [],
   grupos_usuarios: [],
-  reservaciones: [],
   totalProductos: 0,
   subtotal: 0,
   total: 0,
@@ -122,237 +102,15 @@ export const AdminProvider: FC<PropsWithChildren> = ({ children }) => {
       };
     }
   };
-  const obtenerCategorias = async () => {
-    const { data } = await tgcApi.get<ICategoriaProducto[]>(
-      "api/catalogos/categoria-producto"
+
+  const obtenerTiposOrdenCompra = async () => {
+    const { data } = await tgcApi.get<ITipoOrdenCompra[]>(
+      "api/catalogos/tipo-orden-compra"
     );
-    dispatch({ type: "[Admin] - Obtener Categorias", payload: data });
-  };
-
-  const crearCategoria = async (
-    categoria: ICategoriaProducto
-  ): Promise<{ hasError: boolean; message: string }> => {
-    try {
-      await tgcApi.post("api/catalogos/categoria-producto", categoria);
-      obtenerCategorias();
-      return {
-        hasError: false,
-        message: "",
-      };
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        return {
-          hasError: true,
-          message: error.response?.data.message,
-        };
-      }
-
-      return {
-        hasError: true,
-        message: "No se pudo crear la categoria - intente de nuevo",
-      };
-    }
-  };
-
-  const actualizarCategorias = async (
-    categoria: ICategoriaProducto
-  ): Promise<{ hasError: boolean; message: string }> => {
-    try {
-      await tgcApi.put("api/catalogos/categoria-producto", categoria);
-      obtenerCategorias();
-      return {
-        hasError: false,
-        message: "",
-      };
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        return {
-          hasError: true,
-          message: error.response?.data.message,
-        };
-      }
-
-      return {
-        hasError: true,
-        message: "No se pudo crear la categoria - intente de nuevo",
-      };
-    }
-  };
-
-  const desactivarCategoria = async (categoria: ICategoriaProducto) => {
-    await tgcApi.patch("api/catalogos/categoria-producto", categoria);
-    obtenerCategorias();
-  };
-
-  const obtenerMarca = async () => {
-    const { data } = await tgcApi.get<IMarca[]>("api/catalogos/marca");
-    dispatch({ type: "[Inventario] - Obtener Marca", payload: data });
-  };
-
-  const crearMarca = async (
-    unidad_medida: IMarca
-  ): Promise<{
-    hasError: boolean;
-    message: string;
-  }> => {
-    try {
-      await tgcApi.post("api/catalogos/marca", unidad_medida);
-      obtenerMarca();
-      return {
-        hasError: false,
-        message: "",
-      };
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        return {
-          hasError: true,
-          message: error.response?.data.message,
-        };
-      }
-
-      return {
-        hasError: true,
-        message: "No se pudo crear la unidad de medida - intente de nuevo",
-      };
-    }
-  };
-
-  const actualizarMarca = async (
-    unidad_medida: IMarca
-  ): Promise<{ hasError: boolean; message: string }> => {
-    try {
-      await tgcApi.put<IMarca>("api/catalogos/marca", unidad_medida);
-      obtenerMarca();
-      return {
-        hasError: false,
-        message: "",
-      };
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        return {
-          hasError: true,
-          message: error.response?.data.message,
-        };
-      }
-
-      return {
-        hasError: true,
-        message: "No se pudo actualizar la unidad de medida - intente de nuevo",
-      };
-    }
-  };
-
-  const desactivarMarca = async (
-    id: number
-  ): Promise<{ hasError: boolean; message: string }> => {
-    try {
-      await tgcApi.patch<IUnidadMedida>("api/catalogos/marca", { id });
-      obtenerMarca();
-      return {
-        hasError: false,
-        message: "",
-      };
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        return {
-          hasError: true,
-          message: error.response?.data.message,
-        };
-      }
-
-      return {
-        hasError: true,
-        message: "No se pudo desactivar la unidad de medida - intente de nuevo",
-      };
-    }
-  };
-
-  const obtenerUnidadMedida = async () => {
-    const { data } = await tgcApi.get<IUnidadMedida[]>(
-      "api/catalogos/unidad-medida"
-    );
-    dispatch({ type: "[Inventario] - Obtener Unidad Medidas", payload: data });
-  };
-
-  const crearUnidadMedida = async (
-    unidad_medida: IUnidadMedida
-  ): Promise<{
-    hasError: boolean;
-    message: string;
-  }> => {
-    try {
-      await tgcApi.post("api/catalogos/unidad-medida", unidad_medida);
-      obtenerUnidadMedida();
-      return {
-        hasError: false,
-        message: "",
-      };
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        return {
-          hasError: true,
-          message: error.response?.data.message,
-        };
-      }
-
-      return {
-        hasError: true,
-        message: "No se pudo crear la unidad de medida - intente de nuevo",
-      };
-    }
-  };
-
-  const actualizarUnidadMedida = async (
-    unidad_medida: IUnidadMedida
-  ): Promise<{ hasError: boolean; message: string }> => {
-    try {
-      await tgcApi.put<IUnidadMedida>(
-        "api/catalogos/unidad-medida",
-        unidad_medida
-      );
-      obtenerUnidadMedida();
-      return {
-        hasError: false,
-        message: "",
-      };
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        return {
-          hasError: true,
-          message: error.response?.data.message,
-        };
-      }
-
-      return {
-        hasError: true,
-        message: "No se pudo actualizar la unidad de medida - intente de nuevo",
-      };
-    }
-  };
-
-  const desactivarUnidadMedida = async (
-    id: number
-  ): Promise<{ hasError: boolean; message: string }> => {
-    try {
-      await tgcApi.patch<IUnidadMedida>("api/catalogos/unidad-medida", { id });
-      obtenerUnidadMedida();
-      return {
-        hasError: false,
-        message: "",
-      };
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        return {
-          hasError: true,
-          message: error.response?.data.message,
-        };
-      }
-
-      return {
-        hasError: true,
-        message: "No se pudo desactivar la unidad de medida - intente de nuevo",
-      };
-    }
+    dispatch({
+      type: "[Compra] - Obtener Tipos de Orden de Compra",
+      payload: data,
+    });
   };
 
   const añadirProductoOrden = (producto: IProductoCart) => {
@@ -393,114 +151,8 @@ export const AdminProvider: FC<PropsWithChildren> = ({ children }) => {
     });
   };
 
-
   const solicitudCompleta = () => {
     dispatch({ type: "[Compra] - Solicitud Completada" });
-  };
-
-
-  const obtenerTiposOrdenCompra = async () => {
-    const { data } = await tgcApi.get<ITipoOrdenCompra[]>(
-      "api/catalogos/tipo-orden-compra"
-    );
-    dispatch({
-      type: "[Compra] - Obtener Tipos de Orden de Compra",
-      payload: data,
-    });
-  };
-
-  const obtenerProductos = async () => {
-    const { data } = await tgcApi.get<IProducto[]>("api/inventario/producto");
-    dispatch({ type: "[Inventario] - Obtener Productos", payload: data });
-  };
-
-  const crearProducto = async (
-    producto: IProducto
-  ): Promise<{
-    hasError: boolean;
-    message: string;
-  }> => {
-    try {
-      await tgcApi.post("api/inventario/producto", producto);
-      obtenerProductos();
-      return {
-        hasError: false,
-        message: "",
-      };
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        return {
-          hasError: true,
-          message: error.response?.data.message,
-        };
-      }
-
-      return {
-        hasError: true,
-        message: "No se pudo crear el producto - intente de nuevo",
-      };
-    }
-  };
-
-  const obtenerClientes = async () => {
-    const { data } = await tgcApi.get<ICliente[]>("api/venta/cliente");
-    dispatch({ type: "[Ventas] - Obtener Clientes", payload: data });
-  };
-
-  const crearCliente = async (
-    cliente: ICliente
-  ): Promise<{
-    hasError: boolean;
-    message: string;
-  }> => {
-    try {
-      await tgcApi.post<ICliente>("api/venta/cliente", cliente);
-      obtenerClientes();
-      return {
-        hasError: false,
-        message: "",
-      };
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        return {
-          hasError: true,
-          message: error.message,
-        };
-      }
-      return {
-        hasError: true,
-        message: "No se pudo crear el cliente - intente nuevamente.",
-      };
-    }
-  };
-
-  const actualizarCliente = async (
-    cliente: ICliente
-  ): Promise<{ hasError: boolean; message: string }> => {
-    try {
-      await tgcApi.put("api/venta/cliente", cliente);
-      obtenerClientes();
-      return {
-        hasError: false,
-        message: "",
-      };
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        return {
-          hasError: true,
-          message: error.message,
-        };
-      }
-      return {
-        hasError: true,
-        message: "No se puedo actualizar el cliente, intente nuevamente.",
-      };
-    }
-  };
-
-  const desactivarCliente = async (id: number) => {
-    await tgcApi.patch("api/venta/cliente", { id });
-    obtenerClientes();
   };
 
   const crearPedido = async (
@@ -532,70 +184,6 @@ export const AdminProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const anularPedido = async (id: number) => {
     await tgcApi.patch("api/pedido", { id });
-  };
-
-  const obtenerReservaciones = async () => {
-    const { data } = await tgcApi.get<IReservacion[]>("api/venta/reservacion");
-    dispatch({ type: "[Ventas] - Obtener Reservaciones", payload: data });
-  };
-
-  const crearReservacion = async (
-    reservacion: IReservacion
-  ): Promise<{
-    hasError: boolean;
-    message: string;
-  }> => {
-    try {
-      await tgcApi.post("api/venta/reservacion", reservacion);
-      obtenerReservaciones();
-      return {
-        hasError: false,
-        message: "",
-      };
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        return {
-          hasError: true,
-          message: error.message,
-        };
-      }
-      return {
-        hasError: true,
-        message: "No se pudo realizar la reservación - intente nuevamente",
-      };
-    }
-  };
-
-  const actualizarReservacion = async (
-    reservacion: IReservacion
-  ): Promise<{
-    hasError: boolean;
-    message: string;
-  }> => {
-    try {
-      await tgcApi.put("api/venta/reservacion", reservacion);
-      obtenerReservaciones();
-      return {
-        hasError: false,
-        message: "",
-      };
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        return {
-          hasError: true,
-          message: error.message,
-        };
-      }
-      return {
-        hasError: true,
-        message: "No se pudo realizar la reservación - intente nuevamente",
-      };
-    }
-  };
-
-  const anularReservacion = async (id: number) => {
-    await tgcApi.patch("api/venta/reservacion", { id });
-    obtenerReservaciones();
   };
 
   const obtenerMonedas = async () => {
@@ -746,11 +334,6 @@ export const AdminProvider: FC<PropsWithChildren> = ({ children }) => {
   const desactivarFormaPago = async (id: number) => {
     const { data } = await tgcApi.patch("api/catalogos/forma-pago", { id });
     dispatch({ type: "[Ventas] - Desactivar Formas Pago", payload: data });
-  };
-
-  const obtenerVentas = async () => {
-    const { data } = await tgcApi.get<IVenta[]>("api/venta");
-    dispatch({ type: "[Ventas] - Obtener Ventas", payload: data });
   };
 
   const obtenerPedidos = async () => {
@@ -995,8 +578,6 @@ export const AdminProvider: FC<PropsWithChildren> = ({ children }) => {
     obtenerGrupoUsuario();
   };
 
-
-
   const cargarPedido = (productos: IProductoCart[]) => {
     dispatch({ type: "[Compra] - Cargar Orden compra", payload: productos });
   };
@@ -1013,36 +594,6 @@ export const AdminProvider: FC<PropsWithChildren> = ({ children }) => {
     obtenerTrabajadores();
   }, []);
 
-
-  useEffect(() => {
-    obtenerCategorias();
-  }, []);
-
-
-  useEffect(() => {
-    obtenerTiposOrdenCompra();
-  }, []);
-
-  useEffect(() => {
-    obtenerUnidadMedida();
-  }, []);
-
-  useEffect(() => {
-    obtenerMarca();
-  }, []);
-
-  useEffect(() => {
-    obtenerProductos();
-  }, []);
-
-  useEffect(() => {
-    obtenerClientes();
-  }, []);
-
-  useEffect(() => {
-    obtenerReservaciones();
-  }, []);
-
   useEffect(() => {
     obtenerMonedas();
   }, []);
@@ -1052,11 +603,11 @@ export const AdminProvider: FC<PropsWithChildren> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    obtenerVentas();
+    obtenerPedidos();
   }, []);
 
   useEffect(() => {
-    obtenerPedidos();
+    obtenerTiposOrdenCompra();
   }, []);
 
   useEffect(() => {
@@ -1082,37 +633,18 @@ export const AdminProvider: FC<PropsWithChildren> = ({ children }) => {
         ...state,
         obtenerInventarios,
         crearInventario,
-        crearCategoria,
-        actualizarCategorias,
-        desactivarCategoria,
         añadirProductoOrden,
         actualizarCantidadProducto,
         quitarProducto,
         solicitudCompleta,
-        crearUnidadMedida,
-        actualizarUnidadMedida,
-        desactivarUnidadMedida,
-        crearMarca,
-        actualizarMarca,
-        desactivarMarca,
-        crearProducto,
-        crearCliente,
-        actualizarCliente,
-        desactivarCliente,
         crearPedido,
         anularPedido,
-        obtenerReservaciones,
-        crearReservacion,
-        actualizarReservacion,
-        anularReservacion,
         crearMoneda,
         actualizarMoneda,
         desactivarMoneda,
         crearFormaPago,
         actualizarFormaPago,
         desactivarFormaPago,
-        realizarVenta,
-        anularVenta,
         cargarPedido,
         registrarTrabajador,
         actualizarTrabajador,

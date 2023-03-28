@@ -2,28 +2,13 @@ import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { EnvelopeIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
 
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { useCrearProveedorMutation } from "@/store/slices/compra/compraApi";
 
 import { Error } from "../../../landing/Error";
-
-type FormData = {
-  cedula_ruc: string;
-  nombre: string;
-  correo: string;
-  apellido_razon_social: string;
-  fecha_nacimiento_constitucion: Date;
-  telefono: string;
-  celular: string;
-  direccion_domicilio: string;
-  tipo_persona: string;
-  genero: string;
-  sector_comercial: string;
-  nacionalidad: string;
-};
 
 const schema = z.object({
   cedula_ruc: z
@@ -51,51 +36,27 @@ export const AgregarProveedor = () => {
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  // const { crearProveedor } = useContext(AdminContext);
-  const [crearProveedor, { isError, error }] = useCrearProveedorMutation();
+  type FormSchemaType = z.infer<typeof schema>;
+
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
-  } = useForm<FormData>({ resolver: zodResolver(schema) });
+    formState: { errors, isSubmitting },
+  } = useForm<FormSchemaType>({ resolver: zodResolver(schema) });
 
-  const onRegisterProveedor = async ({
-    cedula_ruc,
-    nombre,
-    apellido_razon_social,
-    correo,
-    fecha_nacimiento_constitucion,
-    telefono,
-    celular,
-    direccion_domicilio,
-    tipo_persona,
-    genero,
-    sector_comercial,
-    nacionalidad,
-  }: FormData) => {
-    console.log("test");
-    crearProveedor({
-      cedula_ruc,
-      nombre,
-      correo,
-      apellido_razon_social,
-      fecha_nacimiento_constitucion,
-      telefono,
-      celular,
-      direccion_domicilio,
-      tipo_persona,
-      genero,
-      sector_comercial,
-      nacionalidad,
-    })
-      .unwrap()
-      .then((res) => {
-        toast.success("Proveedor agregado correctamente.");
-        closeModal();
-        reset();
-      })
-      .catch((error) => toast.error(error.data.message));
+  const [crearProveedor, { isError, error }] = useCrearProveedorMutation();
+
+  const onRegisterProveedor: SubmitHandler<FormSchemaType> = async (form) => {
+    try {
+      console.log(form);
+      // await crearProveedor(form).unwrap();
+      // toast.success("Proveedor agregado correctamente.");
+      // closeModal();
+      // reset();
+    } catch (error: any) {
+      toast.error(error.data.message);
+    }
   };
 
   return (

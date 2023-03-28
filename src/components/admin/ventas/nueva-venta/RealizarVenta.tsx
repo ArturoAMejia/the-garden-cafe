@@ -3,7 +3,7 @@ import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import React, { FC, Fragment, useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { AdminContext, AuthContext, CartContext } from "../../../../context";
+import { AdminContext, CartContext } from "../../../../context";
 import { IMoneda, IPedido } from "../../../../interfaces";
 import { useCrearVentaMutation } from "@/store/slices/venta";
 
@@ -20,7 +20,7 @@ interface Props {
 
 export const RealizarVenta: FC<Props> = ({ pedido }) => {
   const { cargarPedido, subtotal } = useContext(CartContext);
-  const { monedas, formas_pago, realizarVenta } = useContext(AdminContext);
+  const { monedas, formas_pago } = useContext(AdminContext);
 
   const { id, id_trabajador, id_cliente, detalle_pedido } = pedido;
   const productosPedido = detalle_pedido.map((producto: any) => ({
@@ -37,11 +37,11 @@ export const RealizarVenta: FC<Props> = ({ pedido }) => {
   const openModal = () => {
     cargarPedido(
       pedido.detalle_pedido.map((producto: any) => ({
-        id: producto.id_producto,
+        id: producto.id_producto_elaborado,
         precio: producto.precio,
-        nombre: producto.producto.nombre,
-        descripcion: producto.producto.descripcion,
-        imagen: producto.producto.imagen,
+        nombre: producto.producto_elaborado.nombre,
+        descripcion: producto.producto_elaborado.descripcion,
+        imagen: producto.producto_elaborado.imagen,
         cantidad: producto.cantidad,
       }))
     );

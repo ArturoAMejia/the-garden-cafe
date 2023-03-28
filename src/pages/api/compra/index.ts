@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { prisma } from "./../../../database";
 import { ICompra } from "../../../interfaces";
+import { prisma } from "@/database";
 
 type Data =
   | {
@@ -134,17 +134,26 @@ const crearCompra = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     })),
   });
 
-
-  await prisma.inventario.updateMany({
-    data: productos.map((producto: any) => ({
-      stock_actual: {
-        increment: producto.cantidad,
-      },
-    })),
-    where: productos.map((producto: any) => ({
-      id_producto: producto.id,
-    })),
-  });
+  await prisma.$transaction(
+    productos.map((producto: any) =>
+      prisma.inventario.upsert({
+        where: {
+          id_producto: producto.id,
+        },
+        update: {
+          stock_actual: {
+            increment: producto.cantidad,
+          },
+        },
+        create: {
+          id_producto: producto.id,
+          stock_min: 1,
+          stock_max: 100,
+          stock_actual: producto.cantidad,
+        },
+      })
+    )
+  );
 
   await prisma.orden_compra.update({
     data: {

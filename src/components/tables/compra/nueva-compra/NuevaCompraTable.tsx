@@ -75,7 +75,7 @@ export const NuevaCompraTable = () => {
             <RealizarCompra orden={props.row.original} />
             <AnularCompra id={props.row.original.id} />
             <Link
-              href={`/admin/orden/orden-realizados/${props.row.original.id}`}
+              href={`/admin/compra/ordenes/${props.row.original.id}`}
               passHref
               className="flex flex-row items-center gap-2 pt-1 text-center text-black"
             >
@@ -93,7 +93,7 @@ export const NuevaCompraTable = () => {
 
   const table = useReactTable({
     data: ordenes_compra?.filter((ordenes: IOrdenCompra) => {
-      return ordenes.id_estado === 1
+      return ordenes.id_estado === 1;
     })!,
     columns,
     getCoreRowModel: getCoreRowModel(),

@@ -13,4 +13,5 @@ export interface IUser {
   id_perfil: number;
   tipo_usuario: string;
   id_persona: number;
+  id_cliente?: number;
 }

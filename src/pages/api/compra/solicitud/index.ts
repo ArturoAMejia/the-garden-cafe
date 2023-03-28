@@ -54,7 +54,15 @@ const obtenerSolicitudesCompra = async (res: NextApiResponse<Data>) => {
       id_estado: true,
       cat_estado: true,
       motivo: true,
-      detalle_solicitud_compra: true,
+      detalle_solicitud_compra: {
+        select: {
+          id_producto: true,
+          producto: true,
+          monto: true,
+          cantidad: true,
+          precio_unitario: true,
+        },
+      },
       descuento: true,
       impuesto: true,
       subtotal: true,

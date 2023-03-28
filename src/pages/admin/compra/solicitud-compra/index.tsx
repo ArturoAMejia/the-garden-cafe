@@ -1,11 +1,7 @@
 import { useContext } from "react";
 
 import { AdminLayout } from "../../../../components/Layout/AdminLayout";
-import {
-  AgregarSolicitudCompra,
-  FilterBar,
-  ResumenPedido,
-} from "../../../../components";
+import { FilterBar, ResumenPedido } from "../../../../components";
 
 import { AdminContext } from "../../../../context";
 import { useObtenerIngredientesQuery } from "@/store/slices/inventario";
@@ -20,7 +16,6 @@ const NuevaOrdenCompraPage = () => {
     tax,
     total,
     añadirProductoOrden,
-    unidades_medidas,
   } = useContext(AdminContext);
 
   const { data: prod, isLoading } = useObtenerIngredientesQuery();
@@ -41,6 +36,8 @@ const NuevaOrdenCompraPage = () => {
             <>Cargando...</>
           ) : (
             <FilterBar
+              isIngredient={true}
+              isPlate={false}
               productos={prod!}
               añadirProductoOrden={añadirProductoOrden}
             />

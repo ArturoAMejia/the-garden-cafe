@@ -1,90 +1,105 @@
 import {
+  ColumnDef,
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 import {
   ICatEstado,
   IComprobante,
   ISolicitudCompra,
   ITrabajador,
 } from "../../../../interfaces";
-import { AdminContext } from "../../../../context";
+import { AdminContext, CartContext } from "../../../../context";
 import { AceptarOrden, RechazarOrden } from "../../../admin";
 
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { useObtenerSolicitudesCompraQuery } from "@/store/slices/compra/compraApi";
+import Link from "next/link";
+import { IdentificationIcon } from "@heroicons/react/24/outline";
 
 const columnHelper = createColumnHelper<ISolicitudCompra>();
 
-const columns = [
-  columnHelper.accessor<"comprobante", IComprobante>("comprobante", {
-    header: "Num Comprobante",
-    cell: (info) => info.getValue().numeracion,
-  }),
-  columnHelper.accessor<"trabajador", ITrabajador>("trabajador", {
-    header: "Trabajador",
-    cell: (info) =>
-      `${info.getValue().persona?.nombre} ${
-        info.getValue().persona?.apellido_razon_social
-      }`,
-  }),
-  columnHelper.accessor<"motivo", string>("motivo", {
-    header: "Motivo de la Solicitud",
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor<"total", number>("total", {
-    header: "Total",
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor<"fecha_solicitud", Date>("fecha_solicitud", {
-    header: "Fecha de la Solicitud",
-    cell: (info) =>
-      format(new Date(info.getValue()), "EEEE dd 'de' MMMM 'del' yyyy", {
-        locale: es,
-      }),
-  }),
-  columnHelper.accessor<"fecha_vigencia", Date>("fecha_vigencia", {
-    header: "Fecha Vigencia",
-    cell: (info) =>
-      format(new Date(info.getValue()), "EEEE dd 'de' MMMM 'del' yyyy", {
-        locale: es,
-      }),
-  }),
-  columnHelper.accessor<"cat_estado", ICatEstado>("cat_estado", {
-    header: "Estado",
-    cell: (props) =>
-      props.getValue().nombre === "Activo" ? (
-        <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-          {props.getValue().nombre}
-        </span>
-      ) : props.getValue().nombre === "Utilizable" ? (
-        <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
-          {props.getValue().nombre}
-        </span>
-      ) : (
-        <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
-          {props.getValue().nombre}
-        </span>
-      ),
-  }),
-  columnHelper.display({
-    id: "actions",
-    header: () => <span>Acciones</span>,
-    cell: (props) => (
-      <div className="flex justify-center gap-2">
-        <AceptarOrden solicitud_compra={props.row.original} />
-        <RechazarOrden solicitud_compra={props.row.original} />
-      </div>
-    ),
-  }),
-];
-
 export const OrdenCompraTable = () => {
+  const { cargarPedido } = useContext(CartContext);
+
+  const columns = useMemo<ColumnDef<ISolicitudCompra, any>[]>(
+    () => [
+      columnHelper.accessor<"comprobante", IComprobante>("comprobante", {
+        header: "Num Comprobante",
+        cell: (info) => info.getValue().numeracion,
+      }),
+      columnHelper.accessor<"trabajador", ITrabajador>("trabajador", {
+        header: "Trabajador",
+        cell: (info) =>
+          `${info.getValue().persona?.nombre} ${
+            info.getValue().persona?.apellido_razon_social
+          }`,
+      }),
+      columnHelper.accessor<"motivo", string>("motivo", {
+        header: "Motivo de la Solicitud",
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor<"total", number>("total", {
+        header: "Total",
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor<"fecha_solicitud", Date>("fecha_solicitud", {
+        header: "Fecha de la Solicitud",
+        cell: (info) =>
+          format(new Date(info.getValue()), "EEEE dd 'de' MMMM 'del' yyyy", {
+            locale: es,
+          }),
+      }),
+      columnHelper.accessor<"fecha_vigencia", Date>("fecha_vigencia", {
+        header: "Fecha Vigencia",
+        cell: (info) =>
+          format(new Date(info.getValue()), "EEEE dd 'de' MMMM 'del' yyyy", {
+            locale: es,
+          }),
+      }),
+      columnHelper.accessor<"cat_estado", ICatEstado>("cat_estado", {
+        header: "Estado",
+        cell: (props) =>
+          props.getValue().nombre === "Activo" ? (
+            <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+              {props.getValue().nombre}
+            </span>
+          ) : props.getValue().nombre === "Utilizable" ? (
+            <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
+              {props.getValue().nombre}
+            </span>
+          ) : (
+            <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
+              {props.getValue().nombre}
+            </span>
+          ),
+      }),
+      columnHelper.display({
+        id: "actions",
+        header: () => <span>Acciones</span>,
+        cell: (props) => (
+          <div className="flex justify-center gap-2">
+            <AceptarOrden solicitud_compra={props.row.original} />
+            <RechazarOrden solicitud_compra={props.row.original} />
+            <Link
+              href={`/admin/compra/solicitud-compra/${props.row.original.id}`}
+              passHref
+              className="flex flex-row items-center gap-2 pt-1 text-center text-black"
+            >
+              <IdentificationIcon className="h-6 w-6 text-black" />
+              Ver Detalles
+            </Link>
+          </div>
+        ),
+      }),
+    ],
+    []
+  );
   const { data: solicitudes_compra, isLoading } =
     useObtenerSolicitudesCompraQuery();
 

@@ -59,15 +59,14 @@ const crearCliente = async (
   res: NextApiResponse<Data>
 ) => {
   const {
-    persona: {
-      cedula_ruc,
-      nombre,
-      apellido_razon_social,
-      fecha_nacimiento_constitucion,
-      telefono,
-      direccion_domicilio,
-      correo,
-    },
+    cedula_ruc,
+    nombre,
+    apellido_razon_social,
+    fecha_nacimiento_constitucion,
+    telefono,
+    direccion_domicilio,
+    correo,
+
     tipo_cliente,
     genero = "",
   } = req.body;
@@ -165,7 +164,7 @@ const actualizarCliente = async (
       id: Number(id),
     },
   });
-  
+
   const persona = await prisma.persona.update({
     data: {
       nombre: nombre,

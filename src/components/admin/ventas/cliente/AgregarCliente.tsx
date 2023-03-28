@@ -1,34 +1,59 @@
-import { Fragment, useContext, useState } from "react";
+import { Fragment, useState } from "react";
 
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
 
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
-import { ICliente } from "../../../../interfaces";
 import { Transition, Dialog } from "@headlessui/react";
-import { AdminContext } from "../../../../context";
+import * as z from "zod";
 import { useCrearClienteMutation } from "@/store/slices/venta";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Error } from "../../../landing/Error";
 
-type FormData = ICliente;
+const schema = z.object({
+  cedula_ruc: z
+    .string()
+    .regex(new RegExp("^[0-9]{3}-[0-9]{6}-[0-9]{4}[aA-zZ]{1}$"), {
+      message: "Formato de cédula no válido",
+    }),
+  nombre: z.string().regex(new RegExp("^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑs]{2,50}$")),
+  correo: z.string(),
+  apellido_razon_social: z
+    .string()
+    .regex(new RegExp("^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑs-]{2,50}$")),
+  fecha_nacimiento_constitucion: z.date(),
+  telefono: z.string(),
+  direccion_domicilio: z.string(),
+  tipo_cliente: z.string(),
+});
 
 export const AgregarCliente = () => {
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
-  const { register, handleSubmit, reset } = useForm<FormData>();
 
-  const [crearCliente] = useCrearClienteMutation();
+  type FormSchemaType = z.infer<typeof schema>;
 
-  const onRegistrarCliente = async (form: FormData) => {
-    crearCliente(form)
-      .unwrap()
-      .then((res) => {
-        toast.success("Cliente creado satisfactoriamente.");
-        closeModal();
-        reset();
-      })
-      .catch((error) => toast.error(error.data.message));
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { isSubmitting, errors },
+  } = useForm<FormSchemaType>({ resolver: zodResolver(schema) });
+
+  const [crearCliente, { isLoading, isError }] = useCrearClienteMutation();
+
+  const onRegistrarCliente: SubmitHandler<FormSchemaType> = async (form) => {
+    console.log(form);
+    try {
+      await crearCliente(form).unwrap();
+      toast.success("Cliente creado satisfactoriamente.");
+      closeModal();
+      reset();
+    } catch (error: any) {
+      toast.error(error.data.message);
+    }
   };
 
   return (
@@ -90,10 +115,13 @@ export const AgregarCliente = () => {
                           <input
                             type="text"
                             id="nombre"
-                            {...register("persona.cedula_ruc")}
+                            {...register("cedula_ruc")}
                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             placeholder="001-010101-0101A"
                           />
+                          {errors.cedula_ruc && (
+                            <Error error={errors.cedula_ruc.message} />
+                          )}
                         </div>
                       </div>
                       {/* Nombre */}
@@ -108,7 +136,7 @@ export const AgregarCliente = () => {
                           <input
                             type="text"
                             id="nombre"
-                            {...register("persona.nombre")}
+                            {...register("nombre")}
                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             placeholder="Nombre"
                           />
@@ -125,7 +153,7 @@ export const AgregarCliente = () => {
                           <input
                             type="text"
                             id="nombre"
-                            {...register("persona.apellido_razon_social")}
+                            {...register("apellido_razon_social")}
                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             placeholder="Apellido Razón Social"
                           />
@@ -143,10 +171,9 @@ export const AgregarCliente = () => {
                           <input
                             type="date"
                             id="nombre"
-                            {...register(
-                              "persona.fecha_nacimiento_constitucion",
-                              { valueAsDate: true }
-                            )}
+                            {...register("fecha_nacimiento_constitucion", {
+                              valueAsDate: true,
+                            })}
                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                           />
                         </div>
@@ -163,7 +190,7 @@ export const AgregarCliente = () => {
                           <input
                             type="tel"
                             id="nombre"
-                            {...register("persona.telefono")}
+                            {...register("telefono")}
                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             placeholder="88119900"
                           />
@@ -181,7 +208,7 @@ export const AgregarCliente = () => {
                           <input
                             type="text"
                             id="nombre"
-                            {...register("persona.direccion_domicilio")}
+                            {...register("direccion_domicilio")}
                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             placeholder="Dirección"
                           />
@@ -200,7 +227,7 @@ export const AgregarCliente = () => {
                           <input
                             type="email"
                             id="nombre"
-                            {...register("persona.correo")}
+                            {...register("correo")}
                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             placeholder="ejemplo@ejemplo.com"
                           />
@@ -230,6 +257,7 @@ export const AgregarCliente = () => {
                     <button
                       type="submit"
                       className="mt-4 inline-flex items-center rounded-md border border-transparent bg-[#388C04] px-4 py-2 font-medium text-white shadow-sm"
+                      disabled={isSubmitting || isLoading}
                     >
                       Agregar Cliente
                       <PlusCircleIcon
