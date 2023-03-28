@@ -5,6 +5,7 @@ import {
   ISubCategoriaProducto,
   IUnidadMedida,
   ITipoCategoria,
+  IInventario,
 } from "@/interfaces";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
 
@@ -23,6 +24,7 @@ export const inventarioApi = createApi({
     "Subcategorias",
     "Tipo de Productos",
     "Tipo de Categorias",
+    "Inventario",
   ],
   endpoints: (builder) => ({
     obtenerProductos: builder.query<IProducto[], void>({
@@ -249,6 +251,18 @@ export const inventarioApi = createApi({
       }),
       invalidatesTags: ["Tipo de Categorias"],
     }),
+    obtenerInventario: builder.query<IInventario[], void>({
+      query: () => "/inventario",
+      providesTags: ["Inventario"],
+    }),
+    crearInventario: builder.mutation<IInventario, any>({
+      query: (inventario) => ({
+        url: "/inventario",
+        method: "POST",
+        body: inventario,
+      }),
+      invalidatesTags: ["Inventario"],
+    }),
   }),
 });
 
@@ -293,4 +307,7 @@ export const {
   useCrearTipoCategoriaMutation,
   useActualizarTipoCategoriaMutation,
   useDesactivarTipoCategoriaMutation,
+  // Inventario
+  useObtenerInventarioQuery,
+  useCrearInventarioMutation,
 } = inventarioApi;

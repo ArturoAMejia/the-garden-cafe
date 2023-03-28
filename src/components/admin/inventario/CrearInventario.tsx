@@ -6,13 +6,19 @@ import toast from "react-hot-toast";
 import { AdminContext } from "../../../context";
 
 import { IInventario } from "../../../interfaces";
+import {
+  useCrearInventarioMutation,
+  useObtenerProductosQuery,
+} from "@/store/slices/inventario";
 
 type FormData = IInventario;
 
 export const AgregarInventario = () => {
-  const { productos_inventario, crearInventario } = useContext(AdminContext);
   const { register, handleSubmit, reset, setValue, getValues } =
     useForm<FormData>();
+
+  const { data: productos, isLoading } = useObtenerProductosQuery();
+  const [crearInventario] = useCrearInventarioMutation();
 
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
@@ -24,21 +30,23 @@ export const AgregarInventario = () => {
     stock_max,
     stock_min,
   }: FormData) => {
-    const { hasError, message } = await crearInventario(
-      id_producto,
-      stock_min,
-      stock_max,
-      stock_actual
-    );
-    if (hasError) {
-      toast.error(message!);
-      return;
+    try {
+      await crearInventario({
+        id_producto,
+        stock_min,
+        stock_max,
+        stock_actual,
+      }).unwrap();
+      toast.success("Inventario creado correctamente");
+      closeModal();
+      reset();
+    } catch (error: any) {
+      toast.error(error.data.message);
     }
-
-    toast.success("Inventario creado correctamente");
-    closeModal();
-    reset();
   };
+
+  if (isLoading) return <>Cargando...</>;
+
   return (
     <>
       <div className="mx-2">
@@ -105,7 +113,7 @@ export const AgregarInventario = () => {
                             })}
                             className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
                           >
-                            {productos_inventario.map((prod) => (
+                            {productos?.map((prod) => (
                               <option key={prod.nombre} value={prod.id}>
                                 {prod.nombre}
                               </option>

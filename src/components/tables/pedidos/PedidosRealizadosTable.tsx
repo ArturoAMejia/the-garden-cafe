@@ -27,8 +27,6 @@ interface Props {
   pedidos: IPedido[];
 }
 export const PedidosRealizadosTable: FC<Props> = ({ pedidos }) => {
-  console.log(pedidos);
-
   const { cargarPedido } = useContext(CartContext);
 
   const columns = useMemo<ColumnDef<IPedido, any>[]>(

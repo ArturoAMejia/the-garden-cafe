@@ -67,7 +67,7 @@ export const CerrarCaja: FC<Props> = ({ pedido, cajas }) => {
         return;
       }
 
-      toast.error("No se pudo abrir la caja.");
+      toast.error("No se pudo cerrar la caja.");
     }
 
     reset();
@@ -167,6 +167,7 @@ export const CerrarCaja: FC<Props> = ({ pedido, cajas }) => {
                             {monedas.map((moneda: IMoneda) => (
                               <option key={moneda.id} value={moneda.id}>
                                 {moneda.nombre}
+
                               </option>
                             ))}
                           </select>
@@ -197,7 +198,7 @@ export const CerrarCaja: FC<Props> = ({ pedido, cajas }) => {
                       type="submit"
                       className="mt-4 inline-flex items-center rounded-md border border-transparent bg-[#388C04] px-4 py-2 font-medium text-white shadow-sm"
                     >
-                      Abrir Caja
+                      Cerrar Caja
                       <PlusCircleIcon
                         className="ml-2 -mr-1 h-5 w-5"
                         aria-hidden="true"

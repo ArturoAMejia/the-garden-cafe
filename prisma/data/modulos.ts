@@ -25,11 +25,6 @@ export const modulos = [
   },
   {
     id_estado: 1,
-    nombre: "Reservaciones",
-    descripcion: "Módulo de Reservaciones del sistema",
-  },
-  {
-    id_estado: 1,
     nombre: "Caja",
     descripcion: "Módulo de Caja del sistema",
     icono: "BanknotesIcon",
@@ -134,7 +129,7 @@ export const sub_modulos = [
   {
     id_modulo: 3,
     nombre: "Inventario",
-    url: "/admin/inventario/", 
+    url: "/admin/inventario/",
   },
   // Módulo de Pedidos
   {
@@ -154,38 +149,38 @@ export const sub_modulos = [
   },
   // Módulo de Caja
   {
-    id_modulo: 6,
+    id_modulo: 5,
     nombre: "Apertura",
     url: "/admin/caja/apertura",
   },
   {
-    id_modulo: 6,
+    id_modulo: 5,
     nombre: "Arqueo",
     url: "/admin/caja/arqueo",
   },
   {
-    id_modulo: 6,
+    id_modulo: 5,
     nombre: "Cierre",
     url: "/admin/caja/cierre",
   },
   {
-    id_modulo: 6,
+    id_modulo: 5,
     nombre: "Déposito del día",
     url: "/admin/caja/deposito-del-día",
   },
   {
-    id_modulo: 6,
+    id_modulo: 5,
     nombre: "Tesorería",
     url: "/admin/caja/tesoreria",
   },
   // Módulo de Usuarios
   {
-    id_modulo: 7,
+    id_modulo: 6,
     nombre: "Trabajadores",
     url: "/admin/user/trabajadores",
   },
   {
-    id_modulo: 7,
+    id_modulo: 6,
     nombre: "Grupo",
     url: "/admin/user/grupos",
   },
@@ -215,16 +210,11 @@ export const roles_modulos = [
   {
     id_rol: 1,
     id_modulo: 5,
-    nombre: "Modulo de Reservaciones",
-  },
-  {
-    id_rol: 1,
-    id_modulo: 6,
     nombre: "Modulo de Caja",
   },
   {
     id_rol: 1,
-    id_modulo: 7,
+    id_modulo: 6,
     nombre: "Modulo de Usuarios",
   },
   {
@@ -244,7 +234,7 @@ export const roles_modulos = [
   },
   {
     id_rol: 2,
-    id_modulo: 6,
+    id_modulo: 5,
     nombre: "Modulo de Caja",
   },
   {
@@ -254,7 +244,7 @@ export const roles_modulos = [
   },
   {
     id_rol: 3,
-    id_modulo: 6,
+    id_modulo: 5,
     nombre: "Modulo de Caja",
   },
   {
@@ -269,7 +259,7 @@ export const roles_modulos = [
   },
   {
     id_rol: 5,
-    id_modulo: 6,
+    id_modulo: 5,
     nombre: "Modulo de Caja",
   },
   {

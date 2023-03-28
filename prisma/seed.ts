@@ -114,7 +114,6 @@ const main = async (): Promise<void> => {
     await prisma.zona_preparacion.createMany({
       data: zona_preparacion,
     });
-
     await prisma.producto_elaborado.createMany({
       data: productos_elaborados,
     });

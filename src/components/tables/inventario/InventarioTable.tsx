@@ -15,8 +15,7 @@ import {
   IProducto,
   IUnidadMedida,
 } from "../../../interfaces";
-import { AdminContext } from "../../../context";
-import { useMenu } from "../../../hooks";
+import { useObtenerInventarioQuery } from "@/store/slices/inventario";
 
 const columnHelper = createColumnHelper<IInventario>();
 export const InventarioTable = () => {
@@ -50,7 +49,8 @@ export const InventarioTable = () => {
     []
   );
 
-  const { inventarios } = useContext(AdminContext);
+  const { data: inventarios, isLoading } = useObtenerInventarioQuery();
+
   const table = useReactTable({
     data: inventarios!,
     columns,
@@ -58,6 +58,7 @@ export const InventarioTable = () => {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
+  if (isLoading) return <>Cargando...</>;
   return (
     <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
       <table className="min-w-full divide-y divide-gray-300">

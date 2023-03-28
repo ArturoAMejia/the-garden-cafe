@@ -64,8 +64,6 @@ export const AceptarOrden: FC<Props> = ({ solicitud_compra }) => {
     }
   };
 
-  console.log(tipos_orden_compra);
-
   if (isLoading) return <>Cargando...</>;
 
   return (
