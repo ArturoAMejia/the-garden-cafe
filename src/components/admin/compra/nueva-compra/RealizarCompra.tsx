@@ -1,27 +1,14 @@
 import { Transition, Dialog } from "@headlessui/react";
 import {
   ExclamationCircleIcon,
-  PlusCircleIcon,
   XCircleIcon,
 } from "@heroicons/react/24/outline";
 import React, { FC, Fragment, useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { AdminContext, AuthContext, CartContext } from "../../../../context";
-import {
-  IMoneda,
-  IOrdenCompra,
-  IPedido,
-  ISolicitudCompra,
-} from "../../../../interfaces";
+import { AdminContext } from "../../../../context";
+import { IOrdenCompra } from "../../../../interfaces";
 import { useCrearCompraMutation } from "@/store/slices/compra";
-
-type FormData = {
-  id_proveedor: number;
-  id_forma_pago: number;
-  tipo_Compra: string;
-  descripcion: string;
-};
 
 interface Props {
   orden: IOrdenCompra;
@@ -31,7 +18,7 @@ export const RealizarCompra: FC<Props> = ({ orden }) => {
   const closeModal = () => setIsOpen(!isOpen);
 
   const [crearCompra] = useCrearCompraMutation();
-  const { cargarPedido, productos, subtotal } = useContext(AdminContext);
+  const { cargarPedido, subtotal } = useContext(AdminContext);
   const openModal = () => {
     cargarPedido(
       orden.detalle_orden_compra.map((producto: any) => ({
@@ -45,8 +32,6 @@ export const RealizarCompra: FC<Props> = ({ orden }) => {
     );
     setIsOpen(!isOpen);
   };
-
-  const { register, handleSubmit, reset } = useForm<FormData>();
 
   const {
     id,
@@ -63,20 +48,20 @@ export const RealizarCompra: FC<Props> = ({ orden }) => {
   }));
 
   const onRealizarCompra = async () => {
-    crearCompra({
-      id_proveedor,
-      id_trabajador: autorizado_por,
-      id_orden_compra: id,
-      productos: detalles,
-      descripcion: comprobante!.descripcion,
-      subtotal,
-    })
-      .unwrap()
-      .then((res) => {
-        toast.success("Compra guardada correctamente");
-        closeModal();
-      })
-      .catch((error) => toast.error(error.data.message));
+    try {
+      crearCompra({
+        id_proveedor,
+        id_trabajador: autorizado_por,
+        id_orden_compra: id,
+        productos: detalles,
+        descripcion: comprobante!.descripcion,
+        subtotal,
+      }).unwrap();
+      toast.success("Compra guardada correctamente");
+      closeModal();
+    } catch (error: any) {
+      toast.error(error.data.message);
+    }
   };
   return (
     <>
