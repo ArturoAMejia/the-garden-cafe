@@ -12,6 +12,12 @@ import {
   useObtenerSubcategoriasQuery,
   useObtenerUnidadesMedidaQuery,
 } from "@/store/slices/inventario";
+import {
+  AgregarCatProducto,
+  AgregarMarca,
+  AgregarUnidadMedida,
+} from "../../formularios";
+import { AgregarSubCategoriaProducto } from "../../formularios/catalogos/sub-categoria-producto/AgregarSubCategoriaProducto";
 
 type FormData = IProducto;
 
@@ -140,7 +146,11 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
                     as="h3"
                     className="text-xl font-bold leading-6 text-gray-900"
                   >
-                    Agregar Producto
+                    {isIngredient ? (
+                      <>Agregar Ingrediente</>
+                    ) : isProduct ? (
+                      <>Agregar Producto</>
+                    ) : null}
                   </Dialog.Title>
 
                   <form
@@ -190,7 +200,7 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
                         >
                           Categoria
                         </label>
-                        <div className="mt-1">
+                        <div className="mt-1 flex items-center">
                           <select
                             id="categoria"
                             {...register("id_categoria_producto", {
@@ -207,6 +217,7 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
                               </option>
                             ))}
                           </select>
+                          <AgregarCatProducto showMin={true} />
                         </div>
                       </div>
                       {/* Subcategoria */}
@@ -217,7 +228,7 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
                         >
                           Subcategoria
                         </label>
-                        <div className="mt-1">
+                        <div className="mt-1 flex items-center">
                           <select
                             id="categoria"
                             {...register("id_sub_categoria_producto", {
@@ -234,6 +245,7 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
                               </option>
                             ))}
                           </select>
+                          <AgregarSubCategoriaProducto showMin={true} />
                         </div>
                       </div>
                       {/* Marca */}
@@ -244,7 +256,7 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
                         >
                           Marca
                         </label>
-                        <div className="mt-1">
+                        <div className="mt-1 flex items-center">
                           <select
                             id="marca"
                             {...register("id_marca", {
@@ -258,6 +270,7 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
                               </option>
                             ))}
                           </select>
+                          <AgregarMarca showMin={true} />
                         </div>
                       </div>
                       {/* Unidad de Medida */}
@@ -268,7 +281,7 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
                         >
                           Unidad de medida
                         </label>
-                        <div className="mt-1">
+                        <div className="mt-1 flex items-center">
                           <select
                             id="unidad_medida"
                             {...register("id_unidad_medida", {
@@ -282,6 +295,7 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
                               </option>
                             ))}
                           </select>
+                          <AgregarUnidadMedida showMin={true} />
                         </div>
                       </div>
                       {/* Imagen */}
@@ -347,90 +361,6 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
                             id="fecha_fabricacion"
                             {...register("fecha_ingreso", {
                               valueAsDate: true,
-                            })}
-                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                          />
-                        </div>
-                      </div>
-                      {/* Estado
-                      <div className="mt-2">
-                        <label
-                          htmlFor="estado"
-                          className="block font-medium text-gray-700"
-                        >
-                          Estado
-                        </label>
-                        <div className="mt-1">
-                          <select
-                            id="estado"
-                            {...register("id_estado", {
-                              valueAsNumber: true,
-                            })}
-                            className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
-                          >
-                            {estados.map((estado) => (
-                              <option key={estado.nombre} value={estado.id}>
-                                {estado.nombre}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      </div> */}
-                      {/* Precio de compra */}
-                      <div className="mt-2">
-                        <label
-                          htmlFor="Precio de compra"
-                          className="block font-medium text-gray-700"
-                        >
-                          Precio de compra
-                        </label>
-                        <div className="mt-1">
-                          <input
-                            type="number"
-                            id="Precio de compra"
-                            max={50}
-                            {...register("precio_compra", {
-                              valueAsNumber: true,
-                            })}
-                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                          />
-                        </div>
-                      </div>
-                      {/* Margen de Ganancias */}
-                      <div className="mt-2">
-                        <label
-                          htmlFor="Margen de Ganancias"
-                          className="block font-medium text-gray-700"
-                        >
-                          Margen de Ganancias
-                        </label>
-                        <div className="mt-1">
-                          <input
-                            type="number"
-                            id="Margen de Ganancias"
-                            max={50}
-                            {...register("margen_ganancia", {
-                              valueAsNumber: true,
-                            })}
-                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                          />
-                        </div>
-                      </div>
-                      {/* Gasto */}
-                      <div className="mt-2">
-                        <label
-                          htmlFor="Gasto"
-                          className="block font-medium text-gray-700"
-                        >
-                          Gasto
-                        </label>
-                        <div className="mt-1">
-                          <input
-                            type="number"
-                            id="Gasto"
-                            max={50}
-                            {...register("gasto", {
-                              valueAsNumber: true,
                             })}
                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                           />

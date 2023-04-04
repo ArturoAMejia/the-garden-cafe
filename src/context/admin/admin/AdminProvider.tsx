@@ -5,23 +5,14 @@ import { adminReducer } from "./adminReducer";
 import axios from "axios";
 import {
   ICatFormaPago,
-  ICategoriaProducto,
-  ICliente,
-  ICompra,
   IEstadoCivil,
   IGrupoUsuario,
   IInventario,
-  IMarca,
   IMoneda,
-  IOrdenCompra,
   IPedido,
   IProducto,
-  IReservacion,
-  ISolicitudCompra,
   ITipoOrdenCompra,
   ITrabajador,
-  IUnidadMedida,
-  IVenta,
 } from "../../../interfaces";
 import { IProductoCart } from "../../../interfaces/producto";
 

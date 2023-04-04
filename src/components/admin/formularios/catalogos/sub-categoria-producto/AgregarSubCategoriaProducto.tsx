@@ -12,7 +12,7 @@ import {
 } from "@/store/slices/inventario";
 
 interface Props {
-  estados: ICatEstado[];
+  showMin: boolean;
 }
 
 type FormData = {
@@ -21,7 +21,7 @@ type FormData = {
   id_categoria_producto: number;
   id_estado: number;
 };
-export const AgregarSubCategoriaProducto = () => {
+export const AgregarSubCategoriaProducto: FC<Props> = ({ showMin }) => {
   const { register, handleSubmit, reset } = useForm<FormData>();
 
   const { data: categorias, isLoading } = useObtenerCategoriasQuery();
@@ -63,7 +63,11 @@ export const AgregarSubCategoriaProducto = () => {
           onClick={openModal}
           className="inline-flex items-center justify-center rounded-md border border-transparent bg-[#388C04] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#8CA862] sm:w-auto"
         >
-          Agregar Subcategoria de Producto
+          {showMin ? (
+            <PlusCircleIcon className="h-6 w-6" />
+          ) : (
+            <>Agregar Subcategoria de Producto</>
+          )}
         </button>
       </div>
 

@@ -5,10 +5,11 @@ import toast from "react-hot-toast";
 
 import { IMenu, IProducto } from "../../../interfaces";
 import { IProductoCart } from "../../../interfaces/producto";
+import { useAppDispatch } from "@/hooks/hooks";
 
 interface Props {
   producto: any;
-  añadirProductoOrden: (producto: IProductoCart) => void;
+  añadirProductoOrden: any;
   isIngredient: boolean;
   isPlate: boolean;
 }
@@ -36,9 +37,11 @@ export const ProductoFiltrado: FC<Props> = ({
     imagen: producto.imagen,
   });
 
+  const dispatch = useAppDispatch();
   const onAddProduct = () => {
     toast.success("Producto añadido al carrito!");
-    añadirProductoOrden(tempCartProducto);
+
+    dispatch(añadirProductoOrden(tempCartProducto));
   };
   return (
     <Combobox.Option

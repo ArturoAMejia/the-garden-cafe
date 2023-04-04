@@ -23,7 +23,7 @@ const Inicio: FC<Props> = ({ ventas, clientes, pedidos }) => {
     case "Mesero":
       navbar = navMesero;
       break;
- 
+
     default:
       break;
   }
@@ -31,8 +31,14 @@ const Inicio: FC<Props> = ({ ventas, clientes, pedidos }) => {
   return (
     <AdminLayout title="Administración">
       <h1>test</h1>
+      <CardShow />
+      <PieChart />
       <p>
-        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Adipisci ex incidunt mollitia ipsum alias temporibus consequuntur neque voluptas, aspernatur quasi minus voluptate quos veniam vero omnis dolores doloribus, maiores architecto tempora. Molestiae, asperiores dolores. Reprehenderit repudiandae cupiditate aliquid laboriosam aliquam!
+        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Adipisci ex
+        incidunt mollitia ipsum alias temporibus consequuntur neque voluptas,
+        aspernatur quasi minus voluptate quos veniam vero omnis dolores
+        doloribus, maiores architecto tempora. Molestiae, asperiores dolores.
+        Reprehenderit repudiandae cupiditate aliquid laboriosam aliquam!
       </p>
     </AdminLayout>
   );
@@ -42,6 +48,8 @@ export default Inicio;
 
 import { GetServerSideProps } from "next";
 import { IVenta } from "../../interfaces";
+import CardShow from "@/components/charts/CardShow";
+import PieChart from "@/components/charts/PieChart";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   await prisma.$connect();

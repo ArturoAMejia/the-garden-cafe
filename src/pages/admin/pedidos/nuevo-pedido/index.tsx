@@ -9,6 +9,10 @@ import { prisma } from "./../../../../database";
 import { ICatEstado } from "../../../../interfaces";
 import { CartContext } from "../../../../context";
 import { useObtenerPlatillosQuery } from "@/store/slices/inventario";
+import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
+import { RootState } from "@reduxjs/toolkit/dist/query/core/apiState";
+import { AppState } from "@/store/store";
+import { añadirProductoPedido } from "@/store/slices/pedido/pedidoSlice";
 
 interface Props {
   estados: ICatEstado[];
@@ -24,6 +28,9 @@ const NuevoPedidoPage: FC<Props> = ({ estados }) => {
     addProductToCart,
   } = useContext(CartContext);
 
+  const productos = useAppSelector((state: AppState) => state.pedido.productos);
+
+  const dispatch = useAppDispatch();
   const { data: platillos } = useObtenerPlatillosQuery();
 
   return (
@@ -39,13 +46,13 @@ const NuevoPedidoPage: FC<Props> = ({ estados }) => {
         </div>
         <FilterBar
           productos={platillos!}
-          añadirProductoOrden={addProductToCart}
+          añadirProductoOrden={añadirProductoPedido}
           isIngredient={false}
           isPlate={true}
         />
       </div>
       <ResumenPedido
-        productos={cart}
+        productos={productos}
         actualizarCantidadProducto={updateCartQuantity}
         quitarProducto={removeCartProduct}
         subtotal={subtotal}
