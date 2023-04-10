@@ -31,8 +31,6 @@ export const AgregarSubCategoriaProducto: FC<Props> = ({ showMin }) => {
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  const categorias = data.filter((categorias) => categorias.id_estado === 1);
-
   const onCrearCategoria = async ({
     nombre,
     id_categoria_producto,
@@ -56,6 +54,8 @@ export const AgregarSubCategoriaProducto: FC<Props> = ({ showMin }) => {
   };
 
   if (isLoading) return <>Cargando...</>;
+
+  const categorias = data.filter((categorias) => categorias.id_estado === 1);
 
   return (
     <>

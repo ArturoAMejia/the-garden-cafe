@@ -12,11 +12,8 @@ const Menu = () => {
   const { filtro, setFiltro, menuFiltrado } = useMenu();
 
   const { data: productos, isLoading } = useObtenerPlatillosQuery();
-  const { data, isLoading: isLoadingCategorias } = useObtenerCategoriasQuery();
-
-  const categoriaProductos = data.filter(
-    (categorias) => categorias.id_estado === 1
-  );
+  const { data: categoriaProductos, isLoading: isLoadingCategorias } =
+    useObtenerCategoriasQuery();
 
   return (
     <Layout title="Menú - The Garden Cafe" pageDescription="Página de Menú">

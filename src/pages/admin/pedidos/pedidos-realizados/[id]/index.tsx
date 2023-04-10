@@ -41,10 +41,8 @@ const DetallePedidoRealizadoPage: FC<Props> = ({ detalle }) => {
     ({ pedido }: AppState) => pedido
   );
 
-  const { data, isLoading: isLoadingCategorias } = useObtenerCategoriasQuery();
-
-  const categorias = data.filter((categorias) => categorias.id_estado === 1);
-
+  const { data: categorias, isLoading: isLoadingCategorias } =
+    useObtenerCategoriasQuery();
   const { data: platillos, isLoading } = useObtenerPlatillosQuery();
 
   const platillosFiltrados =

@@ -23,7 +23,6 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 interface Props {
   estados: ICatEstado[];
 }
-
 const NuevoPedidoPage: FC<Props> = ({ estados }) => {
   const [query, setQuery] = useState("");
 
@@ -33,10 +32,8 @@ const NuevoPedidoPage: FC<Props> = ({ estados }) => {
     ({ pedido }: AppState) => pedido
   );
 
-  const { data, isLoading: isLoadingCategorias } = useObtenerCategoriasQuery();
-
-  const categorias = data.filter((categorias) => categorias.id_estado === 1);
-
+  const { data: categorias, isLoading: isLoadingCategorias } =
+    useObtenerCategoriasQuery();
   const { data: platillos, isLoading } = useObtenerPlatillosQuery();
 
   const platillosFiltrados =
