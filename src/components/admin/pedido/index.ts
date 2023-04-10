@@ -4,3 +4,6 @@ export * from "./ItemCounter";
 export * from "./ProductoFiltrado";
 export * from "./ResumenPedido";
 export * from "./DetallePedido";
+
+
+export * from './PedidoCard'

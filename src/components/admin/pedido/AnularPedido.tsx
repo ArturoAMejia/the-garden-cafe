@@ -1,30 +1,31 @@
-import React, { FC, Fragment, useContext, useState } from "react";
-
+import React, { FC, Fragment, useState } from "react";
 import { Transition, Dialog } from "@headlessui/react";
 import {
   XCircleIcon,
   ExclamationCircleIcon,
 } from "@heroicons/react/24/outline";
-import { AdminContext } from "../../../context";
 import { toast } from "react-hot-toast";
-
+import { useAnularPedidoMutation } from "@/store/slices/pedido";
 interface Props {
   id: number;
   disable: boolean;
 }
 
 export const AnularPedido: FC<Props> = ({ id, disable }) => {
-
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  const { anularPedido } = useContext(AdminContext);
+  const [anularPedido] = useAnularPedidoMutation();
 
-  const onAnularPedido = () => {
-    anularPedido(id);
-    toast.success("Pedido anulado correctamente.");
-    closeModal();
+  const onAnularPedido = async () => {
+    try {
+      await anularPedido({ id }).unwrap();
+      toast.success("Pedido anulado correctamente.");
+      closeModal();
+    } catch (error: any) {
+      toast.error(error.data.message);
+    }
   };
   return (
     <>

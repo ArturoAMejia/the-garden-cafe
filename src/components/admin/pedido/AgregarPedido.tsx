@@ -1,6 +1,6 @@
 import React, { FC, Fragment, useContext, useState } from "react";
 
-import { AuthContext, AdminContext, CartContext } from "../../../context";
+import { AuthContext } from "../../../context";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -8,6 +8,10 @@ import toast from "react-hot-toast";
 import { ICatEstado, IPedido } from "../../../interfaces";
 import { Transition, Dialog } from "@headlessui/react";
 import { useObtenerClientesQuery } from "@/store/slices/venta";
+import { useCrearPedidoMutation } from "@/store/slices/pedido";
+import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
+import { AppState } from "@/store/store";
+import { pedidoCompletado } from "@/store/slices/pedido/pedidoSlice";
 
 interface Props {
   estados: ICatEstado[];
@@ -22,36 +26,38 @@ export const AgregarPedido: FC<Props> = ({ estados }) => {
 
   const { user } = useContext(AuthContext);
   const { register, handleSubmit, reset } = useForm<FormData>();
-  const { crearPedido } = useContext(AdminContext);
-  const { cart, orderComplete } = useContext(CartContext);
+  const [crearPedido] = useCrearPedidoMutation();
 
+  const productos = useAppSelector((state: AppState) => state.pedido.productos);
+
+  const dispatch = useAppDispatch();
   const { data: clientes, isLoading } = useObtenerClientesQuery();
 
   const onCrearPedido = async (data: FormData) => {
     // TODO Crear pedidoApi con redux
-    const { hasError, message } = await crearPedido({
-      ...data,
-      id_trabajador: Number(user!.id),
-      id_cliente: Number(data.id_cliente),
-      productos: cart,
-    });
 
-    if (hasError) {
-      toast.error(message);
-      return;
+    try {
+      await crearPedido({
+        ...data,
+        id_trabajador: Number(user!.id),
+        id_cliente: Number(data.id_cliente),
+        productos,
+      }).unwrap();
+      toast.success("Pedido realizado correctamente.");
+      // orderComplete();
+      dispatch(pedidoCompletado());
+      closeModal();
+      reset();
+    } catch (error: any) {
+      toast.error("error");
     }
-
-    toast.success("Pedido realizado correctamente.");
-    orderComplete();
-    closeModal();
-    reset();
   };
 
   if (isLoading) return <>Cargando...</>;
 
   return (
     <>
-      <div className="mx-2">
+      <div className="">
         <button
           type="button"
           onClick={openModal}

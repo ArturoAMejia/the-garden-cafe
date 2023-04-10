@@ -48,7 +48,7 @@ export const AgregarProveedor = () => {
   const [crearProveedor, { isLoading, isError }] = useCrearProveedorMutation();
 
   const onRegistrarProveedor: SubmitHandler<FormSchemaType> = async (form) => {
-    console.log(form);
+
     try {
       await crearProveedor(form).unwrap();
       toast.success("Proveedor creado satisfactoriamente.");

@@ -1,37 +1,50 @@
-import React, { FC, useContext } from "react";
+import React, { FC, useState } from "react";
 import { GetServerSideProps } from "next";
-
-import { AgregarPedido, ResumenPedido } from "../../../../components";
-import { FilterBar } from "../../../../components/admin/pedido/FilterBar";
+import { AgregarPedido, ProductoFiltrado } from "../../../../components";
 import { AdminLayout } from "../../../../components/Layout/AdminLayout";
-
 import { prisma } from "./../../../../database";
-import { ICatEstado } from "../../../../interfaces";
-import { CartContext } from "../../../../context";
-import { useObtenerPlatillosQuery } from "@/store/slices/inventario";
-import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
-import { RootState } from "@reduxjs/toolkit/dist/query/core/apiState";
+import { ICatEstado, IProducto } from "../../../../interfaces";
+import {
+  useObtenerCategoriasQuery,
+  useObtenerPlatillosQuery,
+} from "@/store/slices/inventario";
+import { useAppSelector } from "@/hooks/hooks";
 import { AppState } from "@/store/store";
-import { añadirProductoPedido } from "@/store/slices/pedido/pedidoSlice";
+import {
+  añadirProductoPedido,
+  quitarProductoPedido,
+} from "@/store/slices/pedido/pedidoSlice";
+import { CategoriaFilter } from "@/components/menu/Filter/CategoriaFilter";
+import { useMenu } from "@/hooks";
+import { ResumenPedidoLocal } from "@/components/admin/pedido/ResumenPedidoLocal";
+import { Button, TextInput } from "@tremor/react";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
 interface Props {
   estados: ICatEstado[];
 }
+
 const NuevoPedidoPage: FC<Props> = ({ estados }) => {
-  const {
-    cart,
-    updateCartQuantity,
-    removeCartProduct,
-    subtotal,
-    total,
-    tax,
-    addProductToCart,
-  } = useContext(CartContext);
+  const [query, setQuery] = useState("");
 
-  const productos = useAppSelector((state: AppState) => state.pedido.productos);
+  const { filtro, setFiltro, menuFiltrado } = useMenu();
 
-  const dispatch = useAppDispatch();
-  const { data: platillos } = useObtenerPlatillosQuery();
+  const { productos, subtotal, total } = useAppSelector(
+    ({ pedido }: AppState) => pedido
+  );
+
+  const { data, isLoading: isLoadingCategorias } = useObtenerCategoriasQuery();
+
+  const categorias = data.filter((categorias) => categorias.id_estado === 1);
+
+  const { data: platillos, isLoading } = useObtenerPlatillosQuery();
+
+  const platillosFiltrados =
+    query === ""
+      ? platillos
+      : platillos.filter((producto: IProducto) => {
+          return producto.nombre.toLowerCase().includes(query.toLowerCase());
+        });
 
   return (
     <AdminLayout title="Nuevo Pedido">
@@ -44,22 +57,73 @@ const NuevoPedidoPage: FC<Props> = ({ estados }) => {
             Usa el filtro de productos para añadirlos al pedido
           </p>
         </div>
-        <FilterBar
-          productos={platillos!}
-          añadirProductoOrden={añadirProductoPedido}
-          isIngredient={false}
-          isPlate={true}
-        />
       </div>
-      <ResumenPedido
-        productos={productos}
-        actualizarCantidadProducto={updateCartQuantity}
-        quitarProducto={removeCartProduct}
-        subtotal={subtotal}
-        total={total}
-        tax={tax}
-      />
-      <AgregarPedido estados={estados} />
+      <div className="flex-row gap-4 md:flex">
+        <div className="w-full md:h-80 md:w-3/5">
+          <ResumenPedidoLocal
+            productos={productos}
+            quitarProducto={quitarProductoPedido}
+            subtotal={subtotal}
+            total={total}
+          />
+          <AgregarPedido estados={estados} />
+        </div>
+        <div className="w-full md:h-5/6 md:w-2/5">
+          <TextInput
+            className="mt-4 md:mt-0"
+            icon={MagnifyingGlassIcon}
+            placeholder="Buscar..."
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          <div className="flex justify-end pr-2 pt-2">
+            <Button variant="light" onClick={() => setFiltro("")}>
+              Borrar Filtro
+            </Button>
+          </div>
+          {isLoadingCategorias ? (
+            <>Cargando...</>
+          ) : (
+            <CategoriaFilter categorias={categorias} setFiltro={setFiltro} />
+          )}
+
+          {isLoading ? (
+            <>Cargando...</>
+          ) : (
+            <div className="mt-4 overflow-y-auto ">
+              {filtro
+                ? menuFiltrado?.map((prod) => (
+                    <ProductoFiltrado
+                      key={prod.nombre}
+                      añadirProductoOrden={añadirProductoPedido}
+                      isIngredient={false}
+                      isPlate={true}
+                      producto={prod}
+                    />
+                  ))
+                : query
+                ? platillosFiltrados.map((platillo) => (
+                    <ProductoFiltrado
+                      key={platillo.nombre}
+                      añadirProductoOrden={añadirProductoPedido}
+                      isIngredient={false}
+                      isPlate={true}
+                      producto={platillo}
+                    />
+                  ))
+                : platillos?.map((prod) => (
+                    <ProductoFiltrado
+                      key={prod.nombre}
+                      añadirProductoOrden={añadirProductoPedido}
+                      isIngredient={false}
+                      isPlate={true}
+                      producto={prod}
+                    />
+                  ))}
+              {}
+            </div>
+          )}
+        </div>
+      </div>
     </AdminLayout>
   );
 };

@@ -19,6 +19,7 @@ import {
 } from "./data/categoria_productos";
 import {
   cargos,
+  clientes,
   estado_civil,
   grupos_usuarios,
   perfiles,
@@ -53,6 +54,9 @@ const main = async (): Promise<void> => {
     });
     await prisma.proveedor.createMany({
       data: proveedor,
+    });
+    await prisma.cliente.createMany({
+      data: clientes,
     });
     await prisma.cat_cargo.createMany({
       data: cargos,

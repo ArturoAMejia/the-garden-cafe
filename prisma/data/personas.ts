@@ -65,6 +65,17 @@ export const personas = [
     fecha_nacimiento_constitucion: "1980-08-16T23:50:21.817Z",
     tipo_persona: "Juridica",
   },
+  {
+    nombre: "Cliente",
+    apellido_razon_social: "Genérico",
+    cedula_ruc: "001-11111-11111-A",
+    telefono: "22222222",
+    direccion_domicilio: "-",
+    correo: "cliente@cliente.com",
+    genero: "-",
+    fecha_nacimiento_constitucion: new Date(),
+    tipo_persona: "Natural",
+  },
 ];
 
 export const proveedor = [
@@ -208,5 +219,13 @@ export const usuarios = [
     correo: "fernanda@gmail.com",
     password: "$2y$10$5GV7mc8fYfP33xtcdf7.b../IpuVpElyLb1eAt1O.vch8jM4mylaq",
     id_rol: 5,
+  },
+];
+
+export const clientes = [
+  {
+    id_persona: 7,
+    id_estado: 1,
+    tipo_cliente: "Natural",
   },
 ];

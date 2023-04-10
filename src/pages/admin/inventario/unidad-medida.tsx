@@ -1,17 +1,8 @@
-import React, { FC, useContext } from "react";
-import { GetServerSideProps } from "next";
 import { AdminLayout } from "../../../components/Layout/AdminLayout";
 import { AgregarUnidadMedida } from "../../../components";
-import { prisma } from "../../../database";
-import { ICatEstado } from "../../../interfaces";
-import { AdminContext } from "../../../context";
 import { UnidadMedidaTable } from "../../../components/tables";
 
-interface Props {
-  estados: ICatEstado[];
-}
-
-const UnidadMedidaPage: FC<Props> = ({ estados }) => {
+const UnidadMedidaPage = () => {
   return (
     <AdminLayout title="Unidad de Medida">
       <div className="sm:flex sm:items-center">
@@ -25,7 +16,7 @@ const UnidadMedidaPage: FC<Props> = ({ estados }) => {
         </div>
 
         <div className="mt-4 mb-4 px-1 sm:mt-0 sm:ml-16 sm:flex-none">
-          <AgregarUnidadMedida estados={estados} />
+          <AgregarUnidadMedida/>
         </div>
       </div>
       <UnidadMedidaTable />
@@ -34,14 +25,3 @@ const UnidadMedidaPage: FC<Props> = ({ estados }) => {
 };
 
 export default UnidadMedidaPage;
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  await prisma.$connect();
-  const estados = await prisma.cat_estado.findMany();
-  await prisma.$disconnect();
-  return {
-    props: {
-      estados: JSON.parse(JSON.stringify(estados)),
-    },
-  };
-};

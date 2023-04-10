@@ -12,7 +12,7 @@ import {
 } from "@/store/slices/inventario";
 
 interface Props {
-  showMin: boolean;
+  showMin?: boolean;
 }
 
 type FormData = {
@@ -24,12 +24,14 @@ type FormData = {
 export const AgregarSubCategoriaProducto: FC<Props> = ({ showMin }) => {
   const { register, handleSubmit, reset } = useForm<FormData>();
 
-  const { data: categorias, isLoading } = useObtenerCategoriasQuery();
+  const { data, isLoading } = useObtenerCategoriasQuery();
 
   const [crearSubcategoria] = useCrearSubcategoriaMutation();
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
+
+  const categorias = data.filter((categorias) => categorias.id_estado === 1);
 
   const onCrearCategoria = async ({
     nombre,

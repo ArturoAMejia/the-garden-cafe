@@ -33,7 +33,9 @@ export const EditarSubCategoriaProducto: FC<Props> = ({
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  const { data: categorias, isLoading } = useObtenerCategoriasQuery();
+  const { data, isLoading } = useObtenerCategoriasQuery();
+
+  const categorias = data.filter((categorias) => categorias.id_estado === 1);
 
   const [actualizarSubcategoria] = useActualizarSubcategoriaMutation();
 

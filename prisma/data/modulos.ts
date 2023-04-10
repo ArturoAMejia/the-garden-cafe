@@ -139,8 +139,13 @@ export const sub_modulos = [
   },
   {
     id_modulo: 4,
+    nombre: "Pedidos",
+    url: "/admin/pedidos",
+  },
+  {
+    id_modulo: 4,
     nombre: "Pedidos Realizados",
-    url: "/admin/pedidos/pedidos-realizados",
+    url: "/admin/pedidos-realizados",
   },
   {
     id_modulo: 4,

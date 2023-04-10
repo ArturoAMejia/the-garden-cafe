@@ -4,7 +4,6 @@ import {
   IProveedor,
   ISolicitudCompra,
 } from "@/interfaces";
-import { IProductoCart } from "@/interfaces/producto";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const compraApi = createApi({

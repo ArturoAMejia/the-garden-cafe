@@ -2,45 +2,24 @@ import {
   TicketIcon,
   BanknotesIcon,
   UserGroupIcon,
+  InboxStackIcon,
+  UserIcon,
 } from "@heroicons/react/20/solid";
 import { Card, Metric, Text, Icon, Flex, Color, Grid } from "@tremor/react";
+import { FC } from "react";
 
-const categories: {
-  title: string;
-  metric: string;
-  icon: any;
-  color: Color;
-}[] = [
-  {
-    title: "Sales",
-    metric: "$ 23,456,456",
-    icon: TicketIcon,
-    color: "indigo",
-  },
-  {
-    title: "Profit",
-    metric: "$ 13,123",
-    icon: BanknotesIcon,
-    color: "fuchsia",
-  },
-  {
-    title: "Customers",
-    metric: "456",
-    icon: UserGroupIcon,
-    color: "amber",
-  },
-  {
-    title: "Customers",
-    metric: "456",
-    icon: UserGroupIcon,
-    color: "amber",
-  },
-];
-
-export default function CardShow() {
+interface Props {
+  categorias: {
+    title: string;
+    metric: string;
+    icon: any;
+    color: Color;
+  }[];
+}
+export const CardShow: FC<Props> = ({ categorias }) => {
   return (
     <Grid numColsSm={2} numColsLg={4} className="gap-6">
-      {categories.map((item) => (
+      {categorias.map((item) => (
         <Card key={item.title} decoration="top" decorationColor={item.color}>
           <Flex justifyContent="start" className="space-x-4">
             <Icon
@@ -58,4 +37,4 @@ export default function CardShow() {
       ))}
     </Grid>
   );
-}
+};

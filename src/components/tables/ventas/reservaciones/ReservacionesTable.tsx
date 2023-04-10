@@ -10,7 +10,17 @@ import { AdminContext } from "../../../../context";
 import { AnularReservacion, EditarReservacion } from "../../../admin";
 import { ICatEstado, ICliente, IReservacion } from "../../../../interfaces";
 import { useObtenerReservacionesQuery } from "@/store/slices/venta";
-import { Table, TableHead, TableRow, TableHeaderCell, TableBody, TableCell } from "@tremor/react";
+import {
+  Table,
+  TableHead,
+  TableRow,
+  TableHeaderCell,
+  TableBody,
+  TableCell,
+} from "@tremor/react";
+
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
 interface Props {}
 const columnHelper = createColumnHelper<IReservacion>();
@@ -29,19 +39,19 @@ export const ReservacionesTable: FC<Props> = () => {
       }),
       columnHelper.accessor<"fecha_reservacion", Date>("fecha_reservacion", {
         header: "Fecha Reservada",
-        cell: (info) => info.getValue(),
+        cell: (info) =>
+          format(new Date(info.getValue()), "EEEE dd 'de' MMMM 'del' yyyy", {
+            locale: es,
+          }),
       }),
       columnHelper.accessor<"horas_reservadas", number>("horas_reservadas", {
         header: "Horas Reservada",
         cell: (info) => info.getValue(),
       }),
-      // columnHelper.accessor<"detalle_reservacion", number>(
-      //   "detalle_reservacion",
-      //   {
-      //     header: "Total Persona",
-      //     cell: (info) => info.getValue(),
-      //   }
-      // ),
+      columnHelper.accessor<"total_personas", number>("total_personas", {
+        header: "Total Personas",
+        cell: (info) => info.row.original.detalle_reservacion[0].total_personas,
+      }),
       columnHelper.accessor<"cat_estado", ICatEstado>("cat_estado", {
         header: "Estado",
         cell: (props) =>
@@ -73,12 +83,9 @@ export const ReservacionesTable: FC<Props> = () => {
     []
   );
 
-  const {
-    data: reservaciones,
-    error,
-    isError,
-    isLoading,
-  } = useObtenerReservacionesQuery();
+  const { data: reservaciones, isLoading } = useObtenerReservacionesQuery();
+
+  console.log(reservaciones);
 
   const table = useReactTable({
     data: reservaciones!,
@@ -88,7 +95,7 @@ export const ReservacionesTable: FC<Props> = () => {
   });
 
   if (isLoading) return <>Cargando...</>;
-  
+
   return (
     <div>
       <Table className="mt-5 rounded-md">

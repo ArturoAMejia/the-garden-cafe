@@ -3,9 +3,12 @@ import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 import React, { FC, useState } from "react";
 import toast from "react-hot-toast";
 
+import { Button } from "@tremor/react";
+
 import { IMenu, IProducto } from "../../../interfaces";
 import { IProductoCart } from "../../../interfaces/producto";
 import { useAppDispatch } from "@/hooks/hooks";
+import { Card, List, ListItem, Title } from "@tremor/react";
 
 interface Props {
   producto: any;
@@ -44,27 +47,29 @@ export const ProductoFiltrado: FC<Props> = ({
     dispatch(añadirProductoOrden(tempCartProducto));
   };
   return (
-    <Combobox.Option
-      key={producto.id}
-      value={producto}
-      className={({ active }) =>
-        classNames(
-          "cursor-default select-none px-4 py-2",
-          active && "bg-[#FFF9EA] text-black"
-        )
-      }
-    >
-      <div className="flex flex-row justify-between">
-        <p className="mt-2">{producto.nombre}</p>
-        <button
-          type="submit"
-          className="inline-flex w-auto items-center justify-center whitespace-nowrap rounded-full border border-transparent bg-[#388C04] px-4 py-2 text-xs font-medium text-white shadow-sm hover:bg-[#8CA862]"
-          onClick={onAddProduct}
-        >
-          <span>Añadir</span>
-          <ShoppingCartIcon className="ml-2 h-5 w-5 text-white" />
-        </button>
-      </div>
-    </Combobox.Option>
+    <div className="flex flex-row my-2 px-1 justify-between">
+      <Card className="w-full p-3">
+        <List className="p-0">
+          <ListItem className="p-0">
+            <span>{producto.nombre}</span>
+            <Button size="xs" onClick={onAddProduct} icon={ShoppingCartIcon}>
+              Añadir
+            </Button>
+
+            {/* <ShoppingCartIcon className="ml-2 h-5 w-5 text-white" /> */}
+          </ListItem>
+        </List>
+      </Card>
+      {/* <p className="mt-2">{producto.nombre}</p> */}
+
+      {/* <button
+        type="submit"
+        className="inline-flex w-auto items-center justify-center whitespace-nowrap rounded-full border border-transparent bg-[#388C04] px-4 py-2 text-xs font-medium text-white shadow-sm hover:bg-[#8CA862]"
+        onClick={onAddProduct}
+      >
+        <span>Añadir</span>
+        <ShoppingCartIcon className="ml-2 h-5 w-5 text-white" />
+      </button> */}
+    </div>
   );
 };

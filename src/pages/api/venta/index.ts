@@ -102,6 +102,7 @@ const crearVenta = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     return res.status(400).json({ message: "Los campos son obligatorios" });
   }
   await prisma.$connect();
+
   const comprobante = await prisma.comprobante.create({
     data: {
       descripcion,
@@ -109,6 +110,7 @@ const crearVenta = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
       fecha_ingreso: new Date(),
     },
   });
+
   const venta = await prisma.venta.create({
     data: {
       id_trabajador,
@@ -126,11 +128,21 @@ const crearVenta = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
       fecha_venta: new Date(),
     },
   });
+
+  await prisma.pedido.update({
+    where: {
+      id: id_pedido,
+    },
+    data: {
+      id_estado: 6,
+    },
+  });
+
   // TODO cambiar el any del producto
   await prisma.detalle_venta.createMany({
     data: productos.map((producto: any) => ({
       id_venta: venta.id,
-      id_producto_elaborado: producto.id,
+      id_producto_elaborado: Number(producto.id),
       cantidad: producto.cantidad,
       monto: producto.cantidad * producto.precio,
       precio: producto.precio,

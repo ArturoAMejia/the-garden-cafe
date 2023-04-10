@@ -15,7 +15,7 @@ const PedidosAnuladosPage: FC<Props> = ({ pedidos }) => {
       <div>
         <h1 className="mb-4 text-2xl font-bold">Pedidos Anulados</h1>
       </div>
-      <PedidosRealizadosTable pedidos={pedidos} />
+      <PedidosRealizadosTable />
     </AdminLayout>
   );
 };

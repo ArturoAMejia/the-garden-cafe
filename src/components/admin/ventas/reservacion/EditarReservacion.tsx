@@ -165,7 +165,9 @@ export const EditarReservacion: FC<Props> = ({ reservacion }) => {
                             id="horas_reservadas"
                             {...register("total_personas")}
                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                            defaultValue={reservacion.horas_reservadas}
+                            defaultValue={
+                              reservacion.detalle_reservacion[0].total_personas
+                            }
                           />
                         </div>
                       </div>

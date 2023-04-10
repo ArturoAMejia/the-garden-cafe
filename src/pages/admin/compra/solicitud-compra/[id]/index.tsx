@@ -6,27 +6,11 @@ import { ISolicitudCompra } from "@/interfaces";
 import { DetallePedido, FilterBar, ResumenPedido } from "@/components";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { useObtenerIngredientesQuery } from "@/store/slices/inventario";
-import { CartContext } from "@/context";
-import { EditarSolicitudCompra } from "@/components/admin/compra/solicitud-compra/EditarSolicitudCompra";
 
 interface Props {
   detalle: ISolicitudCompra;
 }
 const DetalleSolicitudCompra: FC<Props> = ({ detalle }) => {
-  console.log(detalle);
-  const { data: ingredientes, isLoading } = useObtenerIngredientesQuery();
-
-  const {
-    addProductToCart,
-    updateCartQuantity,
-    cart,
-    removeCartProduct,
-    subtotal,
-    tax,
-    total,
-  } = useContext(CartContext);
-
   return (
     <AdminLayout title={`Detalle Solicitud de Compra - ${detalle.id}`}>
       <div className="px-1 sm:flex-auto">
@@ -38,7 +22,7 @@ const DetalleSolicitudCompra: FC<Props> = ({ detalle }) => {
           <p className="text-xl font-bold">
             Trabajador:{" "}
             <span className="text-lg font-medium capitalize">
-              {detalle.trabajador?.persona?.nombre} {" "}
+              {detalle.trabajador?.persona?.nombre}{" "}
               {detalle.trabajador?.persona?.apellido_razon_social}
             </span>
           </p>

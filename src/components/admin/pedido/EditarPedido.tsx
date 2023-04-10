@@ -3,15 +3,13 @@ import { PlusCircleIcon, TrashIcon } from "@heroicons/react/24/outline";
 import React, { FC, Fragment, useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { IPedido } from "../../../interfaces";
-import { ResumenPedido } from "./ResumenPedido";
-import { AdminContext, AuthContext, CartContext } from "../../../context";
-import { FilterBar } from "./FilterBar";
-import { useMenu } from "../../../hooks";
 import { toast } from "react-hot-toast";
-import { IProductoCart } from "../../../interfaces/producto";
-import { ItemCounter } from "./ItemCounter";
 import Image from "next/image";
 import { useObtenerClientesQuery } from "@/store/slices/venta";
+import { AuthContext } from "@/context";
+import { useActualizarPedidoMutation } from "@/store/slices/pedido";
+import { useAppSelector } from "@/hooks/hooks";
+import { AppState } from "@/store/store";
 
 type FormData = IPedido;
 interface Props {
@@ -25,29 +23,30 @@ export const EditarPedido: FC<Props> = ({ pedido }) => {
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  const { cart, actualizarPedido } = useContext(CartContext);
+  const [actualizarPedido] = useActualizarPedidoMutation();
+
+  const { productos } = useAppSelector((state: AppState) => state.pedido);
 
   const { data: clientes, isLoading } = useObtenerClientesQuery();
   const { user } = useContext(AuthContext);
 
   const onActualizarPedido = async (data: FormData) => {
-    const { hasError, message } = await actualizarPedido(
-      pedido.id,
-      data.id_cliente,
-      Number(user!.id),
-      data.tipo_pedido,
-      data.ubicacion_entrega,
-      data.observacion,
-      cart
-    );
-
-    if (hasError) {
-      toast.error(message);
-      return;
+    try {
+      await actualizarPedido({
+        ...pedido,
+        id_cliente: data.id_cliente,
+        id_trabajador: user.id,
+        tipo_pedido: data.tipo_pedido,
+        ubicacion_entrega: data.ubicacion_entrega,
+        observacion: data.observacion,
+        productos,
+      }).unwrap();
+      toast.success("Pedido actualizado correctamente.");
+      closeModal();
+      reset();
+    } catch (error: any) {
+      toast.error(error.data.message);
     }
-    toast.success("Pedido actualizado correctamente.");
-    closeModal();
-    reset();
   };
 
   if (isLoading) return <>Cargando...</>;

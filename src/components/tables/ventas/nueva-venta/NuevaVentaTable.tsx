@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+import Link from "next/link";
 import {
   ColumnDef,
   createColumnHelper,
@@ -6,7 +8,6 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import React, { FC, useContext, useMemo } from "react";
 import {
   ICatEstado,
   ICliente,
@@ -15,16 +16,24 @@ import {
 } from "../../../../interfaces";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import Link from "next/link";
 import { IdentificationIcon } from "@heroicons/react/24/outline";
-import { AnularPedido } from "../../../admin/pedido/AnularPedido";
 import { RealizarVenta } from "../../../admin/ventas/nueva-venta/RealizarVenta";
-import { AdminContext } from "@/context";
-import { Table, TableHead, TableRow, TableHeaderCell, TableBody, TableCell } from "@tremor/react";
+import {
+  Table,
+  TableHead,
+  TableRow,
+  TableHeaderCell,
+  TableBody,
+  TableCell,
+} from "@tremor/react";
+import { useObtenerPedidosQuery } from "@/store/slices/pedido";
+import { useAppDispatch } from "@/hooks/hooks";
 
 const columunHelper = createColumnHelper<IPedido>();
 
 export const NuevaVentaTable = () => {
+  const dispatch = useAppDispatch();
+
   const columns = useMemo<ColumnDef<IPedido, any>[]>(
     () => [
       columunHelper.accessor<"cliente", ICliente>("cliente", {
@@ -88,16 +97,17 @@ export const NuevaVentaTable = () => {
     []
   );
 
-  const { pedidos } = useContext(AdminContext);
-
-  console.log(pedidos);
+  const { data, isLoading } = useObtenerPedidosQuery();
 
   const table = useReactTable({
-    data: pedidos,
+    data: data?.filter((pedido) => pedido.id_estado === 5)!,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
+
+  if (isLoading) return <>Cargando...</>;
+
   return (
     <div>
       <Table className="mt-5 rounded-md">

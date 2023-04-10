@@ -6,7 +6,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import React, { FC, useContext, useMemo } from "react";
+import React, { useMemo } from "react";
 import {
   ICatEstado,
   ICliente,
@@ -19,19 +19,29 @@ import Link from "next/link";
 import { IdentificationIcon } from "@heroicons/react/24/outline";
 import { AnularPedido } from "../../admin/pedido/AnularPedido";
 import { EditarPedido } from "../../admin/pedido/EditarPedido";
-import { CartContext } from "@/context";
-import { Table, TableHead, TableRow, TableHeaderCell, TableBody, TableCell } from "@tremor/react";
+import {
+  Table,
+  TableHead,
+  TableRow,
+  TableHeaderCell,
+  TableBody,
+  TableCell,
+} from "@tremor/react";
+import { useObtenerPedidosQuery } from "@/store/slices/pedido";
+import { useAppDispatch } from "@/hooks/hooks";
+import { cargarPedido } from "@/store/slices/pedido/pedidoSlice";
 
 const columunHelper = createColumnHelper<IPedido>();
 
-interface Props {
-  pedidos: IPedido[];
-}
-export const PedidosRealizadosTable: FC<Props> = ({ pedidos }) => {
-  const { cargarPedido } = useContext(CartContext);
+export const PedidosRealizadosTable = () => {
+  const dispatch = useAppDispatch();
 
   const columns = useMemo<ColumnDef<IPedido, any>[]>(
     () => [
+      columunHelper.accessor<"id", number>("id", {
+        header: "Num Pedido",
+        cell: (info) => info.getValue(),
+      }),
       columunHelper.accessor<"cliente", ICliente>("cliente", {
         header: "Cliente",
         cell: (info) => `${info.getValue().persona?.nombre}
@@ -87,15 +97,15 @@ export const PedidosRealizadosTable: FC<Props> = ({ pedidos }) => {
               passHref
               className="flex flex-row items-center gap-2 pt-1 text-center text-black"
               onClick={() =>
-                cargarPedido(
-                  props.row.original.detalle_pedido.map((producto: any) => ({
-                    id: producto.id_producto_elaborado,
-                    precio: producto.precio,
-                    nombre: producto.producto_elaborado.nombre,
-                    descripcion: producto.producto_elaborado.descripcion,
-                    imagen: producto.producto_elaborado.imagen,
-                    cantidad: producto.cantidad,
-                  }))
+                dispatch(
+                  cargarPedido(
+                    props.row.original.detalle_pedido.map((producto: any) => ({
+                      id: producto.id_producto_elaborado,
+                      nombre: producto.nombre,
+                      precio: producto.precio,
+                      cantidad: producto.cantidad,
+                    }))
+                  )
                 )
               }
             >
@@ -106,15 +116,19 @@ export const PedidosRealizadosTable: FC<Props> = ({ pedidos }) => {
         ),
       }),
     ],
-    [cargarPedido]
+    [dispatch]
   );
 
+  const { data: pedidos, isLoading } = useObtenerPedidosQuery();
+
   const table = useReactTable({
-    data: pedidos,
+    data: pedidos!,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
+
+  if (isLoading) return <>Cargando...</>;
 
   return (
     <div>

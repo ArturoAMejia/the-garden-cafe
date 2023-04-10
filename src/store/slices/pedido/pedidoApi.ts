@@ -28,12 +28,29 @@ export const pedidoApi = createApi({
       }),
       invalidatesTags: ["Pedidos"],
     }),
-    anularPedido: builder.mutation<IPedido, any>({
+    anularPedido: builder.mutation<number, any>({
       query: (id) => ({
         url: "/pedido",
         method: "PATCH",
         body: id,
       }),
+      invalidatesTags: ["Pedidos"],
+    }),
+    actualizarEstadoPedido: builder.mutation<IPedido, any>({
+      query: (pedido) => ({
+        url: "/pedido/estado",
+        method: "PATCH",
+        body: pedido,
+      }),
+      invalidatesTags: ["Pedidos"],
     }),
   }),
 });
+
+export const {
+  useObtenerPedidosQuery,
+  useCrearPedidoMutation,
+  useActualizarPedidoMutation,
+  useAnularPedidoMutation,
+  useActualizarEstadoPedidoMutation,
+} = pedidoApi;

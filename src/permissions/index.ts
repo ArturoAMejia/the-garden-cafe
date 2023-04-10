@@ -23,4 +23,5 @@ cannot("read", "Compra", { id_rol: 2 });
 
 const ability = build();
 ability.can("read", "Compra");
-ability.can("read", subject("Compra", { id_rol: 2 }));
+// TODO Hacer todos los permisos
+// ability.can("read", subject("Compra", { id_rol: 2 }));
