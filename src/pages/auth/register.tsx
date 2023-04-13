@@ -10,6 +10,7 @@ import { toast } from "react-hot-toast";
 import { Error } from "../../components/landing/Error";
 
 import { useForm } from "react-hook-form";
+import { getSession, signIn } from "next-auth/react";
 
 type FormData = {
   nombre: string;
@@ -63,18 +64,24 @@ const RegisterPage = () => {
       setShowError(true);
       return;
     }
-    const isValidLogin = await loginUser(username, password);
 
-    if (!isValidLogin) {
-      setShowError(true);
-      return;
-    }
+    await signIn("credentials", { username, password });
 
-    toast.success("Cuenta creada satisfactoriamente");
-    router.replace("/");
+    // if (!isValidLogin) {
+    //   setShowError(true);
+    //   return;
+    // }
+
+    // toast.success("Cuenta creada satisfactoriamente");
+    // router.replace("/");
   };
   return (
     <>
+      <Head>
+        <title>Registrate Ya!</title>
+        <link rel="shortcut icon" href="logo.svg" type="image/x-icon" />
+        <meta name="description" content="Página de Registro" />
+      </Head>
       <section className="font-serif bg-[#FFF9EA]">
         <div className="lg:grid lg:min-h-screen lg:grid-cols-12">
           <section className="relative flex h-32 items-end bg-gray-900 lg:col-span-5 lg:h-full xl:col-span-6">
@@ -298,6 +305,26 @@ const RegisterPage = () => {
       </section>
     </>
   );
+};
+
+import { GetServerSideProps } from "next";
+import Head from "next/head";
+
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  const session = await getSession({ req });
+
+  if (session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
 };
 
 export default RegisterPage;

@@ -12,43 +12,71 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Error } from "../../../landing/Error";
 import { useCrearProveedorMutation } from "@/store/slices/compra";
 
-const schema = z.object({
-  cedula_ruc: z
-    .string()
-    .regex(new RegExp("^[0-9]{3}-[0-9]{6}-[0-9]{4}[aA-zZ]{1}$"), {
-      message: "Formato de cédula no válido",
-    }),
-  nombre: z.string().regex(new RegExp("^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑs]{2,50}$")),
-  correo: z.string(),
-  apellido_razon_social: z
-    .string()
-    .regex(new RegExp("^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑs-]{2,50}$")),
-  fecha_nacimiento_constitucion: z.date(),
-  telefono: z.string(),
-  direccion_domicilio: z.string(),
-  tipo_persona: z.string(),
-  nacionalidad: z.string(),
-  sector_comercial: z.string(),
-});
+// const schema = z.object({
+//   cedula_ruc: z
+//     .string()
+//     .regex(
+//       new RegExp("^[0-9]{3}-[0-9]{6}-[0-9]{4}[aA-zZ]{1}$") ||
+//         new RegExp("^[0-9]{13}$"),
+//       {
+//         message: "Formato de cédula no válido",
+//       }
+//     ),
+//   nombre: z.string().regex(new RegExp("^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑs]{2,50}$")),
+//   correo: z.string(),
+//   apellido_razon_social: z
+//     .string()
+//     .regex(new RegExp("^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑs-]{2,50}$")),
+//   fecha_nacimiento_constitucion: z.date(),
+//   telefono: z.string(),
+//   direccion_domicilio: z.string(),
+//   tipo_persona: z.string(),
+//   tipo_documento: z.string(),
+//   nacionalidad: z.string(),
+//   sector_comercial: z.string(),
+// });
+
+type FormData = {
+  cedula_ruc: string;
+  nombre: string;
+  correo: string;
+  apellido_razon_social: string;
+  fecha_nacimiento_constitucion: Date;
+  telefono: string;
+  celular: string;
+  direccion_domicilio: string;
+  tipo_persona: string;
+  genero: string;
+  sector_comercial: string;
+  nacionalidad: string;
+  tipo_documento: "Cédula" | "RUC";
+};
 
 export const AgregarProveedor = () => {
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  type FormSchemaType = z.infer<typeof schema>;
-
   const {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { isSubmitting, errors },
-  } = useForm<FormSchemaType>({ resolver: zodResolver(schema) });
+  } = useForm<FormData>();
 
   const [crearProveedor, { isLoading, isError }] = useCrearProveedorMutation();
 
-  const onRegistrarProveedor: SubmitHandler<FormSchemaType> = async (form) => {
+  const tipoDocumento = watch("tipo_documento", "Cédula");
 
+  console.log(tipoDocumento);
+
+  let regex =
+    tipoDocumento === "Cédula"
+      ? "^[0-9]{3}-[0-9]{6}-[0-9]{4}[aA-zZ]{1}$"
+      : "^[aA-zZ]{1}[0-9]{13}$";
+
+  const onRegistrarProveedor = async (form: FormData) => {
     try {
       await crearProveedor(form).unwrap();
       toast.success("Proveedor creado satisfactoriamente.");
@@ -106,6 +134,25 @@ export const AgregarProveedor = () => {
 
                   <form onSubmit={handleSubmit(onRegistrarProveedor)}>
                     <div className="grid grid-cols-4 gap-4">
+                      {/* Tipo de Documento */}
+                      <div className="mt-2">
+                        <label
+                          htmlFor="tipo_documento"
+                          className="block font-medium text-gray-700"
+                        >
+                          Tipo de Documento
+                        </label>
+                        <div className="mt-1">
+                          <select
+                            id="tipo_documento"
+                            {...register("tipo_documento")}
+                            className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+                          >
+                            <option value="Cédula">Cédula</option>
+                            <option value="RUC">RUC</option>
+                          </select>
+                        </div>
+                      </div>
                       {/* Cédula - RUC */}
                       <div className="mt-2">
                         <label
@@ -118,12 +165,18 @@ export const AgregarProveedor = () => {
                           <input
                             type="text"
                             id="nombre"
-                            {...register("cedula_ruc")}
+                            {...register("cedula_ruc", {
+                              pattern: new RegExp(regex),
+                            })}
                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                            placeholder="001-010101-0101A"
+                            placeholder={`${
+                              tipoDocumento === "Cédula"
+                                ? "001-010101-0101A"
+                                : "J0101010101010"
+                            }`}
                           />
-                          {errors.cedula_ruc && (
-                            <Error error={errors.cedula_ruc.message} />
+                          {errors.cedula_ruc?.type === "pattern" && (
+                            <Error error={"Formato no válido"} />
                           )}
                         </div>
                       </div>
@@ -208,12 +261,11 @@ export const AgregarProveedor = () => {
                           Dirección - Domicilio
                         </label>
                         <div className="mt-1">
-                          <input
-                            type="text"
-                            id="nombre"
+                          <textarea
+                            rows={2}
+                            id="direccion"
+                            className="block w-full resize-none rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             {...register("direccion_domicilio")}
-                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                            placeholder="Dirección"
                           />
                         </div>
                       </div>

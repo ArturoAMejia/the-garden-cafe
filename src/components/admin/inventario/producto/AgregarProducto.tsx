@@ -1,6 +1,13 @@
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { Dialog, Transition } from "@headlessui/react";
-import React, { ChangeEvent, FC, Fragment, useContext, useState } from "react";
+import React, {
+  ChangeEvent,
+  FC,
+  Fragment,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { IProducto } from "../../../../interfaces";
@@ -40,8 +47,11 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
 
   const [crearProducto] = useCrearProductoMutation();
 
-  const { register, handleSubmit, reset } = useForm<FormData>();
+  const { register, watch, handleSubmit, reset } = useForm<FormData>();
 
+  const subCat = watch("id_categoria_producto", 1);
+
+  console.log(subCat);
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
@@ -236,14 +246,29 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
                             })}
                             className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
                           >
-                            {sub_categorias?.map((sub_categoria) => (
-                              <option
-                                key={sub_categoria.nombre}
-                                value={sub_categoria.id}
-                              >
-                                {sub_categoria.nombre}
-                              </option>
-                            ))}
+                            {subCat
+                              ? sub_categorias
+                                  .filter(
+                                    (subcategoria) =>
+                                      subcategoria.id_categoria_producto ===
+                                      subCat
+                                  )
+                                  .map((sub_categoria) => (
+                                    <option
+                                      key={sub_categoria.nombre}
+                                      value={sub_categoria.id}
+                                    >
+                                      {sub_categoria.nombre}
+                                    </option>
+                                  ))
+                              : sub_categorias?.map((sub_categoria) => (
+                                  <option
+                                    key={sub_categoria.nombre}
+                                    value={sub_categoria.id}
+                                  >
+                                    {sub_categoria.nombre}
+                                  </option>
+                                ))}
                           </select>
                           <AgregarSubCategoriaProducto showMin={true} />
                         </div>

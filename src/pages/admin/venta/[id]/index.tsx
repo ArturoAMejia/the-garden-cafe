@@ -103,7 +103,8 @@ export const getServerSideProps: GetServerSideProps = async ({
       detalle_venta: {
         select: {
           id_producto: true,
-          producto: true,
+          id_producto_elaborado: true,
+          producto_elaborado: true,
           monto: true,
           cantidad: true,
           precio: true,
