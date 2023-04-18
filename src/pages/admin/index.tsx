@@ -54,6 +54,9 @@ const Inicio: FC<Props> = ({ ventas, clientes, pedidos, usuarios }) => {
     },
   ];
   const { user } = useContext(AuthContext);
+
+  const { data: session } = useSession();
+
   return (
     <AdminLayout title="Administración">
       <h1 className="text-2xl font-bold">Bienvenido {user?.correo}</h1>
@@ -79,8 +82,24 @@ import PieChart from "@/components/charts/PieChart";
 import { AdminContext, AuthContext } from "@/context";
 import { Color } from "@tremor/react";
 import { CardShow } from "@/components/charts/CardShow";
+import { getSession, useSession } from "next-auth/react";
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  const session = await getSession({ req });
+
+  type Roles = 1 | 2 | 3 | 4 | 5 | 7;
+
+  const id_rol = session.user?.id_rol;
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
   await prisma.$connect();
   const ventas = await prisma.venta.findMany({
     select: {

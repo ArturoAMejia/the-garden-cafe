@@ -1,8 +1,20 @@
-import NextAuth, { Session } from "next-auth";
+import NextAuth, { Session, DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "database";
 
 import bcrypt from "bcryptjs";
+
+declare module "next-auth" {
+  /**
+   * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
+   */
+  interface Session {
+    user: {
+      /** The user's postal address. */
+      id_rol: number;
+    } & DefaultSession["user"];
+  }
+}
 
 export default NextAuth({
   providers: [
@@ -29,11 +41,27 @@ export default NextAuth({
           return null;
         }
 
+        const modulos = await prisma.rol_modulo.findMany({
+          select: {
+            modulo: {
+              select: {
+                nombre: true,
+                icono: true,
+                sub_modulo: true,
+              },
+            },
+          },
+          where: {
+            id_rol: user.id_rol,
+          },
+        });
+
         if (user) {
           return {
             id: user.id.toString(),
             email: user.usuario,
-            rol: user.id_rol,
+            id_rol: user.id_rol,
+            modulos,
           };
         }
         return null;
