@@ -3,15 +3,25 @@ import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import React, { FC, Fragment, useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { AdminContext, CartContext } from "../../../../context";
+import { AdminContext } from "../../../../context";
 import { IMoneda, IPedido } from "../../../../interfaces";
 import { useCrearVentaMutation } from "@/store/slices/venta";
+import {
+  asignarDescuento,
+  cargarPedido,
+  cobrarPedido,
+} from "@/store/slices/pedido/pedidoSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
+import { AppState } from "@/store/store";
+import { Divider, Subtitle } from "@tremor/react";
+import { useActualizarEstadoPedidoMutation } from "@/store/slices/pedido";
 
 type FormData = {
   id_moneda: number;
   id_forma_pago: number;
   tipo_venta: string;
   descripcion: string;
+  pago_cliente: number;
 };
 
 interface Props {
@@ -19,12 +29,14 @@ interface Props {
 }
 
 export const RealizarVenta: FC<Props> = ({ pedido }) => {
-  const { cargarPedido, subtotal } = useContext(CartContext);
   const { monedas, formas_pago } = useContext(AdminContext);
 
+  const [actualizarEstadoPedido] = useActualizarEstadoPedidoMutation();
+
   const { id, id_trabajador, id_cliente, detalle_pedido } = pedido;
+
   const productosPedido = detalle_pedido.map((producto: any) => ({
-    id: producto.id_producto,
+    id: producto.id_producto_elaborado,
     precio: producto.precio,
     cantidad: producto.cantidad,
   }));
@@ -34,61 +46,52 @@ export const RealizarVenta: FC<Props> = ({ pedido }) => {
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
 
+  const dispatch = useAppDispatch();
+
+  const { total, subtotal, cambio, descuento } = useAppSelector(
+    (state: AppState) => state.pedido
+  );
+
   const openModal = () => {
-    cargarPedido(
-      pedido.detalle_pedido.map((producto: any) => ({
-        id: producto.id_producto_elaborado,
-        precio: producto.precio,
-        nombre: producto.producto_elaborado.nombre,
-        descripcion: producto.producto_elaborado.descripcion,
-        imagen: producto.producto_elaborado.imagen,
-        cantidad: producto.cantidad,
-      }))
-    );
+    const productos = pedido.detalle_pedido.map((producto: any) => ({
+      id: producto.id_producto_elaborado,
+      precio: producto.precio,
+      nombre: producto.producto_elaborado.nombre,
+      descripcion: producto.producto_elaborado.descripcion,
+      imagen: producto.producto_elaborado.imagen,
+      cantidad: producto.cantidad,
+    }));
+
+    dispatch(cargarPedido(productos));
     setIsOpen(!isOpen);
   };
 
   const { register, handleSubmit, reset } = useForm<FormData>();
 
-  const onAceptarSolicitud = async (data: FormData) => {
+  const onRealizarVenta = async (data: FormData) => {
     const { descripcion, id_forma_pago, id_moneda, tipo_venta } = data;
-    // const { hasError, message } = await realizarVenta(
-    //   pedido.id_trabajador,
-    //   pedido.id_cliente,
-    //   pedido.id,
-    //   data.id_forma_pago,
-    //   data.id_moneda,
-    //   subtotal,
-    //   0,
-    //   data.tipo_venta,
-    //   data.descripcion,
-    //   pedido.detalle_pedido.map((producto: any) => ({
-    //     id: producto.id_producto,
-    //     precio: producto.precio,
-    //     cantidad: producto.cantidad,
-    //   }))
-    // );
-
-    crearVenta({
-      id_pedido: id,
-      id_trabajador,
-      id_cliente,
-      productos: productosPedido,
-      descripcion,
-      id_cat_forma_pago: id_forma_pago,
-      tipo_venta,
-      id_moneda,
-      subtotal,
-      descuento: 0,
-    })
-      .unwrap()
-      .then((res) => {
-        toast.success("Venta realizada correctamente.");
-
-        closeModal();
-        reset();
-      })
-      .catch((error) => toast.error(error.data.message));
+    try {
+      await crearVenta({
+        id_pedido: id,
+        id_trabajador,
+        id_cliente,
+        productos: productosPedido,
+        descripcion,
+        id_cat_forma_pago: id_forma_pago,
+        tipo_venta,
+        id_moneda,
+        subtotal,
+        descuento: 0,
+      }).unwrap();
+      toast.success("Venta realizada correctamente.", {
+        duration: 3000,
+      });
+      await actualizarEstadoPedido({ ...pedido, id_estado: 6 }).unwrap();
+      closeModal();
+      reset();
+    } catch (error: any) {
+      toast.error(error.data.message);
+    }
   };
 
   return (
@@ -138,9 +141,9 @@ export const RealizarVenta: FC<Props> = ({ pedido }) => {
 
                   <form
                     className="h-3/4 w-full"
-                    onSubmit={handleSubmit(onAceptarSolicitud)}
+                    onSubmit={handleSubmit(onRealizarVenta)}
                   >
-                    <div className="flex flex-col gap-4 md:grid md:grid-cols-5">
+                    <div className="flex flex-col gap-4 md:grid md:grid-cols-2">
                       {/* Tipo de venta */}
                       <div className="mt-2">
                         <label
@@ -157,6 +160,30 @@ export const RealizarVenta: FC<Props> = ({ pedido }) => {
                           >
                             <option value="En línea">En línea</option>
                             <option value="En línea">En el local</option>
+                          </select>
+                        </div>
+                      </div>
+                      {/* Forma de pago */}
+                      <div className="mt-2">
+                        <label
+                          htmlFor="forma_pago"
+                          className="block font-medium text-gray-700"
+                        >
+                          Forma de Pago
+                        </label>
+                        <div className="mt-1">
+                          <select
+                            id="forma_pago"
+                            {...register("id_forma_pago", {
+                              valueAsNumber: true,
+                            })}
+                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                          >
+                            {formas_pago.map((forma_pago) => (
+                              <option key={forma_pago.id} value={forma_pago.id}>
+                                {forma_pago.nombre}
+                              </option>
+                            ))}
                           </select>
                         </div>
                       </div>
@@ -184,28 +211,50 @@ export const RealizarVenta: FC<Props> = ({ pedido }) => {
                           </select>
                         </div>
                       </div>
-                      {/* Moneda */}
+                      {/* Entrega del Cliente */}
                       <div className="mt-2">
                         <label
-                          htmlFor="forma_pago"
+                          htmlFor="pago_cliente"
                           className="block font-medium text-gray-700"
                         >
-                          Forma de Pago
+                          Entrega cliente
                         </label>
                         <div className="mt-1">
-                          <select
-                            id="forma_pago"
-                            {...register("id_forma_pago", {
-                              valueAsNumber: true,
-                            })}
+                          <input
+                            type="number"
+                            id="pago_cliente"
+                            onChange={(e) =>
+                              dispatch(
+                                cobrarPedido({
+                                  pago_cliente: Number(e.target.value),
+                                })
+                              )
+                            }
                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                          >
-                            {formas_pago.map((forma_pago) => (
-                              <option key={forma_pago.id} value={forma_pago.id}>
-                                {forma_pago.nombre}
-                              </option>
-                            ))}
-                          </select>
+                          />
+                        </div>
+                      </div>
+                      {/* Descuento */}
+                      <div className="mt-2">
+                        <label
+                          htmlFor="pago_cliente"
+                          className="block font-medium text-gray-700"
+                        >
+                          Descuento
+                        </label>
+                        <div className="mt-1">
+                          <input
+                            type="number"
+                            id="pago_cliente"
+                            onChange={(e) =>
+                              dispatch(
+                                asignarDescuento({
+                                  descuento: Number(e.target.value),
+                                })
+                              )
+                            }
+                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                          />
                         </div>
                       </div>
                       {/* Descripción */}
@@ -224,6 +273,29 @@ export const RealizarVenta: FC<Props> = ({ pedido }) => {
                             {...register("descripcion")}
                           />
                         </div>
+                      </div>
+                      <div className="col-span-5 flex flex-col">
+                        <Divider className="my-2" />
+                        <Subtitle className="text-lg font-bold text-black">
+                          {" "}
+                          Subtotal: {subtotal}
+                        </Subtitle>
+                        <Subtitle className="text-lg font-bold text-black">
+                          Impuesto:{" "}
+                          {(
+                            subtotal * Number(process.env.NEXT_PUBLIC_TAX_RATE)
+                          ).toFixed(2)}
+                        </Subtitle>
+                        <Subtitle className="text-lg font-bold text-black">
+                          Descuento: {descuento.toFixed(2)}
+                        </Subtitle>
+                        {}
+                        <Subtitle className="text-lg font-bold text-black">
+                          Cambio:{cambio.toFixed(2)}
+                        </Subtitle>
+                        <Subtitle className="text-lg font-bold text-black">
+                          Total:{total}
+                        </Subtitle>
                       </div>
                     </div>
 

@@ -5,11 +5,13 @@ import { ItemCounter } from "./ItemCounter";
 
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { IProductoCart } from "../../../interfaces/producto";
+import { useAppDispatch } from "@/hooks/hooks";
+import { quitarProductoPedido } from "@/store/slices/pedido/pedidoSlice";
 
 interface Props {
   productos: IProductoCart[];
   actualizarCantidadProducto: (producto: IProductoCart) => void;
-  quitarProducto: (product: IProductoCart) => void;
+  quitarProducto: any;
   subtotal: number;
   tax: number;
   total: number;
@@ -30,11 +32,13 @@ export const ResumenPedido: FC<Props> = ({
     actualizarCantidadProducto(product);
   };
 
+  const dispatch = useAppDispatch();
+
   return (
-    <div className="min-h-full px-4 sm:px-6 lg:px-2	">
+    <div className="h-52 px-4 sm:px-6 lg:px-2	">
       <div className="mt-8 flex flex-col">
         <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-          <div className="inline-block min-h-min w-full py-2 align-middle md:px-6 lg:px-8">
+          <div className="inline-block min-h-52 overflow-y-auto w-full py-2 align-middle md:px-6 lg:px-8">
             <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
               <table className="w-full divide-y divide-gray-300">
                 <thead className="bg-gray-50">
@@ -107,7 +111,7 @@ export const ResumenPedido: FC<Props> = ({
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-center text-sm font-medium text-gray-900 sm:pl-6">
                         {producto.nombre}
                       </td>
-                      <td className="text-clip overflow-hidden  px-3 py-4 text-center text-sm text-gray-500">
+                      <td className="overflow-hidden text-clip  px-3 py-4 text-center text-sm text-gray-500">
                         {producto.descripcion}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-center text-sm text-gray-500">
@@ -145,7 +149,9 @@ export const ResumenPedido: FC<Props> = ({
                         <button
                           type="button"
                           className="inline-flex  py-2 text-gray-400 hover:text-gray-500"
-                          onClick={() => quitarProducto(producto)}
+                          onClick={() =>
+                            dispatch(quitarProductoPedido(producto))
+                          }
                         >
                           <TrashIcon className="h-4 w-4 text-black" />
                           <span className="sr-only">Remove</span>

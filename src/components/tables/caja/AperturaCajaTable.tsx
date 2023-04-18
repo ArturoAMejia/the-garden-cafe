@@ -13,6 +13,15 @@ import {
   ITrabajador,
 } from "../../../interfaces";
 import tgcApi from "../../../api/tgcApi";
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeaderCell,
+  TableRow,
+} from "@tremor/react";
 import { format, getHours, getMinutes } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -78,16 +87,15 @@ export const AperturaCajaTable = () => {
     getPaginationRowModel: getPaginationRowModel(),
   });
   return (
-    <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-      <table className="min-w-full divide-y divide-gray-300">
-        <thead className="bg-gray-50">
+    <div>
+      <Table className="mt-5 rounded-md">
+        <TableHead className="border-black bg-black">
           {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
+            <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <th
+                <TableHeaderCell
                   key={header.id}
-                  scope="col"
-                  className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900"
+                  className="text-center text-white"
                 >
                   {header.isPlaceholder
                     ? null
@@ -95,26 +103,23 @@ export const AperturaCajaTable = () => {
                         header.column.columnDef.header,
                         header.getContext()
                       )}
-                </th>
+                </TableHeaderCell>
               ))}
-            </tr>
+            </TableRow>
           ))}
-        </thead>
-        <tbody className="divide-y divide-gray-200 bg-white">
+        </TableHead>
+        <TableBody>
           {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
+            <TableRow key={row.id}>
               {row.getVisibleCells().map((cell) => (
-                <td
-                  key={cell.id}
-                  className="whitespace-nowrap px-3 py-2 text-center text-sm capitalize text-gray-500"
-                >
+                <TableCell key={cell.id} className="text-center">
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
+                </TableCell>
               ))}
-            </tr>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
       <nav
         className="flex items-center justify-between gap-1 border-t border-gray-200 bg-white px-4 py-3 sm:px-6"
         aria-label="Pagination"

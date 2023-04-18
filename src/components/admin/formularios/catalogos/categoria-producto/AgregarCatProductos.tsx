@@ -12,7 +12,7 @@ import {
 } from "@/store/slices/inventario";
 
 interface Props {
-  estados: ICatEstado[];
+  showMin?: boolean;
 }
 
 type FormData = {
@@ -22,7 +22,7 @@ type FormData = {
   id_estado: number;
   id_tipo_categoria: number;
 };
-export const AgregarCatProducto = () => {
+export const AgregarCatProducto: FC<Props> = ({ showMin }) => {
   // const { crearCategoria } = useContext(AdminContext);
   const { register, handleSubmit, reset } = useForm<FormData>();
 
@@ -52,7 +52,6 @@ export const AgregarCatProducto = () => {
       toast.success("Categoría agregada correctamente.");
       closeModal();
       reset();
-      
     } catch (error: any) {
       toast.error(error.data.message);
     }
@@ -67,7 +66,11 @@ export const AgregarCatProducto = () => {
           onClick={openModal}
           className="inline-flex items-center justify-center rounded-md border border-transparent bg-[#388C04] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#8CA862] sm:w-auto"
         >
-          Agregar Categoria de Producto
+          {showMin ? (
+            <PlusCircleIcon className="h-6 w-6" />
+          ) : (
+            <>Agregar Categoria de Producto</>
+          )}
         </button>
       </div>
 

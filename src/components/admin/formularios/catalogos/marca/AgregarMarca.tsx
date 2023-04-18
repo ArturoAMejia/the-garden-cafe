@@ -11,7 +11,11 @@ type FormData = {
   nombre: string;
   siglas: string;
 };
-export const AgregarMarca = () => {
+
+interface Props {
+  showMin?: boolean;
+}
+export const AgregarMarca: FC<Props> = ({ showMin }) => {
   const { register, handleSubmit, reset } = useForm<FormData>();
 
   const [crearMarca] = useCrearMarcaMutation();
@@ -38,12 +42,17 @@ export const AgregarMarca = () => {
   return (
     <>
       <div className="mx-2">
+        {}
         <button
           type="button"
           onClick={openModal}
           className="inline-flex items-center justify-center rounded-md border border-transparent bg-[#388C04] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#8CA862] sm:w-auto"
         >
-          Agregar Marca de Producto
+          {showMin ? (
+            <PlusCircleIcon className="h-6 w-6" />
+          ) : (
+            <>Agregar Nueva Marca</>
+          )}
         </button>
       </div>
 

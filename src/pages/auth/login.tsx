@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { AuthContext } from "@/context";
 import { useContext, useState } from "react";
+import { getSession, signIn } from "next-auth/react";
 
 type FormData = {
   username: string;
@@ -27,19 +28,29 @@ const Login = () => {
   const onLoginUser = async ({ username, password }: FormData) => {
     setShowError(false);
 
-    const isValidLogin = await loginUser(username, password);
+    // const isValidLogin = await loginUser(username, password);
 
-    if (!isValidLogin) {
-      setShowError(true);
-      return;
-    }
+    // if (!isValidLogin) {
+    //   setShowError(true);
+    //   return;
+    // }
 
-    // Todo: navegar a la pantalla que el usuario estaba
-    router.replace("/");
+    // // Todo: navegar a la pantalla que el usuario estaba
+    // const destination = router.query.p?.toString() || "/";
+    // router.replace("/");
+    await signIn("credentials", {
+      username,
+      password,
+    });
   };
 
   return (
     <>
+      <Head>
+        <title>Inicio de Sesión</title>
+        <link rel="shortcut icon" href="logo.svg" type="image/x-icon" />
+        <meta name="description" content="Página de inicio de sesión" />
+      </Head>
       <section className="bg-[#FFF9EA]">
         <div className="h-screen lg:grid lg:min-h-screen lg:grid-cols-12">
           <aside className="relative block h-16 lg:order-last lg:col-span-5 lg:h-full xl:col-span-6">
@@ -123,6 +134,26 @@ const Login = () => {
       </section>
     </>
   );
+};
+
+import { GetServerSideProps } from "next";
+import Head from "next/head";
+
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  const session = await getSession({ req });
+
+  if (session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
 };
 
 export default Login;

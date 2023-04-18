@@ -37,12 +37,14 @@ export const cartReducer = (
         cart: [...action.payload],
       };
 
+      // ! Ready
     case "[Cart] - Update products in cart":
       return {
         ...state,
         cart: [...action.payload],
       };
 
+      // ! Ready
     case "[Cart] - Change cart quantity":
       return {
         ...state,
@@ -52,6 +54,8 @@ export const cartReducer = (
           return action.payload;
         }),
       };
+
+      // ! Ready
 
     case "[Cart] - Remove product in cart":
       return {
@@ -65,6 +69,7 @@ export const cartReducer = (
         ),
       };
 
+      // ! Ready
     case "[Cart] - Update order summary":
       return {
         ...state,
@@ -77,6 +82,8 @@ export const cartReducer = (
     //       ...state,
     //       shippingAddress: action.payload
     //    }
+
+    // ! Ready
     case "[Cart] - Order complete":
       return {
         ...state,
@@ -86,6 +93,8 @@ export const cartReducer = (
         tax: 0,
         total: 0,
       };
+
+      // ! Ready
     case "[Cart] - Cargar Pedido":
       return {
         ...state,

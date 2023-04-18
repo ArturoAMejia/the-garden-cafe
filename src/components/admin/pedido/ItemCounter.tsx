@@ -10,8 +10,9 @@ interface Props {
 }
 
 export const ItemCounter: FC<Props> = ({
-  currentValue=0,
+  currentValue = 0,
   updatedQuantity,
+  maxValue,
 }) => {
   const addOrRemove = (value: number) => {
     if (value === -1) {
@@ -19,6 +20,8 @@ export const ItemCounter: FC<Props> = ({
 
       return updatedQuantity(currentValue - 1);
     }
+
+    if (currentValue >= maxValue) return;
 
     updatedQuantity(currentValue + 1);
   };
@@ -28,7 +31,7 @@ export const ItemCounter: FC<Props> = ({
       <button onClick={() => addOrRemove(-1)}>
         <MinusCircleIcon className="h-6 w-6 text-black" />
       </button>
-      <h1 className="text-center w-8"> {currentValue} </h1>
+      <h1 className="w-8 text-center"> {currentValue} </h1>
       <button onClick={() => addOrRemove(+1)}>
         <PlusCircleIcon className="h-6 w-6 text-black" />
       </button>

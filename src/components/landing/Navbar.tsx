@@ -11,11 +11,15 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import { AuthContext, CartContext } from "@/context";
+import { signOut, useSession } from "next-auth/react";
 
 export const Navbar = () => {
   const router = useRouter();
   const [totalItemsCart, setTotalItemsCart] = useState(0);
   const { isLoggedIn, logout } = useContext(AuthContext);
+
+  const { data: session } = useSession();
+
   const { numberOfItems } = useContext(CartContext);
   const path = router.pathname;
 
@@ -68,10 +72,10 @@ export const Navbar = () => {
               </button>
             </Popover.Group>
             <div className="hidden items-center justify-end md:flex md:flex-1 lg:w-0">
-              {isLoggedIn ? (
+              {session?.user.email ? (
                 <button
                   type="button"
-                  onClick={logout}
+                  onClick={() => signOut()}
                   className="whitespace-nowrap text-base font-medium text-black hover:text-gray-900"
                 >
                   Cerrar Sesión

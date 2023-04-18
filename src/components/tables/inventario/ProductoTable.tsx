@@ -18,6 +18,7 @@ import {
 import { EditarProducto } from "@/components/admin";
 import { useObtenerProductosQuery } from "@/store/slices/inventario";
 import { DesactivarProducto } from "@/components/admin/inventario/producto/DesactivarProducto";
+import { Table, TableHead, TableRow, TableHeaderCell, TableBody, TableCell } from "@tremor/react";
 
 const columnHelper = createColumnHelper<IProducto>();
 export const ProductoTable = () => {
@@ -72,16 +73,15 @@ export const ProductoTable = () => {
   if (isLoading) return <>Cargando...</>;
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-gray-200">
-      <table className="min-w-full divide-y-2 divide-gray-200 text-sm">
-        <thead className="bg-gray-50">
+    <div>
+      <Table className="mt-5 rounded-md">
+        <TableHead className="border-black bg-black">
           {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
+            <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <th
+                <TableHeaderCell
                   key={header.id}
-                  scope="col"
-                  className="whitespace-nowrap px-4 py-2 text-center text-gray-900"
+                  className="text-center text-white"
                 >
                   {header.isPlaceholder
                     ? null
@@ -89,26 +89,23 @@ export const ProductoTable = () => {
                         header.column.columnDef.header,
                         header.getContext()
                       )}
-                </th>
+                </TableHeaderCell>
               ))}
-            </tr>
+            </TableRow>
           ))}
-        </thead>
-        <tbody className="divide-y divide-gray-200">
+        </TableHead>
+        <TableBody>
           {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
+            <TableRow key={row.id}>
               {row.getVisibleCells().map((cell) => (
-                <td
-                  key={cell.id}
-                  className="whitespace-nowrap px-4 py-2  text-center text-gray-900"
-                >
+                <TableCell key={cell.id} className="text-center">
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
+                </TableCell>
               ))}
-            </tr>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
       <nav
         className="flex items-center justify-between gap-1 border-t border-gray-200 bg-white px-4 py-3 sm:px-6"
         aria-label="Pagination"

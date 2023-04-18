@@ -1,33 +1,73 @@
-import React, { FC, useContext } from "react";
+import React, { FC, useEffect, useState } from "react";
 
 import { GetServerSideProps } from "next";
 import { prisma } from "../../../../../database";
-import { IPedido } from "../../../../../interfaces";
-import { FilterBar, ResumenPedido } from "../../../../../components";
+import { IPedido, IProducto } from "../../../../../interfaces";
+import { ProductoFiltrado } from "../../../../../components";
 import { AdminLayout } from "../../../../../components/Layout/AdminLayout";
 
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { CartContext } from "../../../../../context";
+
+import { Button, TextInput } from "@tremor/react";
+
 import { EditarPedido } from "../../../../../components/admin/pedido/EditarPedido";
-import { useObtenerPlatillosQuery } from "@/store/slices/inventario";
+import {
+  useObtenerCategoriasQuery,
+  useObtenerPlatillosQuery,
+} from "@/store/slices/inventario";
+import { CategoriaFilter } from "@/components/menu/Filter/CategoriaFilter";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { ResumenPedidoLocal } from "@/components/admin/pedido/ResumenPedidoLocal";
+import { useMenu } from "@/hooks";
+import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
+import {
+  quitarProductoPedido,
+  añadirProductoPedido,
+  cargarPedido,
+} from "@/store/slices/pedido/pedidoSlice";
+import { AppState } from "@/store/store";
 
 interface Props {
   detalle: IPedido;
 }
 
 const DetallePedidoRealizadoPage: FC<Props> = ({ detalle }) => {
-  const {
-    addProductToCart,
-    updateCartQuantity,
-    cart,
-    removeCartProduct,
-    subtotal,
-    tax,
-    total,
-  } = useContext(CartContext);
+  const [query, setQuery] = useState("");
 
+  const { filtro, setFiltro, menuFiltrado } = useMenu();
+
+  const { productos, subtotal, total } = useAppSelector(
+    ({ pedido }: AppState) => pedido
+  );
+
+  const { data: categorias, isLoading: isLoadingCategorias } =
+    useObtenerCategoriasQuery();
   const { data: platillos, isLoading } = useObtenerPlatillosQuery();
+
+  const platillosFiltrados =
+    query === ""
+      ? platillos
+      : platillos.filter((producto: IProducto) => {
+          return producto.nombre.toLowerCase().includes(query.toLowerCase());
+        });
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(
+      cargarPedido(
+        detalle.detalle_pedido.map((producto) => ({
+          id: producto.id_producto_elaborado,
+          nombre: producto.producto_elaborado.nombre,
+          precio: producto.precio,
+          cantidad: producto.cantidad,
+        }))
+      )
+    );
+  }, [dispatch, detalle]);
+
+  console.log(detalle);
 
   return (
     <AdminLayout title={`Detalle del Pedido - ${detalle.id}`}>
@@ -40,7 +80,7 @@ const DetallePedidoRealizadoPage: FC<Props> = ({ detalle }) => {
           <p className="text-xl font-bold">
             Trabajador:{" "}
             <span className="text-lg font-medium capitalize">
-              {detalle.trabajador?.persona?.nombre}
+              {detalle.trabajador?.persona?.nombre}{" "}
               {detalle.trabajador?.persona?.apellido_razon_social}
             </span>
           </p>
@@ -54,13 +94,6 @@ const DetallePedidoRealizadoPage: FC<Props> = ({ detalle }) => {
               )}
             </span>
           </p>
-          {/* {/* <p className="text-xl font-bold">
-            Proveedor:{" "}
-            <span className="text-lg font-medium capitalize">
-              {detalle.proveedor?.persona?.nombre}{" "}
-              {detalle.proveedor?.persona?.apellido_razon_social}
-            </span>
-          </p> */}
           <p className="text-xl font-bold">
             Tipo de Pedido:{" "}
             <span className="text-lg font-medium capitalize">
@@ -69,26 +102,72 @@ const DetallePedidoRealizadoPage: FC<Props> = ({ detalle }) => {
           </p>
         </div>
       </div>
-      {/* <DetallePedido detalle={detalle.detalle_pedido} /> */}
-      <div className="sm:flex sm:items-center">
-        <div className="sm:flex-auto"></div>
-        {isLoading && <>Cargando...</>}
-        <FilterBar
-          isIngredient={false}
-          isPlate={true}
-          productos={platillos!}
-          añadirProductoOrden={addProductToCart}
-        />
+      <div className="flex-row gap-4 md:flex">
+        <div className="w-full md:h-80 md:w-3/5">
+          <ResumenPedidoLocal
+            productos={productos}
+            quitarProducto={quitarProductoPedido}
+            subtotal={subtotal}
+            total={total}
+          />
+          <EditarPedido pedido={detalle} />
+        </div>
+        <div className="w-full md:h-5/6 md:w-2/5">
+          <TextInput
+            className="mt-4 md:mt-0"
+            icon={MagnifyingGlassIcon}
+            placeholder="Buscar..."
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          <div className="flex justify-end pr-2 pt-2">
+            <Button variant="light" onClick={() => setFiltro("")}>
+              Borrar Filtro
+            </Button>
+          </div>
+          {isLoadingCategorias ? (
+            <>Cargando...</>
+          ) : (
+            <CategoriaFilter categorias={categorias} setFiltro={setFiltro} />
+          )}
+
+          {isLoading ? (
+            <>Cargando...</>
+          ) : (
+            <div className="mt-4 overflow-y-auto ">
+              {filtro
+                ? menuFiltrado?.map((prod) => (
+                    <ProductoFiltrado
+                      key={prod.nombre}
+                      añadirProductoOrden={añadirProductoPedido}
+                      isIngredient={false}
+                      isPlate={true}
+                      producto={prod}
+                    />
+                  ))
+                : query
+                ? platillosFiltrados.map((platillo) => (
+                    <ProductoFiltrado
+                      key={platillo.nombre}
+                      añadirProductoOrden={añadirProductoPedido}
+                      isIngredient={false}
+                      isPlate={true}
+                      producto={platillo}
+                    />
+                  ))
+                : platillos?.map((prod) => (
+                    <ProductoFiltrado
+                      key={prod.nombre}
+                      añadirProductoOrden={añadirProductoPedido}
+                      isIngredient={false}
+                      isPlate={true}
+                      producto={prod}
+                    />
+                  ))}
+              {}
+            </div>
+          )}
+        </div>
       </div>
-      <ResumenPedido
-        actualizarCantidadProducto={updateCartQuantity}
-        productos={cart}
-        quitarProducto={removeCartProduct}
-        subtotal={subtotal}
-        tax={tax}
-        total={total}
-      />
-      <EditarPedido pedido={detalle} />
     </AdminLayout>
   );
 };
@@ -133,6 +212,11 @@ export const getServerSideProps: GetServerSideProps = async ({
       detalle_pedido: {
         select: {
           id_producto_elaborado: true,
+          producto_elaborado: {
+            select: {
+              nombre: true,
+            },
+          },
           producto: true,
           monto: true,
           cantidad: true,

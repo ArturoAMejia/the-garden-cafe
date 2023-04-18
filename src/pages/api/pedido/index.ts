@@ -80,9 +80,6 @@ const obtenerPedidos = async (res: NextApiResponse<Data>) => {
     orderBy: {
       id: "desc",
     },
-    where: {
-      id_estado: 1,
-    },
   });
   return res.status(200).json(pedidos);
 };
@@ -150,7 +147,7 @@ const registerPedido = async (
       tipo_pedido,
       fecha_pedido: new Date(),
       ubicacion_entrega: ubicacion_entrega,
-      id_estado: 1,
+      id_estado: 3,
       observacion,
       vigencia: hour(new Date(), 35),
     },
@@ -239,7 +236,7 @@ const cancelarPedido = async (
   await prisma.$connect();
   const pedido = await prisma.pedido.update({
     data: {
-      id_estado: 2,
+      id_estado: 13,
     },
     where: {
       id,

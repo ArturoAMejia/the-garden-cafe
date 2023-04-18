@@ -18,7 +18,7 @@ export const AnularReservacion: FC<Props> = ({ id }) => {
   const [anularReservacion] = useAnularReservacionMutation();
   const onAnularReservacion = async () => {
     try {
-      await anularReservacion(id);
+      await anularReservacion({ id });
       closeModal();
       toast.success("Reservación Anulada satisfactoriamente.");
     } catch (error: any) {

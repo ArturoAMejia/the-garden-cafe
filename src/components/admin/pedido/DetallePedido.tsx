@@ -76,19 +76,19 @@ export const DetallePedido: FC<Props> = ({
                   <tbody className="bg-white">
                     {detalle?.map((detalle: any, detalleIdx: number) => (
                       <tr
-                        key={detalle.producto.id}
+                        key={detalle.producto_elaborado.id}
                         className={
                           detalleIdx % 2 === 0 ? undefined : "bg-gray-50"
                         }
                       >
                         <td className="whitespace-nowrap py-4 pl-4 pr-3 text-center text-sm font-medium text-gray-900 sm:pl-6">
-                          {detalle.producto.id}
+                          {detalle.producto_elaborado.id}
                         </td>
                         <td className="whitespace-nowrap py-4 pl-4 pr-3 text-center text-sm font-medium text-gray-900 sm:pl-6">
-                          {detalle.producto.nombre}
+                          {detalle.producto_elaborado.nombre}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-center text-sm text-gray-500">
-                          {detalle.producto.descripcion}
+                          {detalle.producto_elaborado.descripcion}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-center text-sm text-gray-500">
                           ${detalle!.precio}
@@ -104,8 +104,8 @@ export const DetallePedido: FC<Props> = ({
                           <Image
                             width={56}
                             height={40}
-                            src={detalle.producto.imagen}
-                            alt={detalle.producto.nombre}
+                            src={detalle.producto_elaborado.imagen}
+                            alt={detalle.producto_elaborado.nombre}
                           />
                         </td>
                       </tr>

@@ -139,6 +139,11 @@ export const sub_modulos = [
   },
   {
     id_modulo: 4,
+    nombre: "Pedidos",
+    url: "/admin/pedidos",
+  },
+  {
+    id_modulo: 4,
     nombre: "Pedidos Realizados",
     url: "/admin/pedidos/pedidos-realizados",
   },
@@ -244,27 +249,37 @@ export const roles_modulos = [
   },
   {
     id_rol: 3,
+    id_modulo: 4,
+    nombre: "Modulo de Pedidos",
+  },
+  {
+    id_rol: 3,
     id_modulo: 5,
     nombre: "Modulo de Caja",
   },
   {
     id_rol: 4,
+    id_modulo: 4,
+    nombre: "Modulo de Pedidos",
+  },
+  {
+    id_rol: 5,
+    id_modulo: 5,
+    nombre: "Modulo de Caja",
+  },
+  {
+    id_rol: 5,
+    id_modulo: 2,
+    nombre: "Modulo de Venta",
+  },
+  {
+    id_rol: 7,
     id_modulo: 1,
     nombre: "Modulo de Compra",
   },
   {
-    id_rol: 4,
-    id_modulo: 2,
-    nombre: "Modulo de Venta",
-  },
-  {
-    id_rol: 5,
-    id_modulo: 5,
-    nombre: "Modulo de Caja",
-  },
-  {
-    id_rol: 5,
-    id_modulo: 2,
-    nombre: "Modulo de Venta",
+    id_rol: 7,
+    id_modulo: 3,
+    nombre: "Modulo de Inventario",
   },
 ];

@@ -1,59 +1,87 @@
 import { Fragment, useState } from "react";
-import { Dialog, Transition } from "@headlessui/react";
-import { EnvelopeIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
+
+import { PlusCircleIcon } from "@heroicons/react/24/outline";
 
 import { SubmitHandler, useForm } from "react-hook-form";
-import * as z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
-import { useCrearProveedorMutation } from "@/store/slices/compra/compraApi";
 
+import { Transition, Dialog } from "@headlessui/react";
+import * as z from "zod";
+
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Error } from "../../../landing/Error";
+import { useCrearProveedorMutation } from "@/store/slices/compra";
 
-const schema = z.object({
-  cedula_ruc: z
-    .string()
-    .regex(new RegExp("^[0-9]{3}-[0-9]{6}-[0-9]{4}[aA-zZ]{1}$"), {
-      message: "Formato de cédula no válido",
-    }),
-  nombre: z.string().regex(new RegExp("^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑs]{2,50}$")),
-  correo: z.string(),
-  apellido_razon_social: z
-    .string()
-    .regex(new RegExp("^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑs-]{2,50}$")),
-  fecha_nacimiento_constitucion: z.string(),
-  telefono: z.string(),
-  celular: z.string(),
-  direccion_domicilio: z.string(),
-  tipo_persona: z.string(),
-  genero: z.string(),
-  sector_comercial: z.string(),
-  nacionalidad: z.string(),
-});
+// const schema = z.object({
+//   cedula_ruc: z
+//     .string()
+//     .regex(
+//       new RegExp("^[0-9]{3}-[0-9]{6}-[0-9]{4}[aA-zZ]{1}$") ||
+//         new RegExp("^[0-9]{13}$"),
+//       {
+//         message: "Formato de cédula no válido",
+//       }
+//     ),
+//   nombre: z.string().regex(new RegExp("^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑs]{2,50}$")),
+//   correo: z.string(),
+//   apellido_razon_social: z
+//     .string()
+//     .regex(new RegExp("^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑs-]{2,50}$")),
+//   fecha_nacimiento_constitucion: z.date(),
+//   telefono: z.string(),
+//   direccion_domicilio: z.string(),
+//   tipo_persona: z.string(),
+//   tipo_documento: z.string(),
+//   nacionalidad: z.string(),
+//   sector_comercial: z.string(),
+// });
+
+type FormData = {
+  cedula_ruc: string;
+  nombre: string;
+  correo: string;
+  apellido_razon_social: string;
+  fecha_nacimiento_constitucion: Date;
+  telefono: string;
+  celular: string;
+  direccion_domicilio: string;
+  tipo_persona: string;
+  genero: string;
+  sector_comercial: string;
+  nacionalidad: string;
+  tipo_documento: "Cédula" | "RUC";
+};
 
 export const AgregarProveedor = () => {
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  type FormSchemaType = z.infer<typeof schema>;
-
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitting },
-  } = useForm<FormSchemaType>({ resolver: zodResolver(schema) });
+    watch,
+    formState: { isSubmitting, errors },
+  } = useForm<FormData>();
 
-  const [crearProveedor, { isError, error }] = useCrearProveedorMutation();
+  const [crearProveedor, { isLoading, isError }] = useCrearProveedorMutation();
 
-  const onRegisterProveedor: SubmitHandler<FormSchemaType> = async (form) => {
+  const tipoDocumento = watch("tipo_documento", "Cédula");
+
+  console.log(tipoDocumento);
+
+  let regex =
+    tipoDocumento === "Cédula"
+      ? "^[0-9]{3}-[0-9]{6}-[0-9]{4}[aA-zZ]{1}$"
+      : "^[aA-zZ]{1}[0-9]{13}$";
+
+  const onRegistrarProveedor = async (form: FormData) => {
     try {
-      console.log(form);
-      // await crearProveedor(form).unwrap();
-      // toast.success("Proveedor agregado correctamente.");
-      // closeModal();
-      // reset();
+      await crearProveedor(form).unwrap();
+      toast.success("Proveedor creado satisfactoriamente.");
+      closeModal();
+      reset();
     } catch (error: any) {
       toast.error(error.data.message);
     }
@@ -65,9 +93,9 @@ export const AgregarProveedor = () => {
         <button
           type="button"
           onClick={openModal}
-          className="rounded-lg bg-lime-600 px-4 py-2 text-sm font-medium text-white  hover:bg-lime-700"
+          className="inline-flex items-center justify-center rounded-md border border-transparent bg-[#388C04] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#8CA862] sm:w-auto"
         >
-          Añadir Proveedor
+          Agregar Nuevo Proveedor
         </button>
       </div>
 
@@ -96,37 +124,59 @@ export const AgregarProveedor = () => {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="h-auto w-full max-w-6xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="h-auto w-full max-w-5xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title
                     as="h3"
                     className="text-xl font-bold leading-6 text-gray-900"
                   >
-                    Agregar Proveedor
+                    Agregar Nuevo Proveedor
                   </Dialog.Title>
 
-                  <form
-                    className="h-3/4 w-full"
-                    onSubmit={handleSubmit(onRegisterProveedor)}
-                  >
-                    <div className="flex flex-col gap-4 md:grid md:grid-cols-4">
-                      {/* No_ruc */}
+                  <form onSubmit={handleSubmit(onRegistrarProveedor)}>
+                    <div className="grid grid-cols-4 gap-4">
+                      {/* Tipo de Documento */}
                       <div className="mt-2">
                         <label
-                          htmlFor="no_ruc"
+                          htmlFor="tipo_documento"
                           className="block font-medium text-gray-700"
                         >
-                          Num. de Cédula o Num. RUC
+                          Tipo de Documento
+                        </label>
+                        <div className="mt-1">
+                          <select
+                            id="tipo_documento"
+                            {...register("tipo_documento")}
+                            className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+                          >
+                            <option value="Cédula">Cédula</option>
+                            <option value="RUC">RUC</option>
+                          </select>
+                        </div>
+                      </div>
+                      {/* Cédula - RUC */}
+                      <div className="mt-2">
+                        <label
+                          htmlFor="nombre"
+                          className="block font-medium text-gray-700"
+                        >
+                          Cédula - RUC
                         </label>
                         <div className="mt-1">
                           <input
                             type="text"
-                            id="no_ruc"
-                            {...register("cedula_ruc")}
+                            id="nombre"
+                            {...register("cedula_ruc", {
+                              pattern: new RegExp(regex),
+                            })}
                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                            placeholder="001-191021-4313G"
+                            placeholder={`${
+                              tipoDocumento === "Cédula"
+                                ? "001-010101-0101A"
+                                : "J0101010101010"
+                            }`}
                           />
-                          {errors.cedula_ruc && (
-                            <Error error={errors.cedula_ruc.message} />
+                          {errors.cedula_ruc?.type === "pattern" && (
+                            <Error error={"Formato no válido"} />
                           )}
                         </div>
                       </div>
@@ -144,16 +194,13 @@ export const AgregarProveedor = () => {
                             id="nombre"
                             {...register("nombre")}
                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            placeholder="Nombre"
                           />
-                          {errors.nombre && (
-                            <Error error={errors.nombre.message} />
-                          )}
                         </div>
                       </div>
-                      {/* Apellido Razon Social */}
                       <div className="mt-2">
                         <label
-                          htmlFor="apellido_razon_social"
+                          htmlFor="nombre"
                           className="block font-medium text-gray-700"
                         >
                           Apellido - Razón Social
@@ -161,67 +208,57 @@ export const AgregarProveedor = () => {
                         <div className="mt-1">
                           <input
                             type="text"
-                            id="apellido_razon_social"
+                            id="nombre"
                             {...register("apellido_razon_social")}
+                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            placeholder="Apellido Razón Social"
+                          />
+                        </div>
+                      </div>
+                      {/* Fecha de Nacimiento */}
+                      <div className="mt-2">
+                        <label
+                          htmlFor="nombre"
+                          className="block font-medium text-gray-700"
+                        >
+                          Fecha de Nacimiento
+                        </label>
+                        <div className="mt-1">
+                          <input
+                            type="date"
+                            id="nombre"
+                            {...register("fecha_nacimiento_constitucion", {
+                              valueAsDate: true,
+                            })}
                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                           />
                         </div>
                       </div>
-                      {/* Numero de Celular */}
+                      {/* Teléfono */}
                       <div className="mt-2">
                         <label
-                          htmlFor="phone-number"
+                          htmlFor="nombre"
                           className="block font-medium text-gray-700"
                         >
-                          Número de Celular
+                          Teléfono
                         </label>
-                        <div className="relative mt-1 rounded-md shadow-sm">
-                          <div className="absolute inset-y-0 left-0 flex items-center">
-                            <label htmlFor="celular" className="sr-only">
-                              Compañia
-                            </label>
-                            <select
-                              id="telefono"
-                              name="country"
-                              autoComplete="country"
-                              className="mr-2 h-full rounded-md border-transparent bg-transparent py-0 pl-3 pr-7 text-gray-500 focus:border-indigo-500 focus:ring-indigo-500"
-                            >
-                              <option>Tigo</option>
-                              <option>Claro</option>
-                            </select>
-                          </div>
+                        <div className="mt-1">
                           <input
-                            type="number"
-                            id="celular"
-                            {...register("celular")}
-                            className="mr-2 block w-full rounded-md border-gray-300 pl-16 focus:border-indigo-500 focus:ring-indigo-500"
-                            placeholder="7666 8163"
+                            type="tel"
+                            id="nombre"
+                            {...register("telefono")}
+                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            placeholder="88119900"
                           />
                         </div>
                       </div>
-                      {/* Numero de telefono */}
-                      <div className="mt-2">
-                        <label
-                          htmlFor="phone-number"
-                          className="block font-medium text-gray-700"
-                        >
-                          Número de Teléfono
-                        </label>
-                        <input
-                          type="number"
-                          id="telefono"
-                          {...register("telefono")}
-                          className="mr-2 block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
-                          placeholder="2244 5588"
-                        />
-                      </div>
-                      {/* Direccion */}
+                      {/* Dirección - Domicilio */}
                       <div className="col-span-2 mt-2">
                         <label
-                          htmlFor="direccion"
+                          htmlFor="nombre"
                           className="block font-medium text-gray-700"
                         >
-                          Direccion
+                          Dirección - Domicilio
                         </label>
                         <div className="mt-1">
                           <textarea
@@ -232,44 +269,60 @@ export const AgregarProveedor = () => {
                           />
                         </div>
                       </div>
-                      {/* Correo */}
+
+                      {/*  Correo  */}
                       <div className="mt-2">
                         <label
-                          htmlFor="correo"
-                          className="block  font-medium text-gray-700"
+                          htmlFor="nombre"
+                          className="block font-medium text-gray-700"
                         >
                           Correo
                         </label>
-                        <div className="relative mt-1 rounded-md shadow-sm">
-                          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                            <EnvelopeIcon
-                              className="h-5 w-5 text-gray-400"
-                              aria-hidden="true"
-                            />
-                          </div>
+                        <div className="mt-1">
                           <input
                             type="email"
-                            id="correo"
+                            id="nombre"
                             {...register("correo")}
-                            className="block w-full rounded-md border-gray-300 pl-10 focus:border-indigo-500 focus:ring-indigo-500"
+                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                             placeholder="ejemplo@ejemplo.com"
                           />
                         </div>
                       </div>
-                      {/* Fecha Nacimiento - Constitucion */}
+
+                      {/* Tipo de Proveedor */}
                       <div className="mt-2">
                         <label
-                          htmlFor="origen_proveedor"
+                          htmlFor="nombre"
                           className="block font-medium text-gray-700"
                         >
-                          Fecha Nacimiento - Constitucion
+                          Tipo de Proveedor
+                        </label>
+                        <div className="mt-1">
+                          <select
+                            id="tipo_Proveedor"
+                            {...register("tipo_persona")}
+                            className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+                          >
+                            <option value="Natural">Natural</option>
+                            <option value="Jurídico">Jurídico</option>
+                          </select>
+                        </div>
+                      </div>
+                      {/* Nacionalidad */}
+                      <div className="mt-2">
+                        <label
+                          htmlFor="nacionalidad"
+                          className="block font-medium text-gray-700"
+                        >
+                          Nacionalidad
                         </label>
                         <div className="mt-1">
                           <input
-                            type="date"
-                            id="origen_proveedor"
-                            {...register("fecha_nacimiento_constitucion")}
+                            type="text"
+                            id="nacionalidad"
+                            {...register("nacionalidad")}
                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            placeholder="Nicargüense"
                           />
                         </div>
                       </div>
@@ -287,47 +340,16 @@ export const AgregarProveedor = () => {
                             id="sector_comercial"
                             {...register("sector_comercial")}
                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                          />
-                        </div>
-                      </div>
-                      {/* Nacionalidad */}
-                      <div className="mt-2">
-                        <label
-                          htmlFor="nacionalidad"
-                          className="block font-medium text-gray-700"
-                        >
-                          Nacionalidad
-                        </label>
-                        <div className="mt-1">
-                          <input
-                            type="text"
-                            id="nacionalidad"
-                            {...register("nacionalidad")}
-                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                          />
-                        </div>
-                      </div>
-                      {/* Tipo Proveedor */}
-                      <div className="mt-2">
-                        <label
-                          htmlFor="tipo_persona"
-                          className="block font-medium text-gray-700"
-                        >
-                          Tipo Proveedor
-                        </label>
-                        <div className="mt-1">
-                          <input
-                            type="text"
-                            id="tipo_persona"
-                            {...register("tipo_persona")}
-                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            placeholder="sector_comercial"
                           />
                         </div>
                       </div>
                     </div>
+
                     <button
                       type="submit"
                       className="mt-4 inline-flex items-center rounded-md border border-transparent bg-[#388C04] px-4 py-2 font-medium text-white shadow-sm"
+                      disabled={isSubmitting || isLoading}
                     >
                       Agregar Proveedor
                       <PlusCircleIcon
@@ -337,7 +359,7 @@ export const AgregarProveedor = () => {
                     </button>
                     <button
                       type="button"
-                      className="mt-4 ml-10 inline-flex items-center rounded-md border border-transparent bg-[#CA1514] px-4 py-2 font-medium text-white shadow-sm"
+                      className="mt-4 ml-16 inline-flex items-center rounded-md border border-transparent bg-[#CA1514] px-4 py-2 font-medium text-white shadow-sm"
                       onClick={closeModal}
                     >
                       Cancelar

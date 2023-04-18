@@ -684,7 +684,6 @@ model tipo_bodega {
   nombre String
   bodega bodega[]
 }
-
 model bodega {
   id             Int         @id @default(autoincrement())
   tipo_bodega    tipo_bodega @relation(fields: [id_tipo_bodega], references: [id])
