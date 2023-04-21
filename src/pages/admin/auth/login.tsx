@@ -4,7 +4,7 @@ import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Error } from "../../../components/landing/Error";
 import { AuthContext } from "../../../context";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 
 type FormData = {
   username: string;
@@ -13,10 +13,12 @@ type FormData = {
 
 const LoginPage = () => {
   const router = useRouter();
-  const { loginUser, isLoggedIn } = useContext(AuthContext);
+
+  const { data: session, status } = useSession();
+
   const [showError, setShowError] = useState(false);
 
-  if (isLoggedIn) router.replace("/admin");
+  if (!session) router.replace("/admin");
 
   const {
     register,

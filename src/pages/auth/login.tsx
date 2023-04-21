@@ -3,9 +3,9 @@ import { Error } from "../../components/landing/Error";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { AuthContext } from "@/context";
-import { useContext, useState } from "react";
-import { getSession, signIn } from "next-auth/react";
+
+import { useState } from "react";
+import { getSession, signIn, useSession } from "next-auth/react";
 
 type FormData = {
   username: string;
@@ -14,10 +14,12 @@ type FormData = {
 
 const Login = () => {
   const router = useRouter();
-  const { loginUser, isLoggedIn } = useContext(AuthContext);
+
+  const { data: session } = useSession();
+
   const [showError, setShowError] = useState(false);
 
-  if (isLoggedIn) router.replace("/");
+  if (!session) router.replace("/");
 
   const {
     register,

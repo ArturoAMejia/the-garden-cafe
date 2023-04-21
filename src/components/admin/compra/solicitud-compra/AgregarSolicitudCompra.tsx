@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { AdminContext, AuthContext } from "../../../../context";
 import { useCrearSolicitudCompraMutation } from "@/store/slices/compra/compraApi";
+import { useSession } from "next-auth/react";
 
 type FormData = {
   fecha_vigencia: Date;
@@ -19,7 +20,8 @@ export const AgregarSolicitudCompra = () => {
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  const { user } = useContext(AuthContext);
+  const { data: session } = useSession();
+
 
   const [crearSolicitudCompra] = useCrearSolicitudCompraMutation();
 
@@ -27,7 +29,7 @@ export const AgregarSolicitudCompra = () => {
     useContext(AdminContext);
   const { register, handleSubmit, reset } = useForm<FormData>();
 
-  const trabajador_id = Number(user?.id);
+  const trabajador_id = Number(session.user?.id);
 
   const onCrearNuevaOrdenCompra = async ({
     fecha_vigencia,

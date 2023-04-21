@@ -16,7 +16,6 @@ import { signOut, useSession } from "next-auth/react";
 export const Navbar = () => {
   const router = useRouter();
   const [totalItemsCart, setTotalItemsCart] = useState(0);
-  const { isLoggedIn, logout } = useContext(AuthContext);
 
   const { data: session } = useSession();
 

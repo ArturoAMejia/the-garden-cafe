@@ -9,6 +9,7 @@ import {
   useCrearOrdenCompraMutation,
   useObtenerProveedoresQuery,
 } from "@/store/slices/compra/compraApi";
+import { useSession } from "next-auth/react";
 
 type FormData = {
   id_proveedor: number;
@@ -30,7 +31,8 @@ export const AceptarOrden: FC<Props> = ({ solicitud_compra }) => {
 
   const [crearOrdenCompra] = useCrearOrdenCompraMutation();
 
-  const { user } = useContext(AuthContext);
+  const { data: session } = useSession();
+
   const { register, handleSubmit, reset } = useForm<FormData>();
 
   const onAceptarSolicitud = async ({
@@ -50,7 +52,7 @@ export const AceptarOrden: FC<Props> = ({ solicitud_compra }) => {
         total: solicitud_compra.total,
         fecha_orden: new Date(),
         id_solicitud_compra: solicitud_compra.id,
-        autorizado_por: Number(user!.id),
+        autorizado_por: Number(session.user.id),
         detalle_orden_compra: solicitud_compra.detalle_solicitud_compra,
         motivo: solicitud_compra.motivo,
       }).unwrap();

@@ -10,7 +10,7 @@ import { toast } from "react-hot-toast";
 import { Error } from "../../components/landing/Error";
 
 import { useForm } from "react-hook-form";
-import { getSession, signIn } from "next-auth/react";
+import { getSession, signIn, useSession } from "next-auth/react";
 
 type FormData = {
   nombre: string;
@@ -27,6 +27,8 @@ type FormData = {
 const RegisterPage = () => {
   const router = useRouter();
   const { registerUser, loginUser } = useContext(AuthContext);
+  const { data: session } = useSession();
+
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState("");
   const {

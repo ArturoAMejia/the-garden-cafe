@@ -8,6 +8,7 @@ import { ICaja, IMoneda, IPedido } from "../../../interfaces";
 import tgcApi from "../../../api/tgcApi";
 import axios from "axios";
 import { useCrearVentaMutation } from "@/store/slices/venta";
+import { useSession } from "next-auth/react";
 
 type FormData = {
   id_caja: number;
@@ -26,7 +27,7 @@ export const CerrarCaja: FC<Props> = ({ pedido, cajas }) => {
 
   const [crearVenta] = useCrearVentaMutation();
 
-  const { user } = useContext(AuthContext);
+  const { data: session } = useSession();
 
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
@@ -54,7 +55,7 @@ export const CerrarCaja: FC<Props> = ({ pedido, cajas }) => {
   }: FormData) => {
     try {
       await tgcApi.post("api/caja/cierre", {
-        id_trabajador: Number(user?.id),
+        id_trabajador: Number(session.user.id),
         id_caja,
         id_moneda,
         total: monto_cierre,
@@ -167,7 +168,6 @@ export const CerrarCaja: FC<Props> = ({ pedido, cajas }) => {
                             {monedas.map((moneda: IMoneda) => (
                               <option key={moneda.id} value={moneda.id}>
                                 {moneda.nombre}
-
                               </option>
                             ))}
                           </select>

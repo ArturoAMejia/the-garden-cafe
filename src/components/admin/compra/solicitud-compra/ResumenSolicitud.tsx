@@ -1,5 +1,6 @@
 import { AdminContext, AuthContext } from "@/context";
 import { useCrearSolicitudCompraMutation } from "@/store/slices/compra";
+import { useSession } from "next-auth/react";
 import { useContext } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -11,8 +12,10 @@ type FormData = {
 };
 
 export const ResumenSolicitud = () => {
-  const { user } = useContext(AuthContext);
-  const trabajador_id = Number(user?.id);
+
+  const { data: session } = useSession();
+
+  const trabajador_id = Number(session.user.id);
 
   const { productos, subtotal, solicitudCompleta, total, tax } =
     useContext(AdminContext);

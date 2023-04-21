@@ -1,4 +1,4 @@
-import React, { FC, useContext } from "react";
+import React, { FC } from "react";
 import Cookies from "js-cookie";
 import { AdminLayout } from "../../components/Layout/AdminLayout";
 import {
@@ -53,7 +53,6 @@ const Inicio: FC<Props> = ({ ventas, clientes, pedidos, usuarios }) => {
       color: "red",
     },
   ];
-  const { user } = useContext(AuthContext);
 
   const { data: session } = useSession();
 
@@ -77,15 +76,11 @@ export default Inicio;
 
 import { GetServerSideProps } from "next";
 import { IVenta } from "../../interfaces";
-
-import PieChart from "@/components/charts/PieChart";
-import { AdminContext, AuthContext } from "@/context";
 import { Color } from "@tremor/react";
 import { CardShow } from "@/components/charts/CardShow";
-import { getSession, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-
   await prisma.$connect();
   const ventas = await prisma.venta.findMany({
     select: {
