@@ -85,20 +85,6 @@ import { CardShow } from "@/components/charts/CardShow";
 import { getSession, useSession } from "next-auth/react";
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-  const session = await getSession({ req });
-
-  type Roles = 1 | 2 | 3 | 4 | 5 | 7;
-
-  const id_rol = session.user?.id_rol;
-
-  if (!session) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
 
   await prisma.$connect();
   const ventas = await prisma.venta.findMany({

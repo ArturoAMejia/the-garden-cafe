@@ -1,18 +1,33 @@
-import NextAuth, { Session, DefaultSession } from "next-auth";
+import NextAuth, { User, DefaultSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "database";
 
 import bcrypt from "bcryptjs";
+import { IModulo } from "@/interfaces/administracion/modulo";
+import { IRol } from "@/interfaces/seguridad/rol-modulo";
 
 declare module "next-auth" {
   /**
    * Returned by `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
    */
   interface Session {
+    id_rol: number;
     user: {
-      /** The user's postal address. */
+      id: number;
       id_rol: number;
+      modulos: IModulo[];
+      nombre: string;
+      apellido: string;
+      roles: IRol[];
+
+      /** The user's postal address. */
     } & DefaultSession["user"];
+  }
+  interface User {
+    id_rol: number;
+  }
+  interface DefaultJWT {
+    id_rol: number;
   }
 }
 
@@ -28,6 +43,13 @@ export default NextAuth({
         const user = await prisma.usuario.findUnique({
           where: {
             usuario: credentials.username,
+          },
+          select: {
+            id: true,
+            usuario: true,
+            password: true,
+            id_rol: true,
+            persona: true,
           },
         });
 
@@ -56,12 +78,23 @@ export default NextAuth({
           },
         });
 
+        const roles = await prisma.rol.findMany({
+          where: {
+            NOT: {
+              id: 6,
+            },
+          },
+        });
+
         if (user) {
           return {
             id: user.id.toString(),
             email: user.usuario,
             id_rol: user.id_rol,
+            nombre: user.persona.nombre,
+            apellido: user.persona.apellido_razon_social,
             modulos,
+            roles,
           };
         }
         return null;
@@ -71,6 +104,7 @@ export default NextAuth({
   pages: {
     signIn: "/auth" || "/admin/auth",
   },
+
   session: {
     maxAge: 1296000, /// 15d
     strategy: "jwt",
@@ -84,6 +118,7 @@ export default NextAuth({
         switch (account.type) {
           case "credentials":
             token.user = user;
+            // token.id_rol = user.id_rol;
             break;
         }
       }
@@ -95,6 +130,8 @@ export default NextAuth({
       // session.accessToken = token.accessToken
 
       session.user = token.user as any;
+
+      // session.id_rol = user.id_rol;
       return session;
     },
   },

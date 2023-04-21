@@ -12,6 +12,7 @@ import { useCrearPedidoMutation } from "@/store/slices/pedido";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
 import { AppState } from "@/store/store";
 import { pedidoCompletado } from "@/store/slices/pedido/pedidoSlice";
+import { useSession } from "next-auth/react";
 
 interface Props {
   estados: ICatEstado[];
@@ -24,7 +25,7 @@ export const AgregarPedido: FC<Props> = ({ estados }) => {
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  const { user } = useContext(AuthContext);
+  const { data: session } = useSession();
   const { register, handleSubmit, reset } = useForm<FormData>();
   const [crearPedido] = useCrearPedidoMutation();
 
@@ -39,7 +40,7 @@ export const AgregarPedido: FC<Props> = ({ estados }) => {
     try {
       await crearPedido({
         ...data,
-        id_trabajador: Number(user!.id),
+        id_trabajador: Number(session.user.id),
         id_cliente: Number(data.id_cliente),
         productos,
       }).unwrap();

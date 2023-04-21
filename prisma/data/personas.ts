@@ -5,7 +5,7 @@ export const personas = [
     cedula_ruc: "001-160802-1039X",
     telefono: "7885-3855",
     direccion_domicilio: "Km 12,7 carretera sur",
-    correo: "armejia02@gmail.com",
+    correo: "arturo@gmail.com",
     genero: "Masculino",
     fecha_nacimiento_constitucion: "2002-08-16T23:50:21.817Z",
     tipo_persona: "Natural",
@@ -178,7 +178,7 @@ export const usuarios = [
   {
     id_perfil: 1,
     id_estado: 1,
-    usuario: "ArturoAMejia",
+    usuario: "arturo@gmail.com",
     id_persona: 1,
     correo: "arturo@gmail.com",
     password: "$2y$10$5GV7mc8fYfP33xtcdf7.b../IpuVpElyLb1eAt1O.vch8jM4mylaq",

@@ -1,30 +1,25 @@
 import { getToken } from "next-auth/jwt";
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-
-type Roles = 1 | 2 | 3 | 4 | 5 | 7;
+import { NextRequest, NextResponse } from "next/server";
 
 export async function middleware(req: NextRequest) {
-  const jwt = req.cookies.get("token")?.value;
-  const rol = req.cookies.get("rol")?.value;
-
-  const session = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-
-  console.log({ session });
+  const session: any = await getToken({
+    req,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
 
   if (req.nextUrl.pathname.startsWith("/admin")) {
-    if (!jwt) {
-      return NextResponse.rewrite(new URL("/admin/auth/login", req.url));
+    if (!session) {
+      return NextResponse.rewrite(new URL("/admin/auth", req.url));
     }
-    if (rol === "Cliente" || !rol) {
-      return NextResponse.redirect(new URL("/", req.url));
+
+    const roles = session.user.roles;
+
+    const rolesValidos = [1, 2, 3, 4, 5, 7];
+
+    if (!rolesValidos.includes(session.user.id_rol)) {
+      return NextResponse.rewrite(new URL("/", req.url));
     }
   }
 
-  if (req.nextUrl.pathname.startsWith("/checkout")) {
-    if (jwt === undefined) {
-      return NextResponse.rewrite(new URL("/auth/login", req.url));
-    }
-  }
   return NextResponse.next();
 }

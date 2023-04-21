@@ -4,14 +4,14 @@ import Image from "next/image";
 import { Transition, Menu } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { AuthContext } from "../../../context";
+import { signOut, useSession } from "next-auth/react";
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
 }
 
 export const ProfileDropdown = () => {
-  
-  const { logout, user } = useContext(AuthContext);
+  const { data: session } = useSession();
 
   return (
     <>
@@ -27,7 +27,7 @@ export const ProfileDropdown = () => {
             />
             <span className="ml-3 hidden text-sm font-medium text-gray-700 lg:block">
               <span className="sr-only">Open user menu for </span>
-              {user?.usuario}
+              {session?.user.nombre} {session?.user.apellido}
             </span>
             <ChevronDownIcon
               className="ml-1 hidden h-5 w-5 flex-shrink-0 text-gray-400 lg:block"
@@ -79,7 +79,7 @@ export const ProfileDropdown = () => {
                     active ? "bg-gray-100" : "",
                     "block px-4 py-2 text-sm text-gray-700"
                   )}
-                  onClick={logout}
+                  onClick={() => signOut()}
                 >
                   Logout
                 </a>
