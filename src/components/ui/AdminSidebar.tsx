@@ -1,11 +1,8 @@
 import { Transition, Dialog, Disclosure } from "@headlessui/react";
 import { XCircleIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import React, { FC, Fragment, useContext, useEffect, useState } from "react";
-import { vistaRol } from "../../helpers";
+import React, { FC, Fragment } from "react";
 import Image from "next/image";
-import Cookies from "js-cookie";
-import { AuthContext } from "@/context";
 import { Modulo } from "../../interfaces/seguridad/rol-modulo";
 
 import {
@@ -16,6 +13,7 @@ import {
   CreditCardIcon,
   BanknotesIcon,
 } from "@heroicons/react/24/outline";
+import { useSession } from "next-auth/react";
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
@@ -27,9 +25,7 @@ interface Props {
 }
 
 export const AdminSidebar: FC<Props> = ({ setSidebarOpen, sidebarOpen }) => {
-  const { modulos } = useContext(AuthContext);
-
-  // console.log(modulos[0].modulo.icono);
+  const { data: session } = useSession();
 
   return (
     <div>
@@ -97,7 +93,7 @@ export const AdminSidebar: FC<Props> = ({ setSidebarOpen, sidebarOpen }) => {
                     className="flex-1 space-y-1 px-2 text-black"
                     aria-label="Sidebar"
                   >
-                    {modulos.map((modulo: any) =>
+                    {session?.user.modulos.map((modulo: any) =>
                       !modulo.modulo.sub_modulo ? (
                         <div key={modulo.modulo.nombre}>
                           <Link
@@ -190,7 +186,7 @@ export const AdminSidebar: FC<Props> = ({ setSidebarOpen, sidebarOpen }) => {
           </div>
           <div className="mt-5 flex flex-grow flex-col">
             <nav className="flex-1 space-y-1 px-2" aria-label="Sidebar">
-              {modulos.map((modulo: any) =>
+              {session?.user.modulos.map((modulo: any) =>
                 !modulo.modulo.sub_modulo ? (
                   <div key={modulo.modulo.nombre}>
                     <Link

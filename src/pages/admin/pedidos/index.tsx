@@ -1,3 +1,5 @@
+import { GetServerSideProps } from "next";
+import { getSession } from "next-auth/react";
 import { AdminLayout } from "../../../components/Layout/AdminLayout";
 import { useObtenerPedidosQuery } from "@/store/slices/pedido";
 import { PedidoCard } from "@/components";
@@ -60,3 +62,13 @@ const PedidosPage = () => {
 };
 
 export default PedidosPage;
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const session = await getSession();
+
+  console.log(session);
+
+  return {
+    props: {},
+  };
+};
