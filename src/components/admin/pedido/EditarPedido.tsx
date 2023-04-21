@@ -10,6 +10,7 @@ import { AuthContext } from "@/context";
 import { useActualizarPedidoMutation } from "@/store/slices/pedido";
 import { useAppSelector } from "@/hooks/hooks";
 import { AppState } from "@/store/store";
+import { useSession } from "next-auth/react";
 
 type FormData = IPedido;
 interface Props {
@@ -30,12 +31,14 @@ export const EditarPedido: FC<Props> = ({ pedido }) => {
   const { data: clientes, isLoading } = useObtenerClientesQuery();
   const { user } = useContext(AuthContext);
 
+  const { data: session } = useSession();
+
   const onActualizarPedido = async (data: FormData) => {
     try {
       await actualizarPedido({
         ...pedido,
         id_cliente: data.id_cliente,
-        id_trabajador: user.id,
+        id_trabajador: session.user.id,
         tipo_pedido: data.tipo_pedido,
         ubicacion_entrega: data.ubicacion_entrega,
         observacion: data.observacion,
