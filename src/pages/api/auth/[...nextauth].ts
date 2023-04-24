@@ -119,6 +119,9 @@ export default NextAuth({
           case "credentials":
             token.user = user;
             // token.id_rol = user.id_rol;
+            if (user.id_rol) {
+              token.id_rol = user.id_rol;
+            }
             break;
         }
       }

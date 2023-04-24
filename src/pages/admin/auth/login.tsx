@@ -13,7 +13,7 @@ type FormData = {
 
 const LoginPage = () => {
   const router = useRouter();
-  const { loginUser, isLoggedIn } = useContext(AuthContext);
+  const { isLoggedIn } = useContext(AuthContext);
   const [showError, setShowError] = useState(false);
 
   if (isLoggedIn) router.replace("/admin");

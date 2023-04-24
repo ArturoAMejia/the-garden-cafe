@@ -80,13 +80,15 @@ export const AdminSidebar: FC<Props> = ({ setSidebarOpen, sidebarOpen }) => {
                 </div>
               </Transition.Child>
               <div className="flex flex-grow flex-col overflow-y-auto pt-5 pb-4">
-                <div className="flex flex-shrink-0 items-center px-4">
-                  <Image
-                    height="52"
-                    width="270"
-                    src="/logo.svg"
-                    alt="Workflow"
-                  />
+                <div className="flex flex-shrink-0 justify-center px-4">
+                  <div>
+                    <Image
+                      height="52"
+                      width="100"
+                      src="/logo.svg"
+                      alt="Workflow"
+                    />
+                  </div>
                 </div>
                 <div className="mt-5 flex flex-grow flex-col">
                   <nav
@@ -175,14 +177,10 @@ export const AdminSidebar: FC<Props> = ({ setSidebarOpen, sidebarOpen }) => {
       <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
         {/* Sidebar component, swap this element with another sidebar if you like */}
         <div className="flex flex-grow flex-col overflow-y-auto bg-[#FFCB43] pt-5 pb-4">
-          <div className="flex flex-shrink-0 items-center px-4">
-            <Image
-              height="48"
-              width="210"
-              className="h-8 w-auto"
-              src="/logo.svg"
-              alt="Workflow"
-            />
+          <div className="flex flex-shrink-0 justify-center px-4">
+            <div>
+              <Image height="52" width="70" src="/logo.svg" alt="Workflow" />
+            </div>
           </div>
           <div className="mt-5 flex flex-grow flex-col">
             <nav className="flex-1 space-y-1 px-2" aria-label="Sidebar">

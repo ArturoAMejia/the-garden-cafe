@@ -656,7 +656,7 @@ model venta {
   cat_estado        cat_estado       @relation(fields: [id_estado], references: [id])
   id_estado         Int
   tipo_venta        String
-  fecha_venta       DateTime
+  fecha_venta       DateTime         @default(dbgenerated("CURRENT_DATE"))
   subtotal          Float
   descuento         Float
   impuesto          Float
@@ -684,6 +684,7 @@ model tipo_bodega {
   nombre String
   bodega bodega[]
 }
+
 model bodega {
   id             Int         @id @default(autoincrement())
   tipo_bodega    tipo_bodega @relation(fields: [id_tipo_bodega], references: [id])

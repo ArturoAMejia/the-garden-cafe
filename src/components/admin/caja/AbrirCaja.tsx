@@ -8,6 +8,7 @@ import { ICaja, IMoneda, IPedido } from "../../../interfaces";
 import tgcApi from "../../../api/tgcApi";
 import axios from "axios";
 import { useCrearVentaMutation } from "@/store/slices/venta";
+import { useSession } from "next-auth/react";
 
 type FormData = {
   id_caja: number;
@@ -21,10 +22,11 @@ interface Props {
 }
 
 export const AbrirCaja: FC<Props> = ({ pedido, cajas }) => {
-  const { cargarPedido, subtotal } = useContext(CartContext);
   const { monedas, formas_pago } = useContext(AdminContext);
 
   const [crearVenta] = useCrearVentaMutation();
+
+  const { data: session } = useSession();
   const { user } = useContext(AuthContext);
 
   const [isOpen, setIsOpen] = useState(false);
@@ -53,7 +55,7 @@ export const AbrirCaja: FC<Props> = ({ pedido, cajas }) => {
   }: FormData) => {
     try {
       await tgcApi.post("api/caja/apertura", {
-        id_trabajador: user?.id,
+        id_trabajador: session.user?.id,
         id_caja,
         id_moneda,
         monto_cordobas,

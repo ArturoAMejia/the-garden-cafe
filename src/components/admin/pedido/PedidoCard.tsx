@@ -3,6 +3,7 @@ import {
   CheckIcon,
   ArrowTopRightOnSquareIcon,
   XMarkIcon,
+  ArrowUturnDownIcon,
 } from "@heroicons/react/24/outline";
 import { Card, Title, Subtitle, Button } from "@tremor/react";
 import { getHours, getMinutes } from "date-fns";
@@ -16,8 +17,9 @@ interface Props {
   pedido: IPedido;
   id_estado: number;
   color: "amber" | "blue" | "green";
+  undo?: number;
 }
-export const PedidoCard: FC<Props> = ({ pedido, id_estado, color }) => {
+export const PedidoCard: FC<Props> = ({ pedido, id_estado, color, undo }) => {
   const [actualizarEstadoPedido] = useActualizarEstadoPedidoMutation();
 
   const handleEstado = async (pedido: IPedido, id_estado) => {
@@ -46,20 +48,34 @@ export const PedidoCard: FC<Props> = ({ pedido, id_estado, color }) => {
         {":"}
         {getMinutes(new Date(pedido.fecha_pedido))}
       </Subtitle>
-      <div className="flex">
-        <Button
-          color="emerald"
-          className="p-2"
-          onClick={() => handleEstado(pedido, id_estado)}
-        >
-          <CheckIcon className="h-4 w-4" />
-        </Button>
+      <div className="flex gap-2">
+        {pedido.id_estado !== 5 && (
+          <Button
+            color="emerald"
+            className="p-2"
+            onClick={() => handleEstado(pedido, id_estado)}
+          >
+            <CheckIcon className="h-4 w-4" />
+          </Button>
+        )}
+
         <Link href={`/admin/pedidos/pedidos-realizados/${pedido.id}`}>
-          <Button color="blue" className="mx-2 p-2">
+          <Button color="blue" className="p-2">
             <ArrowTopRightOnSquareIcon className="h-4 w-4" />
           </Button>
         </Link>
-        <AnularPedido id={pedido.id} disable={pedido.id_estado === 13} />
+        {pedido.id_estado !== 3 && (
+          <Button
+            color="cyan"
+            className="p-2"
+            onClick={() => handleEstado(pedido, undo)}
+          >
+            <ArrowUturnDownIcon className="h-4 w-4" />
+          </Button>
+        )}
+        {pedido.id_estado !== 5 && (
+          <AnularPedido id={pedido.id} disable={pedido.id_estado === 13} />
+        )}
       </div>
     </Card>
   );

@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { prisma } from "./../../../database";
+import { format } from "date-fns";
 
 type Data =
   | {
@@ -125,7 +126,6 @@ const crearVenta = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
       subtotal,
       impuesto: subtotal * 0.15,
       total: subtotal * 1.15,
-      fecha_venta: new Date(),
     },
   });
 

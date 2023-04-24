@@ -4,8 +4,8 @@ import React from "react";
 export const Footer = () => {
   return (
     <footer aria-label="Site Footer" className="bg-[#FFF9EA]">
-      <div className="mx-auto max-w-screen-xl px-4 pt-16 pb-6 sm:px-6 lg:px-8 lg:pt-24">
-        <div className="grid grid-cols-2 gap-8 lg:grid-cols-3">
+      <div className="mx-auto max-w-screen-xl px-4 pb-6 sm:px-6 lg:px-8 lg:pt-24">
+        <div className="flex flex-col gap-8 lg:grid lg:grid-cols-3">
           <div>
             <div className="flex justify-center text-black sm:justify-start"></div>
             <p className="mx-auto mt-6 max-w-md text-center leading-relaxed text-gray-500 sm:mx-0 sm:max-w-xs sm:text-left">
@@ -59,7 +59,7 @@ export const Footer = () => {
               </li>
             </ul>
           </div>
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4 lg:col-span-2">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-4 lg:col-span-2">
             <div className="text-center sm:text-left">
               <p className="text-lg font-medium text-gray-900">Nosotros</p>
               <nav aria-label="Footer About Nav" className="mt-4">
@@ -148,7 +148,7 @@ export const Footer = () => {
               </nav>
             </div>
             <div className="text-center sm:text-left">
-              <p className="text-lg font-medium text-gray-900">Contact Us</p>
+              <p className="text-lg font-medium text-gray-900">Contáctanos</p>
               <ul className="mt-4 space-y-4 text-sm">
                 <li>
                   <Link
@@ -177,23 +177,21 @@ export const Footer = () => {
                     className="flex items-center justify-center gap-1.5 sm:justify-start"
                     href="/"
                   >
-
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5 shrink-0 text-gray-900"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                        />
-                      </svg>
-                      <span className="text-gray-700">2552-8582</span>
-
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 shrink-0 text-gray-900"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                      />
+                    </svg>
+                    <span className="text-gray-700">2552-8582</span>
                   </Link>
                 </li>
                 <li className="flex items-start justify-center gap-1.5 sm:justify-start">

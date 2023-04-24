@@ -41,6 +41,9 @@ export const ventaApi = createApi({
       query: () => "/venta",
       providesTags: ["Venta"],
     }),
+    obtenerVentasPorFecha: builder.query<any, void>({
+      query: () => "/venta/total",
+    }),
     crearVenta: builder.mutation<IVenta, any>({
       query: (venta) => ({
         url: "/venta",
@@ -111,6 +114,7 @@ export const {
   useDesactivarClienteMutation,
   // Ventas
   useObtenerVentasQuery,
+  useObtenerVentasPorFechaQuery,
   useObtenerVentaPorIdQuery,
   useCrearVentaMutation,
   useActualizarVentaMutation,

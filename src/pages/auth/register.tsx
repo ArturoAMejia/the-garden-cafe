@@ -26,7 +26,7 @@ type FormData = {
 
 const RegisterPage = () => {
   const router = useRouter();
-  const { registerUser, loginUser } = useContext(AuthContext);
+  const { registerUser } = useContext(AuthContext);
   const [showError, setShowError] = useState(false);
   const [error, setError] = useState("");
   const {

@@ -61,7 +61,10 @@ const Inicio: FC<Props> = ({ ventas, clientes, pedidos, usuarios }) => {
     <AdminLayout title="Administración">
       <h1 className="text-2xl font-bold">Bienvenido {user?.correo}</h1>
       <CardShow categorias={categories} />
-      {/* <PieChart /> */}
+      <Grid numCols={2} className="gap-6 py-4">
+        <PieChart />
+        <ChartView />
+      </Grid>
       {/* <p>
         Lorem, ipsum dolor sit amet consectetur adipisicing elit. Adipisci ex
         incidunt mollitia ipsum alias temporibus consequuntur neque voluptas,
@@ -80,12 +83,12 @@ import { IVenta } from "../../interfaces";
 
 import PieChart from "@/components/charts/PieChart";
 import { AdminContext, AuthContext } from "@/context";
-import { Color } from "@tremor/react";
+import { Color, Grid } from "@tremor/react";
 import { CardShow } from "@/components/charts/CardShow";
 import { getSession, useSession } from "next-auth/react";
+import ChartView from "@/components/charts/AreaChart";
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-
   await prisma.$connect();
   const ventas = await prisma.venta.findMany({
     select: {

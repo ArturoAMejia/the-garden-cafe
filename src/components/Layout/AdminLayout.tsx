@@ -17,7 +17,6 @@ interface Props {
 export const AdminLayout: FC<Props> = ({ title, children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-
   return (
     <>
       <Head>
@@ -45,16 +44,8 @@ export const AdminLayout: FC<Props> = ({ title, children }) => {
             {/* Search bar */}
             <div className="flex flex-1 justify-end px-4 sm:px-6">
               <div className="ml-4 flex items-center md:ml-6">
-                <button
-                  type="button"
-                  className="rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2"
-                >
-                  <span className="sr-only">View notifications</span>
-                  <BellIcon className="h-6 w-6" aria-hidden="true" />
-                </button>
-
                 {/* Profile dropdown */}
-                <ProfileDropdown/>
+                <ProfileDropdown />
               </div>
             </div>
           </div>

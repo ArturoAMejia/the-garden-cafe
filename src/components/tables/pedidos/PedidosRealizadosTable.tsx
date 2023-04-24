@@ -68,12 +68,17 @@ export const PedidosRealizadosTable = () => {
       columunHelper.accessor<"cat_estado", ICatEstado>("cat_estado", {
         header: "Estado",
         cell: (props) =>
-          props.getValue().nombre === "Activo" ? (
+          props.getValue().nombre === "Activo" ||
+          props.getValue().nombre === "Cancelado" ? (
             <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
               {props.getValue().nombre}
             </span>
-          ) : props.getValue().nombre === "Utilizable" ? (
+          ) : props.getValue().nombre === "Servidos" ? (
             <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
+              {props.getValue().nombre}
+            </span>
+          ) : props.getValue().nombre === "Listos" ? (
+            <span className="inline-flex items-center rounded-full bg-blue-200 px-2.5 py-0.5 text-xs font-medium text-blue-800">
               {props.getValue().nombre}
             </span>
           ) : (

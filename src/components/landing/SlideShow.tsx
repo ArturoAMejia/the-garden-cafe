@@ -1,6 +1,7 @@
 import { Slide } from "react-slideshow-image";
 import "react-slideshow-image/dist/styles.css";
 import styles from "./SlideShow.module.css";
+
 const images = [
   {
     url: "/img/slide-show/2.png",

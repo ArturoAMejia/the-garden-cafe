@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "venta" ALTER COLUMN "fecha_venta" SET DEFAULT CURRENT_DATE;

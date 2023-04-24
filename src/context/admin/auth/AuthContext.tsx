@@ -11,8 +11,6 @@ import { Modulo } from "../../../interfaces/seguridad/rol-modulo";
 interface ContextProps {
   isLoggedIn: boolean;
   user?: IUser;
-  loginUser: (username: string, password: string) => Promise<boolean>;
-  modulos: Modulo[] | any;
   registerUser: (
     nombre: string,
     num_cedula: string,
@@ -27,7 +25,6 @@ interface ContextProps {
     hasError: boolean;
     message?: string | undefined;
   }>;
-  logout: () => void;
 }
 
 export const AuthContext = createContext<ContextProps>({} as ContextProps);

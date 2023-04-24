@@ -43,7 +43,7 @@ export const NuevaVentaTable = () => {
         `,
       }),
       columunHelper.accessor<"trabajador", ITrabajador>("trabajador", {
-        header: "Trabajador",
+        header: "Mesero",
         cell: (info) => `${info.getValue().persona?.nombre}
         ${""} ${info.getValue().persona?.apellido_razon_social}
         `,
@@ -100,7 +100,9 @@ export const NuevaVentaTable = () => {
   const { data, isLoading } = useObtenerPedidosQuery();
 
   const table = useReactTable({
-    data: data?.filter((pedido) => pedido.id_estado === 5)!,
+    data: data?.filter(
+      (pedido) => pedido.id_estado === 5 || pedido.tipo_pedido === "Para llevar"
+    )!,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),

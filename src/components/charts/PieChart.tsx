@@ -18,10 +18,18 @@ import {
 import { useEffect, useState } from "react";
 
 const industrys = [
-  { key: "all", name: "All industries" },
-  { key: "tech", name: "Tech" },
-  { key: "health", name: "Health" },
-  { key: "manufacturing", name: "Manufacturing" },
+  { key: "enero", name: "Enero" },
+  { key: "febrero", name: "Febrero" },
+  { key: "marzo", name: "Marzo" },
+  { key: "abril", name: "Abril" },
+  { key: "mayo", name: "Mayo" },
+  { key: "junio", name: "Junio" },
+  { key: "julio", name: "Julio" },
+  { key: "agosto", name: "Agosto" },
+  { key: "septiembre", name: "Septiembre" },
+  { key: "octubre", name: "Octubre" },
+  { key: "noviembre", name: "Noviembre" },
+  { key: "diciembre", name: "Diciembre" },
 ];
 
 interface AssetData {
@@ -35,7 +43,7 @@ interface AssetData {
 
 const cities: AssetData[] = [
   {
-    name: "Off Running Inc.",
+    name: "En línea",
     industry: "tech",
     sales: 984888,
     delta: 61.3,
@@ -43,7 +51,7 @@ const cities: AssetData[] = [
     status: "emerald",
   },
   {
-    name: "Black Swan Holding",
+    name: "Local",
     industry: "health",
     sales: 456700,
     delta: 32.8,
@@ -108,10 +116,10 @@ export default function PieChart() {
   }, [selectedindustry]);
 
   return (
-    <Card className="max-w-4xl mx-auto">
+    <Card className="mx-auto max-w-4xl">
       <div className="hidden sm:block">
         <Flex className="space-x-4" justifyContent="start" alignItems="center">
-          <Title className="truncate">Asset Performance</Title>
+          <Title className="truncate">Ventas por Mes</Title>
           <Dropdown
             onValueChange={(value) => setSelectedindustry(value)}
             placeholder="Industry Selection"
@@ -133,7 +141,7 @@ export default function PieChart() {
         <Dropdown
           onValueChange={(value) => setSelectedindustry(value)}
           placeholder="Industry Selection"
-          className="max-w-full mt-2"
+          className="mt-2 max-w-full"
         >
           {industrys.map((industry) => (
             <DropdownItem

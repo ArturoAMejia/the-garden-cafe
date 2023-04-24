@@ -27,10 +27,7 @@ const Menu = () => {
                   className="overflow-hidden rounded border border-gray-200"
                 >
                   <summary className="flex items-center justify-between bg-[#FFF9EA] px-5 py-3 lg:hidden">
-                    <span className="text-sm font-medium">
-                      {" "}
-                      Toggle Filters{" "}
-                    </span>
+                    <span className="text-sm font-medium"> </span>
                     <svg
                       className="h-5 w-5"
                       xmlns="http://www.w3.org/2000/svg"

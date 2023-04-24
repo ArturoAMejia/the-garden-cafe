@@ -18,19 +18,19 @@ export const ProfileDropdown = () => {
       <Menu as="div" className="relative ml-3">
         <div>
           <Menu.Button className="flex max-w-xs items-center rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 lg:rounded-md lg:p-2 lg:hover:bg-gray-50">
-            <Image
+            {/* <Image
               className="h-8 w-8 rounded-full"
               src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
               alt=""
               height="32"
               width="32"
-            />
-            <span className="ml-3 hidden text-sm font-medium text-gray-700 lg:block">
+            /> */}
+            <span className="ml-3 text-sm font-medium text-gray-700 lg:block">
               <span className="sr-only">Open user menu for </span>
               {session?.user.nombre} {session?.user.apellido}
             </span>
             <ChevronDownIcon
-              className="ml-1 hidden h-5 w-5 flex-shrink-0 text-gray-400 lg:block"
+              className="ml-1 h-5 w-5 flex-shrink-0 text-gray-400 lg:block"
               aria-hidden="true"
             />
           </Menu.Button>
@@ -81,7 +81,7 @@ export const ProfileDropdown = () => {
                   )}
                   onClick={() => signOut()}
                 >
-                  Logout
+                  Cerrar Sesión
                 </a>
               )}
             </Menu.Item>
