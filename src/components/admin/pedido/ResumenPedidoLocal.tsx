@@ -29,7 +29,7 @@ interface Props {
   quitarProducto: any;
   subtotal: number;
   total: number;
-  id_trabajador: number;
+  id_trabajador?: number;
 }
 
 export const ResumenPedidoLocal: FC<Props> = ({
