@@ -45,7 +45,6 @@ export const AgregarCliente = () => {
   const [crearCliente, { isLoading, isError }] = useCrearClienteMutation();
 
   const onRegistrarCliente: SubmitHandler<FormSchemaType> = async (form) => {
-    console.log(form);
     try {
       await crearCliente(form).unwrap();
       toast.success("Cliente creado satisfactoriamente.");

@@ -69,7 +69,6 @@ export const AgregarProveedor = () => {
 
   const tipoDocumento = watch("tipo_documento", "Cédula");
 
-  console.log(tipoDocumento);
 
   let regex =
     tipoDocumento === "Cédula"

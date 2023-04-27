@@ -51,7 +51,6 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
 
   const subCat = watch("id_categoria_producto", 1);
 
-  console.log(subCat);
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);

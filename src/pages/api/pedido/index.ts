@@ -157,6 +157,7 @@ const registerPedido = async (
     data: productos.map((producto: any) => ({
       id_pedido: pedido.id,
       id_producto_elaborado: producto.id,
+      id_estado: 4,
       cantidad: producto.cantidad,
       monto: producto.cantidad * producto.precio,
       precio: producto.precio,
@@ -215,6 +216,7 @@ const actualizarPedido = async (
     data: productos.map((producto: any) => ({
       id_pedido: pedido.id,
       id_producto_elaborado: producto.id,
+      id_estado: producto.id_estado,
       cantidad: producto.cantidad,
       monto: producto.cantidad * producto.precio,
       precio: producto.precio,

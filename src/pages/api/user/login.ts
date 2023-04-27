@@ -47,6 +47,7 @@ const loginUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
       correo: true,
       usuario: true,
       persona: true,
+      id_estado: true,
     },
     where: {
       usuario: username,
@@ -85,6 +86,10 @@ const loginUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     return res
       .status(400)
       .json({ message: "Correo o contraseña no válidos - Password" });
+  }
+
+  if (user.id_estado === 11) {
+    return res.status(400).json({ message: "Cuenta no verificada" });
   }
 
   const { id, usuario, id_rol, rol, persona, correo } = user;

@@ -65,6 +65,13 @@ export const authApi = createApi({
       }),
       invalidatesTags: ["Usuarios"],
     }),
+    confirmarCuenta: builder.mutation<any, any>({
+      query: (data) => ({
+        url: "/user/confirmar-cuenta",
+        method: "PATCH",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -79,4 +86,6 @@ export const {
   useCrearUsuarioMutation,
   useActualizarUsuarioMutation,
   useDesactivarUsuarioMutation,
+  // Confirmar cuenta
+  useConfirmarCuentaMutation,
 } = authApi;

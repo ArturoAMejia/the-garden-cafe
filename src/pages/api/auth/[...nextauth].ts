@@ -19,7 +19,7 @@ declare module "next-auth" {
       nombre: string;
       apellido: string;
       roles: IRol[];
-
+      id_trabajador: number;
       /** The user's postal address. */
     } & DefaultSession["user"];
   }
@@ -40,6 +40,8 @@ export default NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
+        await prisma.$connect();
+
         const user = await prisma.usuario.findUnique({
           where: {
             usuario: credentials.username,
@@ -50,10 +52,15 @@ export default NextAuth({
             password: true,
             id_rol: true,
             persona: true,
+            id_estado: true,
           },
         });
 
         if (!user) {
+          return null;
+        }
+
+        if (user.id_estado === 11) {
           return null;
         }
 
@@ -86,6 +93,12 @@ export default NextAuth({
           },
         });
 
+        const trabajador = await prisma.trabajador.findFirst({
+          where: {
+            id_persona: user.persona.id,
+          },
+        });
+
         if (user) {
           return {
             id: user.id.toString(),
@@ -95,6 +108,7 @@ export default NextAuth({
             apellido: user.persona.apellido_razon_social,
             modulos,
             roles,
+            id_trabajador: trabajador?.id,
           };
         }
         return null;

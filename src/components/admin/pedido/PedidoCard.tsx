@@ -49,7 +49,7 @@ export const PedidoCard: FC<Props> = ({ pedido, id_estado, color, undo }) => {
         {getMinutes(new Date(pedido.fecha_pedido))}
       </Subtitle>
       <div className="flex gap-2">
-        {pedido.id_estado !== 5 && (
+        {pedido.id_estado !== 6 && (
           <Button
             color="emerald"
             className="p-2"

@@ -23,7 +23,7 @@ const Home: FC<Props> = ({ productos }) => {
       </Fade>
       <Slide>
         <div className="bg-[#FFF9EA]">
-          <div className="max-w-7xl  py-16 px-4 sm:py-24 sm:px-6 lg:px-8">
+          <div className=" py-16 px-4 sm:py-24 sm:px-6 ">
             <div className="text-center">
               <h2 className="mt-1 text-4xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl">
                 Alimentación & vida consciente

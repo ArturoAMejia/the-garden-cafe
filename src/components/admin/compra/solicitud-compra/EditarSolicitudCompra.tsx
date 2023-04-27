@@ -24,8 +24,6 @@ export const EditarSolicitudCompra: FC<Props> = ({ solicitud }) => {
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  console.log(solicitud);
-
   const { user } = useContext(AuthContext);
 
   const [crearSolicitudCompra] = useCrearSolicitudCompraMutation();

@@ -16,7 +16,7 @@ export const ProductCard: FC<Props> = ({ productos }) => {
             Nuestro Menú
           </h2>
         </div>
-        <div className="mt-8  flex flex-col gap-x-4 gap-y-8 lg:grid-cols-4 ">
+        <div className="mt-8 flex flex-col gap-x-4 gap-y-8 md:grid md:grid-cols-2 lg:grid-cols-4 ">
           {productos?.map((prod) => (
             <Card key={prod.id} producto={prod} />
           ))}

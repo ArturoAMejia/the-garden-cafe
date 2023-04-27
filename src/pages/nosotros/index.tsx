@@ -12,6 +12,8 @@ const Nosotros = () => {
         <div className="lg:absolute lg:inset-0">
           <div className="lg:absolute lg:inset-y-0 lg:left-0 lg:w-1/2">
             <Image
+              width={600}
+              height={800}
               className="sm:object-containt h-96 w-full object-cover lg:absolute lg:h-full"
               src="/img/acerca.jpeg"
               alt=""

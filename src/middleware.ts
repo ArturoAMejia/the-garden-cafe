@@ -34,7 +34,6 @@ import { withAuth } from "next-auth/middleware";
 export default withAuth(
   // `withAuth` augments your `Request` with the user's token.
   function middleware(req: any) {
-    console.log("token: ", req.nextauth.token);
     const rolesValidos = [1, 2, 3, 4, 5, 7];
 
     if (

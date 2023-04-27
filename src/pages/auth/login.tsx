@@ -26,22 +26,24 @@ const Login = () => {
   } = useForm<FormData>();
 
   const onLoginUser = async ({ username, password }: FormData) => {
-    setShowError(false);
-
     // const isValidLogin = await loginUser(username, password);
 
     // if (!isValidLogin) {
-    //   setShowError(true);
     //   return;
     // }
 
     // // Todo: navegar a la pantalla que el usuario estaba
     // const destination = router.query.p?.toString() || "/";
     // router.replace("/");
-    await signIn("credentials", {
-      username,
-      password,
-    });
+    try {
+      await signIn("credentials", {
+        username,
+        password,
+      });
+      setShowError(false);
+    } catch (error) {
+      setShowError(true);
+    }
   };
 
   return (

@@ -1,16 +1,16 @@
+import React, { FC, Fragment, useState } from "react";
 import { Transition, Dialog } from "@headlessui/react";
-import { PlusCircleIcon, TrashIcon } from "@heroicons/react/24/outline";
-import React, { FC, Fragment, useContext, useState } from "react";
+import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { useForm } from "react-hook-form";
 import { IPedido } from "../../../interfaces";
 import { toast } from "react-hot-toast";
-import Image from "next/image";
+
 import { useObtenerClientesQuery } from "@/store/slices/venta";
-import { AuthContext } from "@/context";
 import { useActualizarPedidoMutation } from "@/store/slices/pedido";
 import { useAppSelector } from "@/hooks/hooks";
 import { AppState } from "@/store/store";
 import { useSession } from "next-auth/react";
+import { useObtenerTrabajadoresQuery } from "@/store/slices/negocio";
 
 type FormData = IPedido;
 interface Props {
@@ -29,16 +29,16 @@ export const EditarPedido: FC<Props> = ({ pedido }) => {
   const { productos } = useAppSelector((state: AppState) => state.pedido);
 
   const { data: clientes, isLoading } = useObtenerClientesQuery();
-  const { user } = useContext(AuthContext);
 
-  const { data: session } = useSession();
+  const { data: trabajadores, isLoading: isLoadingTrabajadores } =
+    useObtenerTrabajadoresQuery();
 
   const onActualizarPedido = async (data: FormData) => {
     try {
       await actualizarPedido({
         ...pedido,
         id_cliente: data.id_cliente,
-        id_trabajador: session.user.id,
+        id_trabajador: data.id_trabajador,
         tipo_pedido: data.tipo_pedido,
         ubicacion_entrega: data.ubicacion_entrega,
         observacion: data.observacion,
@@ -52,18 +52,21 @@ export const EditarPedido: FC<Props> = ({ pedido }) => {
     }
   };
 
+  console.log(pedido.id_trabajador);
+
   if (isLoading) return <>Cargando...</>;
+
+  if (isLoadingTrabajadores) return <>Cargando...</>;
+
   return (
     <>
-      <div className="mx-2">
-        <button
-          type="button"
-          onClick={openModal}
-          className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white  hover:bg-sky-300"
-        >
-          Editar
-        </button>
-      </div>
+      <button
+        type="button"
+        onClick={openModal}
+        className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white  hover:bg-sky-300"
+      >
+        Editar
+      </button>
 
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={closeModal}>
@@ -123,6 +126,33 @@ export const EditarPedido: FC<Props> = ({ pedido }) => {
                                 value={cliente.id}
                               >
                                 {`${cliente.persona?.nombre} ${cliente.persona?.apellido_razon_social}`}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+                      <div className="mt-2">
+                        <label
+                          htmlFor="cliente"
+                          className="block font-medium text-gray-700"
+                        >
+                          Trabajador
+                        </label>
+                        <div className="mt-1 flex flex-row">
+                          <select
+                            id="trabajador"
+                            className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+                            {...(register("id_trabajador"),
+                            {
+                              defaultValue: pedido.id_trabajador,
+                            })}
+                          >
+                            {trabajadores?.map((trabajador) => (
+                              <option
+                                key={`${trabajador.codigo_inss} ${trabajador.id_persona}`}
+                                value={trabajador.id}
+                              >
+                                {`${trabajador.persona?.nombre} ${trabajador.persona?.apellido_razon_social}`}
                               </option>
                             ))}
                           </select>

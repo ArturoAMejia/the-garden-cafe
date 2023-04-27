@@ -63,6 +63,7 @@ model cat_estado {
   producto_elaborado         producto_elaborado[]
   detalle_producto_elaborado detalle_producto_elaborado[]
   tipo_categoria             tipo_categoria[]
+  detalle_pedido             detalle_pedido[]
 }
 
 model categoria_impuesto {
@@ -607,6 +608,8 @@ model detalle_pedido {
   id_producto           Int?
   producto_elaborado    producto_elaborado @relation(fields: [id_producto_elaborado], references: [id])
   id_producto_elaborado Int
+  estado                cat_estado         @relation(fields: [id_estado], references: [id])
+  id_estado             Int                @default(4)
   cantidad              Int
   precio                Float
   monto                 Float
@@ -872,20 +875,20 @@ model perfil {
 }
 
 model usuario {
-  id             Int        @id @default(autoincrement())
-  perfil         perfil     @relation(fields: [id_perfil], references: [id])
-  id_perfil      Int
-  cat_estado     cat_estado @relation(fields: [id_estado], references: [id])
-  id_estado      Int
-  persona        persona    @relation(fields: [id_persona], references: [id])
-  id_persona     Int        @unique
-  usuario        String     @unique
-  correo         String     @unique
-  password       String
-  rol            rol        @relation(fields: [id_rol], references: [id])
-  id_rol         Int        @default(6)
-  fecha_registro DateTime   @default(now())
-
+  id                         Int                          @id @default(autoincrement())
+  perfil                     perfil                       @relation(fields: [id_perfil], references: [id])
+  id_perfil                  Int
+  cat_estado                 cat_estado                   @relation(fields: [id_estado], references: [id])
+  id_estado                  Int
+  persona                    persona                      @relation(fields: [id_persona], references: [id])
+  id_persona                 Int                          @unique
+  usuario                    String                       @unique
+  correo                     String                       @unique
+  password                   String
+  rol                        rol                          @relation(fields: [id_rol], references: [id])
+  id_rol                     Int                          @default(6)
+  fecha_registro             DateTime                     @default(now())
+  token                      String?                      @unique @default(uuid())
   historial_password_usuario historial_password_usuario[]
   conexion                   conexion[]
   historial_sesion           historial_sesion[]
@@ -901,12 +904,13 @@ model historial_password_usuario {
 }
 
 model rol {
-  id         Int          @id @default(autoincrement())
-  nombre     String
-  cat_estado cat_estado   @relation(fields: [id_estado], references: [id])
-  id_estado  Int
-  rol_modulo rol_modulo[]
-  usuario    usuario[]
+  id          Int           @id @default(autoincrement())
+  nombre      String
+  cat_estado  cat_estado    @relation(fields: [id_estado], references: [id])
+  id_estado   Int
+  rol_modulo  rol_modulo[]
+  usuario     usuario[]
+  rol_permiso rol_permiso[]
 }
 
 model modulo {
@@ -944,6 +948,17 @@ model permiso {
   nombre                    String
   descripcion               String
   historial_permiso_usuario historial_permiso_usuario[]
+  rol_permiso               rol_permiso[]
+}
+
+model rol_permiso {
+  rol        rol     @relation(fields: [id_rol], references: [id])
+  id_rol     Int
+  permiso    permiso @relation(fields: [id_permiso], references: [id])
+  id_permiso Int
+  nombre     String
+
+  @@id([id_rol, id_permiso])
 }
 
 model privilegio_usuario {

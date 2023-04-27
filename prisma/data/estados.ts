@@ -33,8 +33,13 @@ export const estados = [
 
   {
     id_categoria_estado: 1,
-    nombre: "Servidos",
-    descripcion: "Estado Servidos",
+    nombre: "Servido",
+    descripcion: "Estado Servido",
+  },
+  {
+    id_categoria_estado: 1,
+    nombre: "Terminado",
+    descripcion: "Estado Terminado",
   },
 
   {

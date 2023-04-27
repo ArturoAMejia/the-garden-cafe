@@ -278,23 +278,23 @@ export const RealizarVenta: FC<Props> = ({ pedido }) => {
                         <Divider className="my-2" />
                         <Subtitle className="text-lg font-bold text-black">
                           {" "}
-                          Subtotal: {subtotal}
+                          Subtotal: ${subtotal.toFixed(2)}
                         </Subtitle>
                         <Subtitle className="text-lg font-bold text-black">
-                          Impuesto:{" "}
+                          Impuesto: $
                           {(
                             subtotal * Number(process.env.NEXT_PUBLIC_TAX_RATE)
                           ).toFixed(2)}
                         </Subtitle>
                         <Subtitle className="text-lg font-bold text-black">
-                          Descuento: {descuento.toFixed(2)}
+                          Descuento: ${descuento.toFixed(2)}
                         </Subtitle>
                         {}
                         <Subtitle className="text-lg font-bold text-black">
-                          Cambio:{cambio.toFixed(2)}
+                          Cambio: ${cambio.toFixed(2)}
                         </Subtitle>
                         <Subtitle className="text-lg font-bold text-black">
-                          Total:{total}
+                          Total: ${total.toFixed(2)}
                         </Subtitle>
                       </div>
                     </div>

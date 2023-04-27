@@ -7,6 +7,7 @@ import { pedidoSlice } from "./slices/pedido/pedidoSlice";
 import { catalogosApi } from "./slices/catalogos";
 import { authApi } from "./slices/auth";
 import { pedidoApi } from "./slices/pedido";
+import { negocioApi } from "./slices/negocio";
 
 export function makeStore() {
   return configureStore({
@@ -18,6 +19,7 @@ export function makeStore() {
       [catalogosApi.reducerPath]: catalogosApi.reducer,
       [authApi.reducerPath]: authApi.reducer,
       [pedidoApi.reducerPath]: pedidoApi.reducer,
+      [negocioApi.reducerPath]: negocioApi.reducer,
       // ! Slice Reducers
       pedido: pedidoSlice.reducer,
       compra: compraSlice.reducer,
@@ -30,6 +32,7 @@ export function makeStore() {
         catalogosApi.middleware,
         authApi.middleware,
         pedidoApi.middleware,
+        negocioApi.middleware,
       ]),
   });
 }

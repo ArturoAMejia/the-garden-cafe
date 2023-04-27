@@ -27,6 +27,9 @@ import {
   cargarPedido,
 } from "@/store/slices/pedido/pedidoSlice";
 import { AppState } from "@/store/store";
+import { getSession, useSession } from "next-auth/react";
+import { getServerSession } from "next-auth";
+import { RealizarVenta } from "@/components/admin/ventas/nueva-venta/RealizarVenta";
 
 interface Props {
   detalle: IPedido;
@@ -40,6 +43,8 @@ const DetallePedidoRealizadoPage: FC<Props> = ({ detalle }) => {
   const { productos, subtotal, total } = useAppSelector(
     ({ pedido }: AppState) => pedido
   );
+
+  const { data: session } = useSession();
 
   const { data: categorias, isLoading: isLoadingCategorias } =
     useObtenerCategoriasQuery();
@@ -61,6 +66,7 @@ const DetallePedidoRealizadoPage: FC<Props> = ({ detalle }) => {
           id: producto.id_producto_elaborado,
           nombre: producto.producto_elaborado.nombre,
           precio: producto.precio,
+          id_estado: producto.id_estado,
           cantidad: producto.cantidad,
         }))
       )
@@ -95,78 +101,137 @@ const DetallePedidoRealizadoPage: FC<Props> = ({ detalle }) => {
             </span>
           </p>
           <p className="text-xl font-bold">
+            Cliente:{" "}
+            <span className="text-lg font-medium capitalize">
+              {detalle.cliente?.persona?.nombre}{" "}
+              {detalle.cliente?.persona?.apellido_razon_social}
+            </span>
+          </p>
+          <p className="text-xl font-bold">
             Tipo de Pedido:{" "}
             <span className="text-lg font-medium capitalize">
               {detalle.tipo_pedido}
             </span>
           </p>
+          <p className="text-xl font-bold">
+            Observaciones:{" "}
+            <span className="text-lg font-medium capitalize">
+              {detalle.observacion}
+            </span>
+          </p>
         </div>
       </div>
-      <div className="flex-row gap-4 md:flex">
-        <div className="w-full md:h-80 md:w-3/5">
+      <div className="mt-4 flex-row gap-4 md:flex">
+        <div
+          className={`w-full  md:h-80 ${
+            session?.user.id_trabajador === detalle.id_trabajador ||
+            (session?.user.id_trabajador !== detalle.id_trabajador &&
+              session?.user.id_rol === 1) ||
+            (session?.user.id_trabajador === detalle.id_trabajador &&
+              session?.user.id_rol === 2)
+              ? "md:w-3/5"
+              : ""
+          }`}
+        >
           <ResumenPedidoLocal
             productos={productos}
             quitarProducto={quitarProductoPedido}
             subtotal={subtotal}
             total={total}
+            id_trabajador={detalle.id_trabajador}
           />
-          <EditarPedido pedido={detalle} />
-        </div>
-        <div className="w-full md:h-5/6 md:w-2/5">
-          <TextInput
-            className="mt-4 md:mt-0"
-            icon={MagnifyingGlassIcon}
-            placeholder="Buscar..."
-            onChange={(e) => setQuery(e.target.value)}
-          />
-          <div className="flex justify-end pr-2 pt-2">
-            <Button variant="light" onClick={() => setFiltro("")}>
-              Borrar Filtro
-            </Button>
+          <div className="flex gap-4">
+            {session?.user.id_rol === 5 ||
+            session?.user.id_rol === 1 ||
+            session?.user.id_rol === 2 ? (
+              <RealizarVenta pedido={detalle} />
+            ) : null}
+            {session?.user.id_trabajador === detalle.id_trabajador ||
+            (session?.user.id_trabajador !== detalle.id_trabajador &&
+              session?.user.id_rol === 1) ||
+            (session?.user.id_trabajador === detalle.id_trabajador &&
+              session?.user.id_rol === 2) ? (
+              <EditarPedido pedido={detalle} />
+            ) : null}
           </div>
-          {isLoadingCategorias ? (
-            <>Cargando...</>
-          ) : (
-            <CategoriaFilter categorias={categorias} setFiltro={setFiltro} />
-          )}
-
-          {isLoading ? (
-            <>Cargando...</>
-          ) : (
-            <div className="mt-4 overflow-y-auto ">
-              {filtro
-                ? menuFiltrado?.map((prod) => (
-                    <ProductoFiltrado
-                      key={prod.nombre}
-                      añadirProductoOrden={añadirProductoPedido}
-                      isIngredient={false}
-                      isPlate={true}
-                      producto={prod}
-                    />
-                  ))
-                : query
-                ? platillosFiltrados.map((platillo) => (
-                    <ProductoFiltrado
-                      key={platillo.nombre}
-                      añadirProductoOrden={añadirProductoPedido}
-                      isIngredient={false}
-                      isPlate={true}
-                      producto={platillo}
-                    />
-                  ))
-                : platillos?.map((prod) => (
-                    <ProductoFiltrado
-                      key={prod.nombre}
-                      añadirProductoOrden={añadirProductoPedido}
-                      isIngredient={false}
-                      isPlate={true}
-                      producto={prod}
-                    />
-                  ))}
-              {}
-            </div>
-          )}
         </div>
+        {session?.user.id_trabajador === detalle.id_trabajador ||
+        (session?.user.id_trabajador !== detalle.id_trabajador &&
+          session?.user.id_rol === 1) ||
+        (session?.user.id_trabajador !== detalle.id_trabajador &&
+          session?.user.id_rol === 2) ? (
+          <>
+            <div
+              className={`w-full md:h-5/6
+        ${
+          session?.user.id_trabajador === detalle.id_trabajador ||
+          (session?.user.id_trabajador !== detalle.id_trabajador &&
+            session?.user.id_rol === 1) ||
+          (session?.user.id_trabajador === detalle.id_trabajador &&
+            session?.user.id_rol === 2)
+            ? "md:w-2/5"
+            : ""
+        }`}
+            >
+              <TextInput
+                className="mt-4 md:mt-0"
+                icon={MagnifyingGlassIcon}
+                placeholder="Buscar..."
+                onChange={(e) => setQuery(e.target.value)}
+              />
+              <div className="flex justify-end pr-2 pt-2">
+                <Button variant="light" onClick={() => setFiltro("")}>
+                  Borrar Filtro
+                </Button>
+              </div>
+              {isLoadingCategorias ? (
+                <>Cargando...</>
+              ) : (
+                <CategoriaFilter
+                  categorias={categorias}
+                  setFiltro={setFiltro}
+                />
+              )}
+
+              {isLoading ? (
+                <>Cargando...</>
+              ) : (
+                <div className="mt-4 overflow-y-auto ">
+                  {filtro
+                    ? menuFiltrado?.map((prod) => (
+                        <ProductoFiltrado
+                          key={prod.nombre}
+                          añadirProductoOrden={añadirProductoPedido}
+                          isIngredient={false}
+                          isPlate={true}
+                          producto={prod}
+                        />
+                      ))
+                    : query
+                    ? platillosFiltrados.map((platillo) => (
+                        <ProductoFiltrado
+                          key={platillo.nombre}
+                          añadirProductoOrden={añadirProductoPedido}
+                          isIngredient={false}
+                          isPlate={true}
+                          producto={platillo}
+                        />
+                      ))
+                    : platillos?.map((prod) => (
+                        <ProductoFiltrado
+                          key={prod.nombre}
+                          añadirProductoOrden={añadirProductoPedido}
+                          isIngredient={false}
+                          isPlate={true}
+                          producto={prod}
+                        />
+                      ))}
+                  {}
+                </div>
+              )}
+            </div>
+          </>
+        ) : null}
       </div>
     </AdminLayout>
   );
@@ -218,6 +283,7 @@ export const getServerSideProps: GetServerSideProps = async ({
             },
           },
           producto: true,
+          id_estado: true,
           monto: true,
           cantidad: true,
           precio: true,

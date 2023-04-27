@@ -2,7 +2,6 @@ import {
   BookmarkIcon,
   CheckCircleIcon,
   CreditCardIcon,
-  MinusCircleIcon,
   TrashIcon,
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
@@ -19,7 +18,7 @@ import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
 import { Elements, CardElement } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import { AuthContext } from "../../context";
+import { useSession } from "next-auth/react";
 
 const paymentMethods = [
   { id: "credit-card", title: "Tarjeta de Crédito" },
@@ -55,17 +54,20 @@ const ResumenPage = () => {
     {
       id: 1,
       title: "Recoger",
-      price: `$${(total * 0.1).toFixed(2)}`,
+      price: total * 0.1,
     },
     {
       id: 2,
       title: "Entrega a domicilio",
-      price: `$${(total * 0.2).toFixed(2)}`,
+      price: total * 0.2,
     },
   ];
   const [tipoPedidoSeleccionado, settipoPedidoSeleccionado] = useState(
     tipoPedido[0]
   );
+
+  console.log(tipoPedidoSeleccionado);
+
   const prod = cart.map((pro) => {
     return {
       ...pro,
@@ -79,17 +81,13 @@ const ResumenPage = () => {
     metodoPagoSeleccionado;
   }, [metodoPagoSeleccionado]);
 
-  const nombre = Cookies.get("nombre");
-  const apellido = Cookies.get("apellido");
-  const correo = Cookies.get("correo");
-
   const { register, handleSubmit, reset, getValues } = useForm<FormData>();
 
-  const { user } = useContext(AuthContext);
+  const { data: session } = useSession();
 
   const onRegisterPedido = async () => {
     const pedido: any = {
-      id_usuario: user!.id,
+      id_usuario: session.user!.id,
       correo: getValues("correo"),
       tipo_pedido: tipoPedidoSeleccionado.title,
       ubicacion_entrega: getValues("direccion_domicilio"),
@@ -134,10 +132,12 @@ const ResumenPage = () => {
           >
             <div>
               <div className="mborder-t border-gray-200">
-                <UserCircleIcon className="h-6 w-6 text-black" />
-                <h2 className="text-lg font-medium text-gray-900">
-                  Información de Envío
-                </h2>
+                <div className="flex items-center gap-2">
+                  <UserCircleIcon className="h-6 w-6 text-black" />
+                  <h2 className="text-lg font-medium text-gray-900">
+                    Información de Envío
+                  </h2>
+                </div>
 
                 <div className="mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4">
                   <div>
@@ -152,7 +152,7 @@ const ResumenPage = () => {
                         type="text"
                         id="nombre"
                         required
-                        defaultValue={nombre}
+                        defaultValue={session?.user.nombre}
                         {...register("nombre", {
                           required: true,
                         })}
@@ -172,7 +172,7 @@ const ResumenPage = () => {
                       <input
                         type="text"
                         id="apellido"
-                        defaultValue={apellido}
+                        defaultValue={session?.user.apellido}
                         {...register("apellido_razon_social", {
                           required: true,
                         })}
@@ -191,7 +191,7 @@ const ResumenPage = () => {
                       <input
                         type="email"
                         id="correo"
-                        value={correo}
+                        value={session?.user.email}
                         {...register("correo", {
                           required: true,
                         })}
@@ -245,9 +245,10 @@ const ResumenPage = () => {
                   value={tipoPedidoSeleccionado}
                   onChange={settipoPedidoSeleccionado}
                 >
-                  <RadioGroup.Label className="text-lg font-medium text-gray-900">
+                  <RadioGroup.Label className="flex items-center gap-2 text-lg font-medium text-gray-900">
                     <BookmarkIcon className="h-6 w-6 text-black" />
-                    Tipo de Pedido
+
+                    <p>Tipo de Pedido</p>
                   </RadioGroup.Label>
 
                   <div className="mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4">
@@ -277,7 +278,7 @@ const ResumenPage = () => {
                                   as="span"
                                   className="mt-2 text-sm font-bold text-gray-900"
                                 >
-                                  {deliveryMethod.price}
+                                  ${deliveryMethod.price}
                                 </RadioGroup.Description>
                               </div>
                             </div>
@@ -307,12 +308,12 @@ const ResumenPage = () => {
 
               {/* Payment */}
               <div className="mt-10 border-t border-gray-200 pt-10">
-                <h2 className="text-lg font-medium text-gray-900">
-                  <span>
-                    <CreditCardIcon className="h-6 w-6 text-black" />
-                  </span>{" "}
-                  Método de pago
-                </h2>
+                <div className="flex items-center gap-2">
+                  <CreditCardIcon className="h-6 w-6 text-black" />
+                  <h2 className="text-lg font-medium text-gray-900">
+                    Método de pago
+                  </h2>
+                </div>
 
                 <fieldset className="mt-4">
                   <legend className="sr-only">Payment type</legend>
@@ -453,7 +454,7 @@ const ResumenPage = () => {
                   <div className="flex items-center justify-between border-t border-[#FFCB43] pt-6">
                     <dt className="text-base font-medium">Total</dt>
                     <dd className="text-base font-medium text-gray-900">
-                      $ {total.toFixed(2)}
+                      $ {`${total + tipoPedidoSeleccionado.price}`}
                     </dd>
                   </div>
                 </dl>

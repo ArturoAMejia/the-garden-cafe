@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 
 import { prisma } from "./../../../database";
 import { jwt } from "../../../utils";
+import { emailRegistro } from "@/helpers/email/confirmar-cuenta";
 
 type Data =
   | { message: string }
@@ -106,7 +107,7 @@ const registerUser = async (
   const nuevoUsuario = await prisma.usuario.create({
     data: {
       id_perfil: 2,
-      id_estado: 1,
+      id_estado: 11,
       usuario: username,
       // TODO Cambiar el correo
       correo: username,
@@ -115,6 +116,8 @@ const registerUser = async (
       id_persona: nuevaPersona.id,
     },
   });
+
+  emailRegistro(username, nombre, nuevoUsuario.token);
 
   const cliente = await prisma.cliente.create({
     data: {

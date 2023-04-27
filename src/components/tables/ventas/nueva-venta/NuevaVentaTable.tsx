@@ -101,7 +101,9 @@ export const NuevaVentaTable = () => {
 
   const table = useReactTable({
     data: data?.filter(
-      (pedido) => pedido.id_estado === 5 || pedido.tipo_pedido === "Para llevar"
+      (pedido) =>
+        pedido.id_estado === 6 ||
+        (pedido.tipo_pedido === "Para llevar" && pedido.id_estado !== 7)
     )!,
     columns,
     getCoreRowModel: getCoreRowModel(),
