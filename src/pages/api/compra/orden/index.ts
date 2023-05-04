@@ -63,6 +63,7 @@ const obtenerOrdenCompra = async (res: NextApiResponse<Data>) => {
           id_estado_civil: true,
           estado_civil: true,
           id_estado: true,
+          genero: true,
           codigo_inss: true,
           fecha_ingreso: true,
         },

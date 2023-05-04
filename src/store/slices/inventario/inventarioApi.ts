@@ -6,6 +6,8 @@ import {
   IUnidadMedida,
   ITipoCategoria,
   IInventario,
+  IProductoElaborado,
+  IIngrediente,
 } from "@/interfaces";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
 
@@ -55,11 +57,11 @@ export const inventarioApi = createApi({
       }),
       invalidatesTags: ["Productos"],
     }),
-    obtenerPlatillos: builder.query<IProducto[], void>({
+    obtenerPlatillos: builder.query<IProductoElaborado[], void>({
       query: () => "/inventario/producto/platillos",
       providesTags: ["Platillos"],
     }),
-    crearPlatillo: builder.mutation<IProducto, any>({
+    crearPlatillo: builder.mutation<IProductoElaborado, any>({
       query: (platillo) => ({
         url: "/inventario/producto/platillo",
         method: "POST",
@@ -67,7 +69,7 @@ export const inventarioApi = createApi({
       }),
       invalidatesTags: ["Platillos"],
     }),
-    actualizarPlatillo: builder.mutation<IProducto, any>({
+    actualizarPlatillo: builder.mutation<IProductoElaborado, any>({
       query: (platillo) => ({
         url: "/inventario/producto/platillo",
         method: "PUT",
@@ -83,7 +85,7 @@ export const inventarioApi = createApi({
       }),
       invalidatesTags: ["Platillos"],
     }),
-    obtenerIngredientes: builder.query<IProducto[], void>({
+    obtenerIngredientes: builder.query<IIngrediente[], void>({
       query: () => "/inventario/producto/ingrediente",
       providesTags: ["Ingredientes"],
     }),

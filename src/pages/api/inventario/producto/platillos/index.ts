@@ -1,4 +1,4 @@
-import { IProducto } from "@/interfaces";
+import { IProducto, IProductoElaborado } from "@/interfaces";
 import { prisma } from "database";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -6,9 +6,9 @@ type Data =
   | {
       message: string;
     }
-  | IProducto
+  | IProductoElaborado
   // TODO Quitar el any cuando se implementen los métodos
-  | IProducto[]
+  | IProductoElaborado[]
   | any;
 
 export default function handler(
@@ -51,6 +51,15 @@ const obtenerPlatillos = async (res: NextApiResponse<Data>) => {
       cod_producto: true,
       imagen: true,
       fecha_ingreso: true,
+      detalle_producto_elaborado: {
+        select: {
+          id_producto: true,
+          producto: true,
+          cantidad: true,
+          id_producto_elaborado: true,
+          producto_elaborado: true,
+        },
+      },
     },
   });
   await prisma.$disconnect();

@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import { IProducto } from "../../interfaces";
+import { IIngrediente, IProducto, IProductoElaborado } from "../../interfaces";
 import { useObtenerPlatillosQuery } from "@/store/slices/inventario";
 
+type stateType = IProducto | IIngrediente | IProductoElaborado;
+
 export const useMenu = () => {
-  const [menuFiltrado, setMenuFiltrado] = useState<IProducto[]>();
+  const [menuFiltrado, setMenuFiltrado] = useState<stateType[]>();
 
   const [filtro, setFiltro] = useState("");
 

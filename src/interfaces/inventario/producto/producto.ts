@@ -16,7 +16,6 @@ export interface IProducto {
   sub_categoria_producto?: ISubCategoriaProducto;
   id_tipo_producto: number;
   id_unidad_medida: number;
-
   cod_producto: string;
   nombre: string;
   descripcion: string;

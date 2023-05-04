@@ -92,7 +92,6 @@ const registerUser = async (
       nombre,
       apellido_razon_social,
       cedula_ruc: num_cedula,
-      genero,
       fecha_nacimiento_constitucion,
       telefono,
       correo: username,
@@ -122,7 +121,7 @@ const registerUser = async (
   const cliente = await prisma.cliente.create({
     data: {
       id_estado: 1,
-
+      genero,
       id_persona: nuevaPersona.id,
       tipo_cliente: tipo_persona,
     },

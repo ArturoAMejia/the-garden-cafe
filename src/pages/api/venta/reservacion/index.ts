@@ -84,6 +84,7 @@ const obtenerReservaciones = async (res: NextApiResponse<Data>) => {
           id_estado: true,
           id_persona: true,
           persona: true,
+          genero: true,
           tipo_cliente: true,
         },
       },

@@ -6,5 +6,6 @@ export interface ICliente {
   persona?: IPersona;
   id_estado: number;
   cat_estado?: ICatEstado;
+  genero: string;
   tipo_cliente: string;
 }

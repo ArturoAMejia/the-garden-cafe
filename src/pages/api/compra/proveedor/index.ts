@@ -68,7 +68,6 @@ const crearProveedor = async (
     celular = "",
     direccion_domicilio = "",
     tipo_persona,
-    genero = "",
     sector_comercial,
     nacionalidad,
   } = req.body;
@@ -106,7 +105,6 @@ const crearProveedor = async (
       apellido_razon_social,
       fecha_nacimiento_constitucion: new Date(fecha_nacimiento_constitucion),
       tipo_persona,
-      genero,
       telefono,
       direccion_domicilio,
       correo,

@@ -23,6 +23,10 @@ import {
 } from "@/store/slices/pedido/pedidoSlice";
 import { useSession } from "next-auth/react";
 
+import { Modal } from "@/components/ui/Modal";
+import { CambiarEstadoProductoPedido } from "./CambiarEstadoProductoPedido";
+import { ICatEstado } from "@/interfaces";
+
 interface Props {
   productos: IProductoCart[];
   // actualizarCantidadProducto: any;
@@ -30,6 +34,8 @@ interface Props {
   subtotal: number;
   total: number;
   id_trabajador?: number;
+  estados?: ICatEstado[];
+  nuevo_pedido: boolean;
 }
 
 export const ResumenPedidoLocal: FC<Props> = ({
@@ -39,6 +45,8 @@ export const ResumenPedidoLocal: FC<Props> = ({
   subtotal,
   total,
   id_trabajador,
+  estados,
+  nuevo_pedido,
 }) => {
   const dispatch = useAppDispatch();
 
@@ -66,7 +74,11 @@ export const ResumenPedidoLocal: FC<Props> = ({
                 Cantidad
               </TableHeaderCell>
               <TableHeaderCell className="text-center">Total</TableHeaderCell>
-              <TableHeaderCell className="text-center">Estado</TableHeaderCell>
+              {!nuevo_pedido && (
+                <TableHeaderCell className="text-center">
+                  Estado
+                </TableHeaderCell>
+              )}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -101,19 +113,28 @@ export const ResumenPedidoLocal: FC<Props> = ({
                 <TableCell className="text-center">
                   <Text>{item.precio * item.cantidad}</Text>
                 </TableCell>
-                <TableCell className="text-center">
-                  {item.id_estado === 4 ? (
-                    <Badge size="xs">En preparación</Badge>
-                  ) : item.id_estado === 5 ? (
-                    <Badge size="sm" color="emerald">
-                      Listo
-                    </Badge>
-                  ) : item.id_estado === 6 ? (
-                    <Badge size="sm" color="red">
-                      Servido
-                    </Badge>
-                  ) : null}
-                </TableCell>
+
+                {!nuevo_pedido ? (
+                  <TableCell className="text-center">
+                    <CambiarEstadoProductoPedido
+                      id_estado={item.id_estado}
+                      estados={estados}
+                    />
+
+                    {/* {item.id_estado === 4 ? (
+      <Badge size="xs">En preparación</Badge>
+    ) : item.id_estado === 5 ? (
+      <Badge size="sm" color="emerald">
+        Listo
+      </Badge>
+    ) : item.id_estado === 6 ? (
+      <Badge size="sm" color="red">
+        Servido
+      </Badge>
+    ) : null} */}
+                  </TableCell>
+                ) : null}
+
                 <TableCell className="text-center">
                   {id_trabajador === session?.user?.id_trabajador ||
                   (id_trabajador !== session?.user?.id_trabajador &&

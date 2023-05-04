@@ -2,7 +2,12 @@ import React, { FC, useEffect, useState } from "react";
 
 import { GetServerSideProps } from "next";
 import { prisma } from "../../../../../database";
-import { IPedido, IProducto } from "../../../../../interfaces";
+import {
+  ICatEstado,
+  IPedido,
+  IProducto,
+  IProductoElaborado,
+} from "../../../../../interfaces";
 import { ProductoFiltrado } from "../../../../../components";
 import { AdminLayout } from "../../../../../components/Layout/AdminLayout";
 
@@ -30,12 +35,14 @@ import { AppState } from "@/store/store";
 import { getSession, useSession } from "next-auth/react";
 import { getServerSession } from "next-auth";
 import { RealizarVenta } from "@/components/admin/ventas/nueva-venta/RealizarVenta";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
 interface Props {
   detalle: IPedido;
+  estados: ICatEstado[];
 }
 
-const DetallePedidoRealizadoPage: FC<Props> = ({ detalle }) => {
+const DetallePedidoRealizadoPage: FC<Props> = ({ detalle, estados }) => {
   const [query, setQuery] = useState("");
 
   const { filtro, setFiltro, menuFiltrado } = useMenu();
@@ -45,6 +52,7 @@ const DetallePedidoRealizadoPage: FC<Props> = ({ detalle }) => {
   );
 
   const { data: session } = useSession();
+  console.log(session?.user.id_trabajador);
 
   const { data: categorias, isLoading: isLoadingCategorias } =
     useObtenerCategoriasQuery();
@@ -53,7 +61,7 @@ const DetallePedidoRealizadoPage: FC<Props> = ({ detalle }) => {
   const platillosFiltrados =
     query === ""
       ? platillos
-      : platillos.filter((producto: IProducto) => {
+      : platillos.filter((producto: IProductoElaborado) => {
           return producto.nombre.toLowerCase().includes(query.toLowerCase());
         });
 
@@ -139,6 +147,8 @@ const DetallePedidoRealizadoPage: FC<Props> = ({ detalle }) => {
             subtotal={subtotal}
             total={total}
             id_trabajador={detalle.id_trabajador}
+            nuevo_pedido={false}
+            estados={estados}
           />
           <div className="flex gap-4">
             {session?.user.id_rol === 5 ||
@@ -239,9 +249,11 @@ const DetallePedidoRealizadoPage: FC<Props> = ({ detalle }) => {
 
 export default DetallePedidoRealizadoPage;
 
-export const getServerSideProps: GetServerSideProps = async ({
-  query: { id },
-}) => {
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const session = await getServerSession(ctx.req, ctx.res, authOptions);
+
+  console.log(session);
+
   await prisma.$connect();
   const detalle = await prisma.pedido.findFirst({
     select: {
@@ -290,12 +302,16 @@ export const getServerSideProps: GetServerSideProps = async ({
         },
       },
     },
-    where: { id: Number(id) },
+    where: { id: Number(ctx.query.id) },
   });
+
+  console.log(detalle.id_trabajador);
+  const estados = await prisma.cat_estado.findMany();
   await prisma.$disconnect();
   return {
     props: {
       detalle: JSON.parse(JSON.stringify(detalle)),
+      estados: JSON.parse(JSON.stringify(estados)),
     },
   };
 };

@@ -3,7 +3,12 @@ import { GetServerSideProps } from "next";
 import { AgregarPedido, ProductoFiltrado } from "../../../../components";
 import { AdminLayout } from "../../../../components/Layout/AdminLayout";
 import { prisma } from "./../../../../database";
-import { ICatEstado, IProducto } from "../../../../interfaces";
+import {
+  ICatEstado,
+  IIngrediente,
+  IProducto,
+  IProductoElaborado,
+} from "../../../../interfaces";
 import {
   useObtenerCategoriasQuery,
   useObtenerPlatillosQuery,
@@ -20,6 +25,7 @@ import { ResumenPedidoLocal } from "@/components/admin/pedido/ResumenPedidoLocal
 import { Button, TextInput } from "@tremor/react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
+type propFilter = IProducto | IIngrediente | IProductoElaborado;
 interface Props {
   estados: ICatEstado[];
 }
@@ -39,7 +45,7 @@ const NuevoPedidoPage: FC<Props> = ({ estados }) => {
   const platillosFiltrados =
     query === ""
       ? platillos
-      : platillos.filter((producto: IProducto) => {
+      : platillos.filter((producto: IProductoElaborado) => {
           return producto.nombre.toLowerCase().includes(query.toLowerCase());
         });
 
@@ -62,6 +68,7 @@ const NuevoPedidoPage: FC<Props> = ({ estados }) => {
             quitarProducto={quitarProductoPedido}
             subtotal={subtotal}
             total={total}
+            nuevo_pedido={true}
           />
           <AgregarPedido estados={estados} />
         </div>

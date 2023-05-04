@@ -12,18 +12,25 @@ import {
 import {
   ICategoriaProducto,
   IMarca,
-  IProducto,
+  IIngrediente,
   IUnidadMedida,
 } from "../../../interfaces";
 
 import { useObtenerIngredientesQuery } from "@/store/slices/inventario";
 import { EditarProducto } from "@/components/admin";
 import { DesactivarProducto } from "@/components/admin/inventario/producto/DesactivarProducto";
-import { Table, TableHead, TableRow, TableHeaderCell, TableBody, TableCell } from "@tremor/react";
+import {
+  Table,
+  TableHead,
+  TableRow,
+  TableHeaderCell,
+  TableBody,
+  TableCell,
+} from "@tremor/react";
 
-const columnHelper = createColumnHelper<IProducto>();
+const columnHelper = createColumnHelper<IIngrediente>();
 export const IngredienteTable = () => {
-  const columns = useMemo<ColumnDef<IProducto, any>[]>(
+  const columns = useMemo<ColumnDef<IIngrediente, any>[]>(
     () => [
       columnHelper.accessor<"id", number>("id", {
         header: "Código",
@@ -58,7 +65,10 @@ export const IngredienteTable = () => {
         cell: (props) => (
           <div className="flex justify-center">
             <EditarProducto isIngredient={true} producto={props.row.original} />
-            <DesactivarProducto isIngredient={true} id={props.row.original.id} />
+            <DesactivarProducto
+              isIngredient={true}
+              id={props.row.original.id}
+            />
           </div>
         ),
       }),

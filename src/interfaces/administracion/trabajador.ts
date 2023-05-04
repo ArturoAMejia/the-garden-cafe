@@ -11,6 +11,8 @@ export interface ITrabajador {
   id_estado: number;
   cat_estado?: ICatEstado;
   codigo_inss: string;
+  genero: string;
+
   fecha_ingreso: Date;
   grupo?: IGrupoUsuario;
 }

@@ -3,7 +3,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import React, { ChangeEvent, FC, Fragment, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { IProducto } from "../../../../interfaces";
+import { IIngrediente, IProducto } from "../../../../interfaces";
 import {
   useActualizarIngredienteMutation,
   useActualizarProductoMutation,
@@ -17,10 +17,11 @@ import {
 
 type FormData = IProducto;
 
+type propType = IProducto | IIngrediente;
 interface Props {
   isIngredient?: boolean;
   isProduct?: boolean;
-  producto: IProducto;
+  producto: propType;
 }
 export const EditarProducto: FC<Props> = ({
   isIngredient,

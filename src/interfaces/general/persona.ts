@@ -8,7 +8,6 @@ export interface IPersona {
   telefono: string;
   direccion_domicilio: string;
   correo: string;
-  genero: string;
   fecha_nacimiento_constitucion: Date;
   fecha_registro: Date;
   tipo_persona: string;

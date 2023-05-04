@@ -44,6 +44,7 @@ const obtenerClientes = async (
       cat_estado: true,
       id_persona: true,
       persona: true,
+      genero:true,
       tipo_cliente: true,
     },
     orderBy: {
@@ -100,7 +101,6 @@ const crearCliente = async (
       apellido_razon_social,
       cedula_ruc,
       fecha_nacimiento_constitucion: new Date(fecha_nacimiento_constitucion),
-      genero,
       telefono: telefono.toString(),
       direccion_domicilio,
       correo,
@@ -112,6 +112,8 @@ const crearCliente = async (
       id_persona: persona.id,
       tipo_cliente,
       id_estado: 1,
+      genero,
+
     },
   });
   await prisma.$disconnect();

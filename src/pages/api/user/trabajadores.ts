@@ -39,12 +39,10 @@ const obtenerTrabajadores = async (res: NextApiResponse<Data>) => {
           id: true,
           nombre: true,
           apellido_razon_social: true,
-
           cedula_ruc: true,
           telefono: true,
           direccion_domicilio: true,
           correo: true,
-          genero: true,
           fecha_nacimiento_constitucion: true,
           fecha_registro: true,
           tipo_persona: true,
@@ -81,6 +79,8 @@ const obtenerTrabajadores = async (res: NextApiResponse<Data>) => {
       },
       id_estado_civil: true,
       estado_civil: true,
+      genero: true,
+
       id_estado: true,
       cat_estado: true,
       codigo_inss: true,
@@ -140,7 +140,6 @@ const crearTrabajador = async (
       nombre,
       apellido_razon_social,
       cedula_ruc,
-      genero,
       fecha_nacimiento_constitucion: new Date(fecha_nacimiento_constitucion),
       telefono,
       correo,
@@ -168,6 +167,8 @@ const crearTrabajador = async (
     data: {
       id_persona: nuevaPersona!.id,
       codigo_inss,
+      genero,
+
       fecha_ingreso: new Date(),
       id_estado: 1,
       id_estado_civil,
@@ -217,7 +218,6 @@ const actualizarTrabajador = async (
       nombre,
       apellido_razon_social,
       cedula_ruc,
-      genero,
       fecha_nacimiento_constitucion: new Date(fecha_nacimiento_constitucion),
       telefono,
       correo,
@@ -235,6 +235,8 @@ const actualizarTrabajador = async (
       codigo_inss,
       fecha_ingreso: new Date(),
       id_estado: 1,
+      genero,
+
       id_estado_civil,
     },
     where: {
@@ -267,5 +269,5 @@ const desactivarTrabajador = async (
     },
   });
   await prisma.$disconnect();
-  return res.status(200).json(trabajador)
+  return res.status(200).json(trabajador);
 };

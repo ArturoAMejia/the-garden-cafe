@@ -1,10 +1,11 @@
-import NextAuth, { User, DefaultSession } from "next-auth";
+import NextAuth, { User, DefaultSession, NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "database";
 
 import bcrypt from "bcryptjs";
 import { IModulo } from "@/interfaces/administracion/modulo";
 import { IRol } from "@/interfaces/seguridad/rol-modulo";
+import { AdapterUser } from "next-auth/adapters";
 
 declare module "next-auth" {
   /**
@@ -12,6 +13,7 @@ declare module "next-auth" {
    */
   interface Session {
     id_rol: number;
+    id_trabajador: number;
     user: {
       id: number;
       id_rol: number;
@@ -20,8 +22,9 @@ declare module "next-auth" {
       apellido: string;
       roles: IRol[];
       id_trabajador: number;
-      /** The user's postal address. */
-    } & DefaultSession["user"];
+    } & DefaultSession["user"] &
+      AdapterUser;
+    /** The user's postal address. */
   }
   interface User {
     id_rol: number;
@@ -31,7 +34,7 @@ declare module "next-auth" {
   }
 }
 
-export default NextAuth({
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -144,12 +147,11 @@ export default NextAuth({
     },
 
     async session({ session, token, user }) {
-      // session.accessToken = token.accessToken
-
       session.user = token.user as any;
 
-      // session.id_rol = user.id_rol;
       return session;
     },
   },
-});
+};
+
+export default NextAuth(authOptions);

@@ -1,23 +1,26 @@
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { Dialog, Transition } from "@headlessui/react";
-import React, { ChangeEvent, FC, Fragment, useContext, useState } from "react";
+import React, { Fragment, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { AdminContext } from "../../../context";
 
 import { IInventario } from "../../../interfaces";
 import {
   useCrearInventarioMutation,
+  useObtenerInventarioQuery,
   useObtenerProductosQuery,
 } from "@/store/slices/inventario";
 
 type FormData = IInventario;
 
 export const AgregarInventario = () => {
-  const { register, handleSubmit, reset, setValue, getValues } =
-    useForm<FormData>();
+  const { register, handleSubmit, reset } = useForm<FormData>();
 
   const { data: productos, isLoading } = useObtenerProductosQuery();
+
+  const { data: inventario, isLoading: isLoadingInventario } =
+    useObtenerInventarioQuery();
+
   const [crearInventario] = useCrearInventarioMutation();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -46,6 +49,14 @@ export const AgregarInventario = () => {
   };
 
   if (isLoading) return <>Cargando...</>;
+
+  if (isLoadingInventario) return <>Cargando...</>;
+
+  const prods = productos.filter((producto) =>
+    inventario.map!((inv) => inv.id_producto).includes(producto.id)
+  );
+
+  console.log(prods);
 
   return (
     <>

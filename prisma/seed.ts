@@ -33,6 +33,11 @@ import { monedas } from "./data/monedas";
 import { cajas } from "./data/caja";
 import { tipo_orden_compra } from "./data/tipo-orden-compra";
 import { prisma } from "../database";
+import {
+  ingredientes,
+  platillo_ingredientes,
+  platillos,
+} from "./data/inventario";
 
 const main = async (): Promise<void> => {
   await prisma.$connect();
@@ -115,6 +120,9 @@ const main = async (): Promise<void> => {
     await prisma.producto.createMany({
       data: productos,
     });
+    await prisma.producto.createMany({
+      data: ingredientes,
+    });
     await prisma.precio_producto.createMany({
       data: precio_productos,
     });
@@ -123,6 +131,12 @@ const main = async (): Promise<void> => {
     });
     await prisma.producto_elaborado.createMany({
       data: productos_elaborados,
+    });
+    await prisma.producto_elaborado.createMany({
+      data: platillos,
+    });
+    await prisma.detalle_producto_elaborado.createMany({
+      data: platillo_ingredientes,
     });
     await prisma.moneda.createMany({
       data: monedas,

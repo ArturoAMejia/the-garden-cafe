@@ -92,7 +92,6 @@ model persona {
   telefono                      String
   direccion_domicilio           String
   correo                        String
-  genero                        String
   fecha_nacimiento_constitucion DateTime
   fecha_registro                DateTime    @default(now())
   tipo_persona                  String      @default("Natural")
@@ -109,6 +108,7 @@ model cliente {
   cat_estado   cat_estado    @relation(fields: [id_estado], references: [id])
   id_estado    Int
   tipo_cliente String
+  genero       String
   pedido       pedido[]
   reservacion  reservacion[]
   venta        venta[]
@@ -155,6 +155,7 @@ model trabajador {
   cat_estado                 cat_estado                   @relation(fields: [id_estado], references: [id])
   id_estado                  Int
   codigo_inss                String
+  genero                     String
   fecha_ingreso              DateTime                     @default(now())
   historial_cargo_trabajador historial_cargo_trabajador[]
   compra                     compra[]

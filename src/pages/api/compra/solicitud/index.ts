@@ -44,6 +44,7 @@ const obtenerSolicitudesCompra = async (res: NextApiResponse<Data>) => {
           id_estado_civil: true,
           estado_civil: true,
           id_persona: true,
+          genero: true,
           persona: true,
           fecha_ingreso: true,
         },
