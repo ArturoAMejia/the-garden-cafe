@@ -196,6 +196,10 @@ export const tipo_producto = [
     nombre: "Combo",
     id_estado: 1,
   },
+  {
+    nombre: "Productos para vender",
+    id_estado: 1,
+  },
 ];
 
 export const tipo_categoria = [

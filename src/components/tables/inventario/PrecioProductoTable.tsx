@@ -1,5 +1,4 @@
-import { useMemo } from "react";
-
+import React, { useMemo } from "react";
 import {
   ColumnDef,
   createColumnHelper,
@@ -8,16 +7,17 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-
 import {
   ICategoriaProducto,
-  IMarca,
-  IProducto,
+  IIngrediente,
+  IPrecioProducto,
   IUnidadMedida,
 } from "../../../interfaces";
 
-import { useObtenerIngredientesQuery } from "@/store/slices/inventario";
-import { EditarProducto } from "@/components/admin";
+import {
+  useObtenerPlatillosQuery,
+  useObtenerProductosQuery,
+} from "@/store/slices/inventario";
 import { DesactivarProducto } from "@/components/admin/inventario/producto/DesactivarProducto";
 import {
   Table,
@@ -27,49 +27,37 @@ import {
   TableBody,
   TableCell,
 } from "@tremor/react";
+import { DetallePlatillo } from "@/components/admin/inventario/producto/DetallePlatillo";
 
 const columnHelper = createColumnHelper<any>();
 
-export const IngredienteTable = () => {
+export const PrecioProductoTable = () => {
   const columns = useMemo<ColumnDef<any, any>[]>(
     () => [
-      columnHelper.accessor<"id", number>("id", {
-        header: "Código",
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor<"nombre", string>("nombre", {
+      columnHelper.accessor<"gasto", number>("gasto", {
         header: "Nombre",
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor<"descripcion", string>("descripcion", {
-        header: "Descripción",
+      // columnHelper.accessor<"descripcion", string>("descripcion", {
+      //   header: "descripcion",
+      //   cell: (info) => info.getValue(),
+      // }),
+      columnHelper.accessor<"producto", IIngrediente>("producto", {
+        header: "Categoría",
+        cell: (info) => info.getValue().nombre,
+      }),
+      columnHelper.accessor<"precio_compra", number>("precio_compra", {
+        header: "Precio de compra",
         cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor<"categoria_producto", ICategoriaProducto>(
-        "categoria_producto",
-        {
-          header: "Categoría",
-          cell: (info) => info.getValue().nombre,
-        }
-      ),
-      columnHelper.accessor<"unidad_medida", IUnidadMedida>("unidad_medida", {
-        header: "Unidad de Medida",
-        cell: (info) => info.getValue().nombre,
-      }),
-      columnHelper.accessor<"marca", IMarca>("marca", {
-        header: "Marca",
-        cell: (info) => info.getValue().nombre,
       }),
       columnHelper.display({
         id: "actions",
         header: () => <span>Acciones</span>,
         cell: (props) => (
           <div className="flex justify-center">
-            <EditarProducto isIngredient={true} producto={props.row.original} />
-            <DesactivarProducto
-              isIngredient={true}
-              id={props.row.original.id}
-            />
+            {/* //! TODO Hacer el editar platillo */}
+            {/* <EditarProducto isProduct={true} producto={props.row.original} />
+            <DesactivarProducto isProduct={true} id={props.row.original.id} /> */}
           </div>
         ),
       }),
@@ -77,9 +65,10 @@ export const IngredienteTable = () => {
     []
   );
 
-  const { data: ingredientes, isLoading } = useObtenerIngredientesQuery();
+  const { data: productos, isLoading } = useObtenerPlatillosQuery();
+
   const table = useReactTable({
-    data: ingredientes!,
+    data: productos!,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),

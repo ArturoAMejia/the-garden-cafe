@@ -18,11 +18,18 @@ import {
 import { EditarProducto } from "@/components/admin";
 import { useObtenerProductosQuery } from "@/store/slices/inventario";
 import { DesactivarProducto } from "@/components/admin/inventario/producto/DesactivarProducto";
-import { Table, TableHead, TableRow, TableHeaderCell, TableBody, TableCell } from "@tremor/react";
+import {
+  Table,
+  TableHead,
+  TableRow,
+  TableHeaderCell,
+  TableBody,
+  TableCell,
+} from "@tremor/react";
 
-const columnHelper = createColumnHelper<IProducto>();
+const columnHelper = createColumnHelper<any>();
 export const ProductoTable = () => {
-  const columns = useMemo<ColumnDef<IProducto, any>[]>(
+  const columns = useMemo<ColumnDef<any, any>[]>(
     () => [
       columnHelper.accessor<"id", number>("id", {
         header: "Código",

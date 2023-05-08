@@ -91,7 +91,7 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
       }
     } else if (isProduct) {
       try {
-        crearProducto({ ...data, id_tipo_producto: 2 }).unwrap();
+        crearProducto({ ...data, id_tipo_producto: 4 }).unwrap();
         toast.success("Producto agregado correctamente");
         closeModal();
         reset();

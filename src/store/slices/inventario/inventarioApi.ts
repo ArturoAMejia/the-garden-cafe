@@ -8,6 +8,8 @@ import {
   IInventario,
   IProductoElaborado,
   IIngrediente,
+  IPrecioProducto,
+  IInventarioABC,
 } from "@/interfaces";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
 
@@ -265,6 +267,34 @@ export const inventarioApi = createApi({
       }),
       invalidatesTags: ["Inventario"],
     }),
+    obtenerPrecioProducto: builder.query<IPrecioProducto[], void>({
+      query: () => "/inventario/producto/precio-producto",
+      providesTags: ["Inventario"],
+    }),
+    crearPrecioProducto: builder.mutation<IPrecioProducto, any>({
+      query: (precioProducto) => ({
+        url: "/inventario/producto/precio-producto",
+        method: "POST",
+        body: precioProducto,
+      }),
+      invalidatesTags: ["Inventario"],
+    }),
+    obtenerInventarioAbcVenta: builder.query<IInventarioABC[], void>({
+      query: () => "/inventario/inventario-abc/venta",
+      providesTags: ["Inventario"],
+    }),
+    obtenerPoliticasInventario: builder.query<any[], void>({
+      query: () => "/inventario/politica-inventario",
+      providesTags: ["Inventario"],
+    }),
+    actualizarPoliticaInventario: builder.mutation<any, any>({
+      query: (politica) => ({
+        url: "/inventario/politica-inventario",
+        method: "PUT",
+        body: politica,
+      }),
+      invalidatesTags: ["Inventario"],
+    }),
   }),
 });
 
@@ -312,4 +342,12 @@ export const {
   // Inventario
   useObtenerInventarioQuery,
   useCrearInventarioMutation,
+  // Precio Producto
+  useObtenerPrecioProductoQuery,
+  useCrearPrecioProductoMutation,
+  // Inventario ABC
+  useObtenerInventarioAbcVentaQuery,
+  // Politicas de Inventario
+  useObtenerPoliticasInventarioQuery,
+  useActualizarPoliticaInventarioMutation,
 } = inventarioApi;

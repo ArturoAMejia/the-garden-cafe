@@ -75,22 +75,20 @@ const crearIngrediente = async (
     id_marca,
     id_unidad_medida,
     id_sub_categoria_producto,
-    precio_compra,
-    gasto,
-    margen_ganancia,
+    precio_compra = 0,
+    gasto = 0,
+    margen_ganancia = 0,
     imagen,
   } = req.body;
 
+  console.log(req.body);
   if (
     !nombre ||
     !descripcion ||
     !id_categoria_producto ||
     !id_marca ||
     !id_unidad_medida ||
-    !id_sub_categoria_producto ||
-    !precio_compra ||
-    !gasto ||
-    !margen_ganancia
+    !id_sub_categoria_producto
   )
     return res
       .status(400)

@@ -1,5 +1,3 @@
-import { useMemo } from "react";
-
 import {
   ColumnDef,
   createColumnHelper,
@@ -8,30 +6,34 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-
+import { useMemo } from "react";
 import {
-  ICategoriaProducto,
-  IMarca,
+  Count,
+  IInventario,
+  IInventarioABC,
   IProducto,
-  IUnidadMedida,
 } from "../../../interfaces";
-
-import { useObtenerIngredientesQuery } from "@/store/slices/inventario";
-import { EditarProducto } from "@/components/admin";
-import { DesactivarProducto } from "@/components/admin/inventario/producto/DesactivarProducto";
 import {
+  useObtenerInventarioAbcVentaQuery,
+  useObtenerPoliticasInventarioQuery,
+} from "@/store/slices/inventario";
+import {
+  Badge,
   Table,
-  TableHead,
-  TableRow,
-  TableHeaderCell,
   TableBody,
   TableCell,
+  TableHead,
+  TableHeaderCell,
+  TableRow,
 } from "@tremor/react";
 
-const columnHelper = createColumnHelper<any>();
+const columnHelper = createColumnHelper<IInventarioABC>();
 
-export const IngredienteTable = () => {
-  const columns = useMemo<ColumnDef<any, any>[]>(
+export const InventarioABCTable = () => {
+  const { data: politicas, isLoading: isLoadingPoliticas } =
+    useObtenerPoliticasInventarioQuery();
+
+  const columns = useMemo<ColumnDef<IInventarioABC, any>[]>(
     () => [
       columnHelper.accessor<"id", number>("id", {
         header: "Código",
@@ -41,51 +43,61 @@ export const IngredienteTable = () => {
         header: "Nombre",
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor<"descripcion", string>("descripcion", {
-        header: "Descripción",
+      columnHelper.accessor<"_count", Count>("_count", {
+        header: "Demanda",
+        cell: (info) => info.getValue().detalle_pedido,
+      }),
+      columnHelper.accessor<"precio_producto", number>("precio_producto", {
+        header: "Valor platillo",
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor<"categoria_producto", ICategoriaProducto>(
-        "categoria_producto",
+      columnHelper.accessor<"porcentaje", number>("porcentaje", {
+        header: "%",
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor<"porcentaje_acumulado", number>(
+        "porcentaje_acumulado",
         {
-          header: "Categoría",
-          cell: (info) => info.getValue().nombre,
+          header: "% Acumulado",
+          cell: (info) => info.getValue(),
         }
       ),
-      columnHelper.accessor<"unidad_medida", IUnidadMedida>("unidad_medida", {
-        header: "Unidad de Medida",
-        cell: (info) => info.getValue().nombre,
-      }),
-      columnHelper.accessor<"marca", IMarca>("marca", {
-        header: "Marca",
-        cell: (info) => info.getValue().nombre,
-      }),
-      columnHelper.display({
-        id: "actions",
-        header: () => <span>Acciones</span>,
-        cell: (props) => (
-          <div className="flex justify-center">
-            <EditarProducto isIngredient={true} producto={props.row.original} />
-            <DesactivarProducto
-              isIngredient={true}
-              id={props.row.original.id}
-            />
-          </div>
-        ),
+      columnHelper.accessor<"clasificacion", string>("clasificacion", {
+        header: "Clasificación",
+        cell: (info) =>
+          info.row.original.porcentaje_acumulado <= politicas[0].porcentaje ? (
+            <Badge key={info.row.original.clasificacion} color="red">
+              A
+            </Badge>
+          ) : info.row.original.porcentaje_acumulado <=
+            politicas[0].porcentaje + politicas[1].porcentaje ? (
+            <Badge key={info.row.original.clasificacion} color="blue">
+              B
+            </Badge>
+          ) : (
+            <Badge key={info.row.original.clasificacion} color="amber">
+              C
+            </Badge>
+          ),
       }),
     ],
-    []
+    [politicas]
   );
 
-  const { data: ingredientes, isLoading } = useObtenerIngredientesQuery();
+  const { data: inventarios, isLoading } = useObtenerInventarioAbcVentaQuery();
+
+  console.log(politicas);
+
   const table = useReactTable({
-    data: ingredientes!,
+    data: inventarios!,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
 
   if (isLoading) return <>Cargando...</>;
+
+  if (isLoadingPoliticas) return <>Cargando...</>;
 
   return (
     <div>

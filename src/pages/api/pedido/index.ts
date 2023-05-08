@@ -178,7 +178,7 @@ const actualizarPedido = async (
   const {
     id,
     id_cliente,
-    id_trabajador = 1,
+    id_trabajador,
     tipo_pedido,
     ubicacion_entrega = "",
     observacion = "",

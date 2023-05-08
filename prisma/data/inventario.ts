@@ -5,6 +5,21 @@ import {
 } from "@/interfaces";
 import { IProducto } from "@/interfaces/producto";
 
+export const politicas = [
+  {
+    clasificacion: "A",
+    porcentaje: 80,
+  },
+  {
+    clasificacion: "B",
+    porcentaje: 15,
+  },
+  {
+    clasificacion: "C",
+    porcentaje: 5,
+  },
+];
+
 export const ingredientes = [
   // Carne de res
   {

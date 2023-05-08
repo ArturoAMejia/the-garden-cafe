@@ -97,7 +97,9 @@ export const ResumenPedidoLocal: FC<Props> = ({
                   (id_trabajador !== session?.user?.id_trabajador &&
                     session?.user.id_rol === 1) ||
                   (id_trabajador !== session?.user?.id_trabajador &&
-                    session?.user.id_rol === 2) ? (
+                    session?.user.id_rol === 2) ||
+                  (id_trabajador !== session?.user?.id_trabajador &&
+                    session?.user.id_rol === 5) ? (
                     <ItemCounter
                       currentValue={item.cantidad}
                       maxValue={20}
@@ -120,18 +122,6 @@ export const ResumenPedidoLocal: FC<Props> = ({
                       id_estado={item.id_estado}
                       estados={estados}
                     />
-
-                    {/* {item.id_estado === 4 ? (
-      <Badge size="xs">En preparación</Badge>
-    ) : item.id_estado === 5 ? (
-      <Badge size="sm" color="emerald">
-        Listo
-      </Badge>
-    ) : item.id_estado === 6 ? (
-      <Badge size="sm" color="red">
-        Servido
-      </Badge>
-    ) : null} */}
                   </TableCell>
                 ) : null}
 
@@ -140,7 +130,9 @@ export const ResumenPedidoLocal: FC<Props> = ({
                   (id_trabajador !== session?.user?.id_trabajador &&
                     session?.user.id_rol === 1) ||
                   (id_trabajador !== session?.user?.id_trabajador &&
-                    session?.user.id_rol === 2) ? (
+                    session?.user.id_rol === 2) ||
+                  (id_trabajador !== session?.user?.id_trabajador &&
+                    session?.user.id_rol === 5) ? (
                     <button
                       type="button"
                       className="inline-flex  py-2 text-gray-400 hover:text-gray-500"

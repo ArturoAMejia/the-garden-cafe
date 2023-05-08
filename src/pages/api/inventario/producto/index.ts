@@ -57,6 +57,9 @@ const obtenerProductos = async (res: NextApiResponse<Data>) => {
       imagen: true,
       fecha_ingreso: true,
     },
+    where: {
+      id_tipo_producto: 4,
+    },
   });
   await prisma.$disconnect();
   res.status(200).json(productos);
@@ -74,9 +77,9 @@ const crearProducto = async (
     id_unidad_medida,
     id_sub_categoria_producto,
     id_tipo_producto,
-    precio_compra,
-    gasto,
-    margen_ganancia,
+    precio_compra = 0,
+    gasto = 0,
+    margen_ganancia = 0,
     imagen,
   } = req.body;
 
@@ -89,10 +92,7 @@ const crearProducto = async (
     !id_marca ||
     !id_unidad_medida ||
     !id_sub_categoria_producto ||
-    !id_tipo_producto ||
-    !precio_compra ||
-    !gasto ||
-    !margen_ganancia
+    !id_tipo_producto
   )
     return res
       .status(400)
@@ -110,7 +110,7 @@ const crearProducto = async (
       imagen,
       fecha_ingreso: new Date(),
       id_sub_categoria_producto,
-      id_tipo_producto,
+      id_tipo_producto: 4,
     },
   });
 
@@ -137,13 +137,18 @@ const actualizarProducto = async (
     id,
     nombre,
     descripcion,
-    imagen,
     id_categoria_producto,
-    id_estado,
     id_marca,
-    id_unidad_medida,
+    id_estado,
     cod_producto,
     fecha_ingreso,
+    id_unidad_medida,
+    id_sub_categoria_producto,
+    id_tipo_producto,
+    precio_compra = 0,
+    gasto = 0,
+    margen_ganancia = 0,
+    imagen,
   } = req.body;
 
   if (!id)
@@ -154,13 +159,10 @@ const actualizarProducto = async (
   if (
     !nombre ||
     !descripcion ||
-    !imagen ||
     !id_categoria_producto ||
-    !id_estado ||
     !id_marca ||
-    !cod_producto ||
     !id_unidad_medida ||
-    !fecha_ingreso
+    !id_sub_categoria_producto 
   )
     return res
       .status(400)

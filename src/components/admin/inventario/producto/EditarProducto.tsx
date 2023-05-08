@@ -74,7 +74,7 @@ export const EditarProducto: FC<Props> = ({
   const onCrearProducto = async (data: FormData) => {
     if (isIngredient) {
       try {
-        await actualizarIngrediente(data).unwrap();
+        await actualizarIngrediente({ ...data, id: producto.id }).unwrap();
         toast.success("Ingrediente actualizado correctamente");
         closeModal();
         reset();
@@ -83,7 +83,7 @@ export const EditarProducto: FC<Props> = ({
       }
     } else if (isProduct) {
       try {
-        await actualizarProducto(data).unwrap();
+        await actualizarProducto({ ...data, id: producto.id }).unwrap();
         toast.success("Producto agregado correctamente");
         closeModal();
         reset();

@@ -34,6 +34,7 @@ export const EditarPedido: FC<Props> = ({ pedido }) => {
     useObtenerTrabajadoresQuery();
 
   const onActualizarPedido = async (data: FormData) => {
+    console.log(data);
     try {
       await actualizarPedido({
         ...pedido,
@@ -142,10 +143,7 @@ export const EditarPedido: FC<Props> = ({ pedido }) => {
                           <select
                             id="trabajador"
                             className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
-                            {...(register("id_trabajador"),
-                            {
-                              defaultValue: pedido.id_trabajador,
-                            })}
+                            {...register("id_trabajador")}
                           >
                             {trabajadores?.map((trabajador) => (
                               <option

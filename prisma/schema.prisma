@@ -446,6 +446,14 @@ model lote_producto {
   fecha_entrada DateTime
 }
 
+model politica_abc {
+  id             Int      @id @default(autoincrement())
+  clasificacion  String
+  porcentaje     Float
+  fecha_creacion DateTime @default(now())
+}
+
+
 // !        Compras        //
 
 model solicitud_compra {

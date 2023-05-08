@@ -21,10 +21,7 @@ export interface IProducto {
   descripcion: string;
   imagen: string;
   fecha_ingreso: Date;
-  categoria_producto: ICategoriaProducto | undefined;
+  categoria_producto?: ICategoriaProducto;
   precio_producto?: IPrecioProducto;
-  unidad_medida: IUnidadMedida | undefined;
-  margen_ganancia?: number;
-  gasto?: number;
-  precio_compra?: number;
+  unidad_medida?: IUnidadMedida;
 }

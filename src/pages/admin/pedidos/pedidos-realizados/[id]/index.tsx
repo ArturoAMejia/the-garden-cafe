@@ -128,6 +128,11 @@ const DetallePedidoRealizadoPage: FC<Props> = ({ detalle, estados }) => {
             </span>
           </p>
         </div>
+        {session?.user.id_rol === 5 ||
+        session?.user.id_rol === 1 ||
+        session?.user.id_rol === 2 ? (
+          <RealizarVenta pedido={detalle} />
+        ) : null}
       </div>
       <div className="mt-4 flex-row gap-4 md:flex">
         <div
@@ -151,16 +156,13 @@ const DetallePedidoRealizadoPage: FC<Props> = ({ detalle, estados }) => {
             estados={estados}
           />
           <div className="flex gap-4">
-            {session?.user.id_rol === 5 ||
-            session?.user.id_rol === 1 ||
-            session?.user.id_rol === 2 ? (
-              <RealizarVenta pedido={detalle} />
-            ) : null}
             {session?.user.id_trabajador === detalle.id_trabajador ||
             (session?.user.id_trabajador !== detalle.id_trabajador &&
               session?.user.id_rol === 1) ||
             (session?.user.id_trabajador === detalle.id_trabajador &&
-              session?.user.id_rol === 2) ? (
+              session?.user.id_rol === 2) ||
+            (session?.user.id_trabajador !== detalle.id_trabajador &&
+              session?.user.id_rol === 5) ? (
               <EditarPedido pedido={detalle} />
             ) : null}
           </div>
