@@ -1,10 +1,10 @@
-import { ICatEstado } from './../../';
-
+import { ICatEstado } from "./../../";
 
 export interface ICategoriaProducto {
   id: number;
   id_estado: number;
-  cat_estado?: ICatEstado
+  cat_estado?: ICatEstado;
   nombre: string;
   descripcion: string;
+  id_tipo_categoria: number;
 }

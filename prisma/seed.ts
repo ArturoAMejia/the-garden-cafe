@@ -37,6 +37,7 @@ import {
   ingredientes,
   platillo_ingredientes,
   platillos,
+  politicas,
 } from "./data/inventario";
 
 const main = async (): Promise<void> => {
@@ -143,6 +144,9 @@ const main = async (): Promise<void> => {
     });
     await prisma.cat_forma_pago.createMany({
       data: formas_pago,
+    });
+    await prisma.politica_abc.createMany({
+      data: politicas,
     });
   } catch (error) {
     console.log(error);

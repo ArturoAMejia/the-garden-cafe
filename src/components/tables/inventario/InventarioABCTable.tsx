@@ -43,9 +43,9 @@ export const InventarioABCTable = () => {
         header: "Nombre",
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor<"_count", Count>("_count", {
+      columnHelper.accessor<"demanda_total", number>("demanda_total", {
         header: "Demanda",
-        cell: (info) => info.getValue().detalle_pedido,
+        cell: (info) => Number(info.getValue()),
       }),
       columnHelper.accessor<"precio_producto", number>("precio_producto", {
         header: "Valor platillo",
@@ -53,13 +53,13 @@ export const InventarioABCTable = () => {
       }),
       columnHelper.accessor<"porcentaje", number>("porcentaje", {
         header: "%",
-        cell: (info) => info.getValue(),
+        cell: (info) => info.getValue().toFixed(2),
       }),
       columnHelper.accessor<"porcentaje_acumulado", number>(
         "porcentaje_acumulado",
         {
           header: "% Acumulado",
-          cell: (info) => info.getValue(),
+          cell: (info) => info.getValue().toFixed(2),
         }
       ),
       columnHelper.accessor<"clasificacion", string>("clasificacion", {
@@ -86,14 +86,14 @@ export const InventarioABCTable = () => {
 
   const { data: inventarios, isLoading } = useObtenerInventarioAbcVentaQuery();
 
-  console.log(politicas);
-
   const table = useReactTable({
     data: inventarios!,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
+
+  console.log(inventarios);
 
   if (isLoading) return <>Cargando...</>;
 

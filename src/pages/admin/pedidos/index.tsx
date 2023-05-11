@@ -18,7 +18,7 @@ const PedidosPage = () => {
   const { data: session } = useSession();
   if (isLoading) return <>Cargando...</>;
 
-  const pedidosPreparación = data.filter(
+  const pedidoEnCola = data.filter(
     (pedido) =>
       pedido.id_estado === 3 &&
       ((pedido.id_trabajador !== session?.user?.id_trabajador &&
@@ -27,8 +27,7 @@ const PedidosPage = () => {
           session?.user.id_rol === 2) ||
         pedido.id_trabajador === session?.user?.id_trabajador)
   );
-
-  const pedidosListos = data.filter(
+  const pedidosPreparación = data.filter(
     (pedido) =>
       pedido.id_estado === 4 &&
       ((pedido.id_trabajador !== session?.user?.id_trabajador &&
@@ -38,9 +37,19 @@ const PedidosPage = () => {
         pedido.id_trabajador === session?.user?.id_trabajador)
   );
 
-  const pedidosServido = data.filter(
+  const pedidosListos = data.filter(
     (pedido) =>
       pedido.id_estado === 5 &&
+      ((pedido.id_trabajador !== session?.user?.id_trabajador &&
+        session?.user.id_rol === 1) ||
+        (pedido.id_trabajador !== session?.user?.id_trabajador &&
+          session?.user.id_rol === 2) ||
+        pedido.id_trabajador === session?.user?.id_trabajador)
+  );
+
+  const pedidosServido = data.filter(
+    (pedido) =>
+      pedido.id_estado === 6 &&
       ((pedido.id_trabajador !== session?.user?.id_trabajador &&
         session?.user.id_rol === 1) ||
         (pedido.id_trabajador !== session?.user?.id_trabajador &&
@@ -70,7 +79,21 @@ const PedidosPage = () => {
       </TabList>
 
       {showCard === 1 ? (
-        <div className="grid grid-cols-3 gap-8">
+        <div className="grid grid-cols-4 gap-8">
+          <div className="">
+            <h2 className="text-lg font-bold">En Cola</h2>
+
+            {pedidoEnCola
+              .filter((pedido) => pedido.tipo_pedido === "Local")
+              .map((pedido) => (
+                <PedidoCard
+                  key={pedido.id}
+                  id_estado={4}
+                  pedido={pedido}
+                  color="amber"
+                />
+              ))}
+          </div>
           <div className="">
             <h2 className="text-lg font-bold">En Preparación</h2>
 
@@ -79,9 +102,10 @@ const PedidosPage = () => {
               .map((pedido) => (
                 <PedidoCard
                   key={pedido.id}
-                  id_estado={4}
+                  id_estado={5}
                   pedido={pedido}
                   color="amber"
+                  undo={3}
                 />
               ))}
           </div>
@@ -92,10 +116,10 @@ const PedidosPage = () => {
               .map((pedido) => (
                 <PedidoCard
                   key={pedido.id}
-                  id_estado={5}
+                  id_estado={6}
                   pedido={pedido}
                   color="blue"
-                  undo={3}
+                  undo={4}
                 />
               ))}
           </div>
@@ -106,16 +130,30 @@ const PedidosPage = () => {
               .map((pedido) => (
                 <PedidoCard
                   key={pedido.id}
-                  id_estado={6}
+                  id_estado={7}
                   pedido={pedido}
                   color="green"
-                  undo={4}
+                  undo={5}
                 />
               ))}
           </div>
         </div>
       ) : showCard === 2 ? (
-        <div className="grid grid-cols-3 gap-8">
+        <div className="grid grid-cols-4 gap-8">
+          <div className="">
+            <h2 className="text-lg font-bold">En Cola</h2>
+
+            {pedidoEnCola
+              .filter((pedido) => pedido.tipo_pedido === "Para llevar")
+              .map((pedido) => (
+                <PedidoCard
+                  key={pedido.id}
+                  id_estado={4}
+                  pedido={pedido}
+                  color="amber"
+                />
+              ))}
+          </div>
           <div className="">
             <h2 className="text-lg font-bold">En Preparación para llevar</h2>
 
@@ -124,7 +162,7 @@ const PedidosPage = () => {
               .map((pedido) => (
                 <PedidoCard
                   key={pedido.id}
-                  id_estado={4}
+                  id_estado={5}
                   pedido={pedido}
                   color="amber"
                 />
@@ -137,7 +175,7 @@ const PedidosPage = () => {
               .map((pedido) => (
                 <PedidoCard
                   key={pedido.id}
-                  id_estado={5}
+                  id_estado={6}
                   pedido={pedido}
                   color="blue"
                   undo={3}
@@ -151,7 +189,7 @@ const PedidosPage = () => {
               .map((pedido) => (
                 <PedidoCard
                   key={pedido.id}
-                  id_estado={6}
+                  id_estado={7}
                   pedido={pedido}
                   color="green"
                   undo={4}
@@ -160,7 +198,21 @@ const PedidosPage = () => {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-3 gap-8">
+        <div className="grid grid-cols-4 gap-8">
+          <div className="">
+            <h2 className="text-lg font-bold">En Cola</h2>
+
+            {pedidoEnCola
+              .filter((pedido) => pedido.tipo_pedido === "Entrega a domicilio")
+              .map((pedido) => (
+                <PedidoCard
+                  key={pedido.id}
+                  id_estado={4}
+                  pedido={pedido}
+                  color="amber"
+                />
+              ))}
+          </div>
           <div className="">
             <h2 className="text-lg font-bold">En Preparación para domicilio</h2>
 
@@ -169,7 +221,7 @@ const PedidosPage = () => {
               .map((pedido) => (
                 <PedidoCard
                   key={pedido.id}
-                  id_estado={4}
+                  id_estado={5}
                   pedido={pedido}
                   color="amber"
                 />
@@ -182,7 +234,7 @@ const PedidosPage = () => {
               .map((pedido) => (
                 <PedidoCard
                   key={pedido.id}
-                  id_estado={5}
+                  id_estado={6}
                   pedido={pedido}
                   color="blue"
                   undo={3}
@@ -196,7 +248,7 @@ const PedidosPage = () => {
               .map((pedido) => (
                 <PedidoCard
                   key={pedido.id}
-                  id_estado={6}
+                  id_estado={7}
                   pedido={pedido}
                   color="green"
                   undo={4}

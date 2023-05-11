@@ -64,6 +64,7 @@ model cat_estado {
   detalle_producto_elaborado detalle_producto_elaborado[]
   tipo_categoria             tipo_categoria[]
   detalle_pedido             detalle_pedido[]
+  pedido_cocinero            pedido_cocinero[]
 }
 
 model categoria_impuesto {
@@ -172,6 +173,7 @@ model trabajador {
   solicitud_compra           solicitud_compra[]
   orden_compra               orden_compra[]
   cierre_caja                cierre_caja[]
+  pedido_cocinero            pedido_cocinero[]
 }
 
 model cat_cargo {
@@ -357,6 +359,7 @@ model producto {
   detalle_producto_elaborado detalle_producto_elaborado[]
   coste_producto             coste_producto[]
   inventario                 inventario?
+  detalle_pedido_ingrediente detalle_pedido_ingrediente[]
 }
 
 model coste_producto {
@@ -390,6 +393,24 @@ model producto_elaborado {
   detalle_pedido             detalle_pedido[]
   detalle_venta              detalle_venta[]
 }
+
+// model punto_pedido {
+//   id          Int      @id @default(autoincrement())
+//   cat_estado  cat_estado @relation(fields: [id_estado], references: [id])
+//   id_estado   Int
+//   nombre      String
+//   descripcion String
+
+// }
+
+// model stock_seguridad {
+//   id          Int      @id @default(autoincrement())
+//   producto   producto @relation(fields: [id_producto], references: [id])
+//   id_producto Int
+//   dias       Int
+//   desviacion_estandar Float
+
+// }
 
 model detalle_producto_elaborado {
   producto              producto           @relation(fields: [id_producto], references: [id])
@@ -452,7 +473,6 @@ model politica_abc {
   porcentaje     Float
   fecha_creacion DateTime @default(now())
 }
-
 
 // !        Compras        //
 
@@ -594,20 +614,22 @@ model devolucion_compra {
 // *        Pedidos        //
 
 model pedido {
-  id                Int              @id @default(autoincrement())
-  cliente           cliente          @relation(fields: [id_cliente], references: [id])
-  id_cliente        Int
-  trabajador        trabajador       @relation(fields: [id_trabajador], references: [id])
-  id_trabajador     Int
-  cat_estado        cat_estado       @relation(fields: [id_estado], references: [id])
-  id_estado         Int
-  tipo_pedido       String
-  fecha_pedido      DateTime
-  ubicacion_entrega String
-  observacion       String
-  vigencia          DateTime
-  detalle_pedido    detalle_pedido[]
-  venta             venta[]
+  id                         Int                          @id @default(autoincrement())
+  cliente                    cliente                      @relation(fields: [id_cliente], references: [id])
+  id_cliente                 Int
+  trabajador                 trabajador                   @relation(fields: [id_trabajador], references: [id])
+  id_trabajador              Int
+  cat_estado                 cat_estado                   @relation(fields: [id_estado], references: [id])
+  id_estado                  Int
+  tipo_pedido                String
+  fecha_pedido               DateTime
+  ubicacion_entrega          String
+  observacion                String
+  vigencia                   DateTime
+  detalle_pedido             detalle_pedido[]
+  venta                      venta[]
+  detalle_pedido_ingrediente detalle_pedido_ingrediente[]
+  pedido_cocinero            pedido_cocinero[]
 }
 
 model detalle_pedido {
@@ -624,6 +646,27 @@ model detalle_pedido {
   monto                 Float
 
   @@id([id_pedido, id_producto_elaborado])
+}
+
+model detalle_pedido_ingrediente {
+  pedido      pedido   @relation(fields: [id_pedido], references: [id])
+  id_pedido   Int
+  ingrediente producto @relation(fields: [id_producto], references: [id])
+  id_producto Int
+  cantidad    Int
+
+  @@id([id_pedido, id_producto])
+}
+
+model pedido_cocinero {
+  id            Int        @id @default(autoincrement())
+  trabajador    trabajador @relation(fields: [id_trabajador], references: [id])
+  id_trabajador Int
+  pedido        pedido     @relation(fields: [id_pedido], references: [id])
+  id_pedido     Int        @unique
+  cat_estado    cat_estado @relation(fields: [id_estado], references: [id])
+  id_estado     Int
+  fecha_pedido  DateTime   @default(now())
 }
 
 // *        Reservación        //

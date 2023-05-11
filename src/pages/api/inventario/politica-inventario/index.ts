@@ -29,6 +29,8 @@ const obtenerPolicitasInventario = async (
 
   const politicas = await prisma.politica_abc.findMany();
 
+  console.log(politicas);
+
   return res.status(200).json(politicas);
 };
 const actualizarPoliticaInventario = async (

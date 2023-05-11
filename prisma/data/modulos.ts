@@ -113,16 +113,6 @@ export const sub_modulos = [
   },
   {
     id_modulo: 3,
-    nombre: "Ingredientes",
-    url: "/admin/inventario/ingredientes",
-  },
-  {
-    id_modulo: 3,
-    nombre: "Platillos",
-    url: "/admin/inventario/platillos",
-  },
-  {
-    id_modulo: 3,
     nombre: "Producto",
     url: "/admin/inventario/productos",
   },

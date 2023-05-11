@@ -28,6 +28,7 @@ import {
 import { InventarioABCTable } from "@/components/tables/inventario/InventarioABCTable";
 import PoliticasInventarioStats from "@/components/admin/inventario/PoliticasInventarioStats";
 import { useObtenerPoliticasInventarioQuery } from "@/store/slices/inventario";
+import { ActualizarPoliticasABC } from "@/components/admin/inventario/ActualizarPoliticasABC";
 
 const InventarioIndex = () => {
   const [showCard, setShowCard] = useState(1);
@@ -62,7 +63,10 @@ const InventarioIndex = () => {
         <InventarioTable />
       ) : showCard === 2 ? (
         <>
-          <PoliticasInventarioStats />
+          <div className="flex justify-between">
+            <PoliticasInventarioStats />
+            <ActualizarPoliticasABC />
+          </div>
           <InventarioABCTable />
         </>
       ) : // TODO

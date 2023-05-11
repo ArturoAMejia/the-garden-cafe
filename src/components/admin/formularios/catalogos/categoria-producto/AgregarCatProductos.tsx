@@ -10,9 +10,12 @@ import {
   useCrearCategoriaMutation,
   useObtenerTiposCategoriaQuery,
 } from "@/store/slices/inventario";
+import { useToggle } from "@/hooks";
 
 interface Props {
   showMin?: boolean;
+  isIngredient?: boolean;
+  isProduct?: boolean;
 }
 
 type FormData = {
@@ -22,12 +25,17 @@ type FormData = {
   id_estado: number;
   id_tipo_categoria: number;
 };
-export const AgregarCatProducto: FC<Props> = ({ showMin }) => {
-  // const { crearCategoria } = useContext(AdminContext);
+export const AgregarCatProducto: FC<Props> = ({
+  showMin,
+  isIngredient,
+  isProduct,
+}) => {
   const { register, handleSubmit, reset } = useForm<FormData>();
 
   const { data: tipo_categorias, isLoading } = useObtenerTiposCategoriaQuery();
   const [crearCategoria] = useCrearCategoriaMutation();
+
+  const { value, toggle } = useToggle();
 
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
@@ -50,7 +58,7 @@ export const AgregarCatProducto: FC<Props> = ({ showMin }) => {
       }).unwrap();
 
       toast.success("Categoría agregada correctamente.");
-      closeModal();
+      toggle();
       reset();
     } catch (error: any) {
       toast.error(error.data.message);
@@ -63,7 +71,7 @@ export const AgregarCatProducto: FC<Props> = ({ showMin }) => {
       <div className="mx-2">
         <button
           type="button"
-          onClick={openModal}
+          onClick={toggle}
           className="inline-flex items-center justify-center rounded-md border border-transparent bg-[#388C04] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#8CA862] sm:w-auto"
         >
           {showMin ? (
@@ -74,8 +82,8 @@ export const AgregarCatProducto: FC<Props> = ({ showMin }) => {
         </button>
       </div>
 
-      <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+      <Transition appear show={value} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={toggle}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -185,7 +193,7 @@ export const AgregarCatProducto: FC<Props> = ({ showMin }) => {
                     <button
                       type="button"
                       className="mt-4 ml-16 inline-flex items-center rounded-md border border-transparent bg-[#CA1514] px-4 py-2 font-medium text-white shadow-sm"
-                      onClick={closeModal}
+                      onClick={toggle}
                     >
                       Cancelar
                     </button>

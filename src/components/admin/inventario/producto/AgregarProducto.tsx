@@ -25,6 +25,7 @@ import {
   AgregarUnidadMedida,
 } from "../../formularios";
 import { AgregarSubCategoriaProducto } from "../../formularios/catalogos/sub-categoria-producto/AgregarSubCategoriaProducto";
+import { useToggle } from "@/hooks";
 
 type FormData = IProducto;
 
@@ -50,6 +51,8 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
   const { register, watch, handleSubmit, reset } = useForm<FormData>();
 
   const subCat = watch("id_categoria_producto", 1);
+
+  const { value, toggle } = useToggle();
 
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
@@ -82,18 +85,17 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
     if (isIngredient) {
       try {
         await crearIngrediente({ ...data, id_tipo_producto: 1 }).unwrap();
-
         toast.success("Ingrediente agregado correctamente");
-        closeModal();
+        toggle();
         reset();
       } catch (error: any) {
         toast.error(error.data.message);
       }
     } else if (isProduct) {
       try {
-        crearProducto({ ...data, id_tipo_producto: 4 }).unwrap();
+        await crearProducto({ ...data, id_tipo_producto: 4 }).unwrap();
         toast.success("Producto agregado correctamente");
-        closeModal();
+        toggle();
         reset();
       } catch (error: any) {
         toast.error(error.data.message);
@@ -109,12 +111,20 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
 
   if (isLoadingSubCat) return <>Cargando...</>;
 
+  const categorias_filtradas = categorias.filter((categoria) =>
+    isIngredient
+      ? categoria.id_tipo_categoria === 1
+      : isProduct
+      ? categoria.id_tipo_categoria === 2
+      : categoria.id_tipo_categoria === 3
+  );
+
   return (
     <>
       <div className="mx-2">
         <button
           type="button"
-          onClick={openModal}
+          onClick={toggle}
           className="inline-flex items-center justify-center rounded-md border border-transparent bg-[#388C04] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#8CA862] sm:w-auto"
         >
           {isProduct
@@ -125,8 +135,8 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
         </button>
       </div>
 
-      <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+      <Transition appear show={value} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={toggle}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -217,7 +227,7 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
                             })}
                             className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
                           >
-                            {categorias?.map((categoria) => (
+                            {categorias_filtradas?.map((categoria) => (
                               <option
                                 key={categoria.nombre}
                                 value={categoria.id}
@@ -404,7 +414,7 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
                     <button
                       type="button"
                       className="mt-4 ml-16 inline-flex items-center rounded-md border border-transparent bg-[#CA1514] px-4 py-2 font-medium text-white shadow-sm"
-                      onClick={closeModal}
+                      onClick={toggle}
                     >
                       Cancelar
                     </button>

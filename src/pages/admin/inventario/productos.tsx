@@ -1,24 +1,69 @@
+import { Tab, TabList } from "@tremor/react";
 import { AdminLayout } from "../../../components/Layout/AdminLayout";
 import { AgregarProducto } from "../../../components/admin/inventario/producto/AgregarProducto";
 import { ProductoTable } from "../../../components/tables/inventario/ProductoTable";
+import { useState } from "react";
+import {
+  BanknotesIcon,
+  BeakerIcon,
+  StarIcon,
+} from "@heroicons/react/24/outline";
+import { PlatilloTable } from "@/components/tables/inventario/PlatillosTable";
+import { IngredienteTable } from "@/components/tables/inventario/IngredienteTable";
 
 const ProductosPage = () => {
+  const [showCard, setShowCard] = useState(1);
+
   return (
     <AdminLayout title="Productos">
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
           <h1 className="mb-2 text-xl font-semibold text-gray-900">
-            Productos
+            {showCard === 1
+              ? "Platillos"
+              : showCard === 2
+              ? "Productos para vender"
+              : "Ingredientes"}
           </h1>
           <p className="mb-4 text-sm text-gray-700">
-            Añade un nuevo producto dandole click al botón
+            Añade un nuevo 
+            {showCard === 1
+              ? // TODO Crear platillo
+                " platillo "
+              : showCard === 2
+              ? " producto "
+              : " ingrediente "}
+            dandole click al botón
           </p>
         </div>
         <div className="mt-4 mb-4 px-1 sm:mt-0 sm:ml-16 sm:flex-none">
-          <AgregarProducto isProduct={true} />
+          {showCard === 1 ? (
+            // TODO Crear platillo
+            "            Agregar platillo"
+          ) : showCard === 2 ? (
+            <AgregarProducto isProduct={true} />
+          ) : (
+            <AgregarProducto isIngredient={true} />
+          )}
         </div>
       </div>
-      <ProductoTable />
+
+      <TabList
+        defaultValue="1"
+        onValueChange={(value) => setShowCard(Number(value))}
+      >
+        <Tab value="1" text="Platillos" icon={StarIcon} />
+        <Tab value="2" text="Productos para vender" icon={BanknotesIcon} />
+        <Tab value="3" text="Ingredientes" icon={BeakerIcon} />
+      </TabList>
+
+      {showCard === 1 ? (
+        <PlatilloTable />
+      ) : showCard === 2 ? (
+        <ProductoTable />
+      ) : (
+        <IngredienteTable />
+      )}
     </AdminLayout>
   );
 };

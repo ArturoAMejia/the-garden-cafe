@@ -10,16 +10,14 @@ import Layout from "../../components/Layout/Layout";
 
 type FormData = {
   correo: string;
-  fecha_reserva: Date;
+  fecha_reservacion: Date;
   total_personas: string;
   observaciones: string;
 };
 
 const ReservacionesIndex = () => {
-  const { isLoggedIn } = useContext(AuthContext);
-  const nombre = Cookies.get("nombre");
-  const apellido = Cookies.get("apellido");
-  const correo = Cookies.get("correo");
+  const { data: session } = useSession();
+
   const router = useRouter();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -31,12 +29,8 @@ const ReservacionesIndex = () => {
 
   const { register, handleSubmit, reset, getValues } = useForm<FormData>();
 
-  const { user } = useContext(AuthContext);
-
   const cancelButtonRef = useRef(null);
-  if (!isLoggedIn) {
-    return <Login />;
-  }
+
   const realizarPedido = () => {
     setOpen(false);
     router.push("/menu");
@@ -44,7 +38,7 @@ const ReservacionesIndex = () => {
 
   const onFormSubmit = async ({
     correo,
-    fecha_reserva,
+    fecha_reservacion,
     total_personas,
     observaciones,
   }: FormData) => {
@@ -53,16 +47,16 @@ const ReservacionesIndex = () => {
         url: "api/venta/reservacion",
         method: "POST",
         data: {
-          id_cliente: Number(user?.id),
+          id_cliente: Number(session.user?.id_cliente),
           correo,
-          fecha_reserva,
+          fecha_reservacion,
           total_personas,
           observaciones,
         },
       });
       reset();
       toast.success("Reservacion realizada correctamente!");
-      closeModal()
+      closeModal();
 
       setTimeout(() => {
         router.push("/");
@@ -73,13 +67,13 @@ const ReservacionesIndex = () => {
   };
   const realizarReservacion = async ({
     correo,
-    fecha_reserva,
+    fecha_reservacion,
     total_personas,
     observaciones,
   }: FormData) => {
     onFormSubmit({
       correo,
-      fecha_reserva,
+      fecha_reservacion,
       total_personas,
       observaciones,
     });
@@ -109,7 +103,7 @@ const ReservacionesIndex = () => {
                   className="w-full rounded-lg border-gray-200 p-2.5 text-sm shadow-sm"
                   type="text"
                   id="nombre"
-                  value={nombre}
+                  value={session?.user?.nombre}
                   // {...register("nombre")}
                 />
               </div>
@@ -124,7 +118,7 @@ const ReservacionesIndex = () => {
                   className="w-full rounded-lg border-gray-200 p-2.5 text-sm shadow-sm"
                   type="text"
                   id="apellido"
-                  value={apellido}
+                  value={session?.user?.apellido}
                   //{...register("apellido")}
                 />
               </div>
@@ -139,7 +133,7 @@ const ReservacionesIndex = () => {
                   className="w-full rounded-lg border-gray-200 p-2.5 text-sm shadow-sm"
                   type="email"
                   id="correo"
-                  value={correo}
+                  value={session?.user.email}
                   {...register("correo")}
                 />
               </div>
@@ -168,7 +162,7 @@ const ReservacionesIndex = () => {
                   type="datetime-local"
                   min={today}
                   id="hora_reserva"
-                  {...register("fecha_reserva", {
+                  {...register("fecha_reservacion", {
                     required: "Este campo es obligatorio",
                     valueAsDate: true,
                   })}
@@ -280,8 +274,8 @@ const ReservacionesIndex = () => {
                                     onClick={() =>
                                       realizarReservacion({
                                         correo: getValues("correo"),
-                                        fecha_reserva:
-                                          getValues("fecha_reserva"),
+                                        fecha_reservacion:
+                                          getValues("fecha_reservacion"),
                                         total_personas:
                                           getValues("total_personas"),
                                         observaciones:
@@ -320,14 +314,30 @@ const ReservacionesIndex = () => {
 export default ReservacionesIndex;
 
 import { GetServerSideProps } from "next";
-import { prisma } from "./../../database";
 
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import tgcApi from "../../api/tgcApi";
 import Login from "../auth/login";
 import { useRouter } from "next/router";
-import { ConfirmarReservacion } from "../../components/reservaciones/ConfirmarReservacion";
 import { Dialog, Transition } from "@headlessui/react";
 import { BookmarkIcon } from "@heroicons/react/24/outline";
 import { AuthContext } from "../../context";
+import { getSession, useSession } from "next-auth/react";
+
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  const session = await getSession({ req });
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/auth/login",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};

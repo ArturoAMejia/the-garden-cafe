@@ -8,6 +8,7 @@ import { catalogosApi } from "./slices/catalogos";
 import { authApi } from "./slices/auth";
 import { pedidoApi } from "./slices/pedido";
 import { negocioApi } from "./slices/negocio";
+import { cartSlice } from "./slices/cart";
 
 export function makeStore() {
   return configureStore({
@@ -23,6 +24,7 @@ export function makeStore() {
       // ! Slice Reducers
       pedido: pedidoSlice.reducer,
       compra: compraSlice.reducer,
+      cart: cartSlice.reducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat([

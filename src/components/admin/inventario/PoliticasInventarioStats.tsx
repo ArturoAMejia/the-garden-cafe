@@ -20,14 +20,14 @@ const PoliticasInventarioStats = () => {
   });
 
   return (
-    <>
+    <div>
       <Title className="text-2xl font-bold">Politicas </Title>
       <Legend
         className="mt-3"
         categories={politicas.map((politica) => politica.clasificacion)}
         colors={politicas.map((politica) => politica.color)}
       />
-    </>
+    </div>
   );
 };
 

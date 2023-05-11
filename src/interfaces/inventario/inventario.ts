@@ -84,6 +84,8 @@ export interface IInventarioABC {
   porcentaje: number;
   porcentaje_acumulado: number;
   clasificacion?: string;
+  cantidad_total?: number;
+  demanda_total?: number;
 }
 
 export interface Count {

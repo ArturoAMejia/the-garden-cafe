@@ -1,7 +1,6 @@
-import { Fragment, useContext, useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Popover, Transition } from "@headlessui/react";
 import {
-  ArrowLeftCircleIcon,
   ArrowLeftOnRectangleIcon,
   ArrowRightOnRectangleIcon,
   Bars3Icon,
@@ -13,9 +12,10 @@ import { navbar } from "../../helpers/navbar/navbar";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Image from "next/image";
-import { AuthContext, CartContext } from "@/context";
 import { signOut, useSession } from "next-auth/react";
 import { rolesValidos } from "@/helpers";
+import { useAppSelector } from "@/hooks/hooks";
+import { AppState } from "@/store/store";
 
 export const Navbar = () => {
   const router = useRouter();
@@ -23,16 +23,16 @@ export const Navbar = () => {
 
   const { data: session } = useSession();
 
-  const { numberOfItems } = useContext(CartContext);
+  const productos = useAppSelector((state: AppState) => state.cart.productos);
   const path = router.pathname;
 
   useEffect(() => {
-    if (numberOfItems) {
-      setTotalItemsCart(numberOfItems);
+    if (productos) {
+      setTotalItemsCart(productos.length);
     } else {
       setTotalItemsCart(0);
     }
-  }, [numberOfItems]);
+  }, [productos]);
 
   return (
     <div className=" relative top-0 bg-[#FAB73A]">

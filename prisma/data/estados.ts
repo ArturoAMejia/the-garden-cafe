@@ -18,7 +18,11 @@ export const estados = [
     nombre: "Inactivo",
     descripcion: "Estado Inactivo",
   },
-
+  {
+    id_categoria_estado: 1,
+    nombre: "En cola",
+    descripcion: "Estado en cola",
+  },
   {
     id_categoria_estado: 1,
     nombre: "Preparación",

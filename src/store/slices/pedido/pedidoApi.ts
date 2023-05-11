@@ -44,6 +44,22 @@ export const pedidoApi = createApi({
       }),
       invalidatesTags: ["Pedidos"],
     }),
+    asignarCocineroPedido: builder.mutation<any, any>({
+      query: (pedido) => ({
+        url: "/pedido/cocinero",
+        method: "POST",
+        body: pedido,
+      }),
+      invalidatesTags: ["Pedidos"],
+    }),
+    actualizarEstadoCocineroPedido: builder.mutation<any, any>({
+      query: (pedido) => ({
+        url: "/pedido/cocinero",
+        method: "PATCH",
+        body: pedido,
+      }),
+      invalidatesTags: ["Pedidos"],
+    }),
   }),
 });
 
@@ -53,4 +69,7 @@ export const {
   useActualizarPedidoMutation,
   useAnularPedidoMutation,
   useActualizarEstadoPedidoMutation,
+  // Cocinero
+  useAsignarCocineroPedidoMutation,
+  useActualizarEstadoCocineroPedidoMutation,
 } = pedidoApi;

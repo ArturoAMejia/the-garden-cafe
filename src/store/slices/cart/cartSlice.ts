@@ -37,9 +37,23 @@ export const cartSlice = createSlice({
           productoExistente.cantidad!++;
         }
       }
+      state.subtotal = state.productos.reduce(
+        (acc, p) => acc + p.precio! * p.cantidad!,
+        0
+      );
+      state.total =
+        state.subtotal +
+        state.subtotal * Number(process.env.NEXT_PUBLIC_TAX_RATE);
     },
     actualizarProductos: (state, action) => {
       state.productos = [...action.payload];
+      state.subtotal = state.productos.reduce(
+        (acc, p) => acc + p.precio! * p.cantidad!,
+        0
+      );
+      state.total =
+        state.subtotal +
+        state.subtotal * Number(process.env.NEXT_PUBLIC_TAX_RATE);
     },
     actualizarCantidad: (state, action) => {
       state.productos = state.productos.map((producto) => {
@@ -47,6 +61,13 @@ export const cartSlice = createSlice({
 
         return action.payload;
       });
+      state.subtotal = state.productos.reduce(
+        (acc, p) => acc + p.precio! * p.cantidad!,
+        0
+      );
+      state.total =
+        state.subtotal +
+        state.subtotal * Number(process.env.NEXT_PUBLIC_TAX_RATE);
     },
     quitarProducto: (state, action) => {
       state.productos = state.productos.filter(
@@ -56,6 +77,13 @@ export const cartSlice = createSlice({
             producto.nombre === action.payload.nombre
           )
       );
+      state.subtotal = state.productos.reduce(
+        (acc, p) => acc + p.precio! * p.cantidad!,
+        0
+      );
+      state.total =
+        state.subtotal +
+        state.subtotal * Number(process.env.NEXT_PUBLIC_TAX_RATE);
     },
     pedidoCompleto: (state) => {
       state.productos = [];

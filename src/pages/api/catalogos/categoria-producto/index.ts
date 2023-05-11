@@ -37,6 +37,7 @@ const obtenerCategoriaProducto = async (res: NextApiResponse<Data>) => {
       id_estado: true,
       descripcion: true,
       cat_estado: true,
+      id_tipo_categoria: true,
     },
     orderBy: {
       id: "asc",

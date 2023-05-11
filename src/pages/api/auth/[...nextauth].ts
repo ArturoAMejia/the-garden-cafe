@@ -22,6 +22,7 @@ declare module "next-auth" {
       apellido: string;
       roles: IRol[];
       id_trabajador: number;
+      id_cliente: number;
     } & DefaultSession["user"] &
       AdapterUser;
     /** The user's postal address. */
@@ -102,6 +103,12 @@ export const authOptions: NextAuthOptions = {
           },
         });
 
+        const cliente = await prisma.cliente.findFirst({
+          where: {
+            id_persona: user.persona.id,
+          },
+        });
+
         if (user) {
           return {
             id: user.id.toString(),
@@ -112,6 +119,7 @@ export const authOptions: NextAuthOptions = {
             modulos,
             roles,
             id_trabajador: trabajador?.id,
+            id_cliente: cliente?.id,
           };
         }
         return null;

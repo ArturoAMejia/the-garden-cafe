@@ -142,6 +142,8 @@ const registerPedido = async (
       .status(400)
       .json({ message: "No se encontró registro de este cliente." });
 
+  console.log(productos);
+
   const pedido = await prisma.pedido.create({
     data: {
       id_cliente: client!.id,
@@ -163,6 +165,29 @@ const registerPedido = async (
       cantidad: producto.cantidad,
       monto: producto.cantidad * producto.precio,
       precio: producto.precio,
+    })),
+  });
+
+  const detalle = productos.map((producto) => {
+    return {
+      detalle: producto.detalle,
+    };
+  });
+
+  const detalles = detalle[0];
+
+  console.log("----------------------");
+
+  const { detalle: deta } = detalles;
+
+  console.log(deta);
+  console.log("----------------------");
+
+  await prisma.detalle_pedido_ingrediente.createMany({
+    data: deta.map((producto: any) => ({
+      id_pedido: pedido.id,
+      id_producto: producto.id_producto,
+      cantidad: producto.cantidad,
     })),
   });
 

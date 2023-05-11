@@ -5,20 +5,22 @@ import {
   TrashIcon,
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Image from "next/image";
 import Layout from "../../components/Layout/Layout";
-import { CartContext } from "../../context/landing/cart";
 import { RadioGroup } from "@headlessui/react";
-import Cookies from "js-cookie";
 import { useForm } from "react-hook-form";
-import tgcApi from "../../api/tgcApi";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
 import { Elements, CardElement } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { useSession } from "next-auth/react";
+import { useCrearPedidoMutation } from "@/store/slices/pedido";
+import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
+import { pedidoCompletado } from "@/store/slices/pedido/pedidoSlice";
+import { AppState } from "@/store/store";
+import { quitarProducto } from "@/store/slices/cart";
 
 const paymentMethods = [
   { id: "credit-card", title: "Tarjeta de Crédito" },
@@ -41,15 +43,15 @@ type FormData = {
 
 const ResumenPage = () => {
   const router = useRouter();
+  const dispatch = useAppDispatch();
+
   const {
-    cart,
-    numberOfItems,
+    productos: cart,
     subtotal,
-    tax,
+    impuesto: tax,
     total,
-    removeCartProduct,
-    orderComplete,
-  } = useContext(CartContext);
+  } = useAppSelector((state: AppState) => state.cart);
+
   const tipoPedido = [
     {
       id: 1,
@@ -83,37 +85,27 @@ const ResumenPage = () => {
 
   const { register, handleSubmit, reset, getValues } = useForm<FormData>();
 
+  const [crearPedido] = useCrearPedidoMutation();
+
   const { data: session } = useSession();
 
   const onRegisterPedido = async () => {
-    const pedido: any = {
-      id_usuario: session.user!.id,
-      correo: getValues("correo"),
-      tipo_pedido: tipoPedidoSeleccionado.title,
-      ubicacion_entrega: getValues("direccion_domicilio"),
-      tipo_venta: getValues("metodo_pago"),
-      subtotal: subtotal,
-      descuento: 0,
-      impuesto: tax,
-      total: Number(total.toFixed(2)),
-      numeroItems: numberOfItems,
-      productos: cart,
-    };
-
     try {
-      const res = await tgcApi({
-        url: "api/pedido",
-        method: "POST",
-        data: pedido,
-      });
+      await crearPedido({
+        productos: cart,
+        id_cliente: Number(session.user.id_cliente),
+        tipo_pedido: tipoPedidoSeleccionado.title,
+      }).unwrap();
+      toast.success("Pedido realizado correctamente.");
+      // orderComplete();
+      dispatch(pedidoCompletado());
       reset();
-      toast.success("Orden realizada correctamente");
-      orderComplete();
-      Cookies.remove("cart");
       setTimeout(() => {
-        router.push("/");
+        router.replace("/");
       }, 1000);
-    } catch (error) {}
+    } catch (error: any) {
+      toast.error("error");
+    }
   };
 
   const stripeLoad = loadStripe(
@@ -407,7 +399,7 @@ const ResumenPage = () => {
                             <button
                               type="button"
                               className="-m-2.5 flex items-center justify-center p-2.5 text-black hover:text-gray-500"
-                              onClick={() => removeCartProduct(product)}
+                              onClick={() => dispatch(quitarProducto(product))}
                             >
                               <span className="sr-only">Remove</span>
                               <TrashIcon

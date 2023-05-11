@@ -7,11 +7,16 @@ import {
 } from "@heroicons/react/24/outline";
 import { Card, Title, Subtitle, Button } from "@tremor/react";
 import { getHours, getMinutes } from "date-fns";
-import { useActualizarEstadoPedidoMutation } from "@/store/slices/pedido";
+import {
+  useActualizarEstadoCocineroPedidoMutation,
+  useActualizarEstadoPedidoMutation,
+  useAsignarCocineroPedidoMutation,
+} from "@/store/slices/pedido";
 import React, { FC } from "react";
 import toast from "react-hot-toast";
 import { AnularPedido } from "./AnularPedido";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 interface Props {
   pedido: IPedido;
@@ -20,10 +25,29 @@ interface Props {
   undo?: number;
 }
 export const PedidoCard: FC<Props> = ({ pedido, id_estado, color, undo }) => {
+  const { data: session } = useSession();
+
   const [actualizarEstadoPedido] = useActualizarEstadoPedidoMutation();
+  const [asignarCocineroPedido] = useAsignarCocineroPedidoMutation();
+  const [actualizarEstadoCocineroPedido] =
+    useActualizarEstadoCocineroPedidoMutation();
 
   const handleEstado = async (pedido: IPedido, id_estado) => {
     try {
+      if (id_estado === 4) {
+        await asignarCocineroPedido({
+          ...pedido,
+          id_tabajador: session.user.id_trabajador,
+        }).unwrap();
+      }
+
+      if (id_estado !== 4) {
+        await actualizarEstadoCocineroPedido({
+          ...pedido,
+          id_trabajador: session.user.id_trabajador,
+          id_estado,
+        });
+      }
       await actualizarEstadoPedido({ ...pedido, id_estado }).unwrap();
       toast.success("Estado actualizado correctamente!.");
     } catch (error: any) {
@@ -49,7 +73,9 @@ export const PedidoCard: FC<Props> = ({ pedido, id_estado, color, undo }) => {
         {getMinutes(new Date(pedido.fecha_pedido))}
       </Subtitle>
       <div className="flex gap-2">
-        {pedido.id_estado !== 6 && (
+        {(pedido.id_estado !== 7 && session.user.id_rol === 4) ||
+        (pedido.id_estado !== 7 && session.user.id_rol === 1) ||
+        (pedido.id_estado !== 7 && session.user.id_rol === 2) ? (
           <Button
             color="emerald"
             className="p-2"
@@ -57,7 +83,7 @@ export const PedidoCard: FC<Props> = ({ pedido, id_estado, color, undo }) => {
           >
             <CheckIcon className="h-4 w-4" />
           </Button>
-        )}
+        ) : null}
 
         <Link href={`/admin/pedidos/pedidos-realizados/${pedido.id}`}>
           <Button color="blue" className="p-2">

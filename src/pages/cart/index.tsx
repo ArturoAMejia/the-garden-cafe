@@ -1,38 +1,39 @@
-import React, { useContext, useEffect } from "react";
+import React, { useEffect } from "react";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ItemCounter } from "../../components/checkout/ItemCounter";
 import Layout from "../../components/Layout/Layout";
-import { CartContext } from "@/context";
 import { IProductoCart } from "../../interfaces/producto";
+import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
+import { AppState } from "@/store/store";
+import { actualizarCantidad, quitarProducto } from "@/store/slices/cart";
 
 const Cart = () => {
   const router = useRouter();
+
+  const dispatch = useAppDispatch();
+
   const {
-    isLoaded,
-    cart,
-    addProductToCart,
-    updateCartQuantity,
-    removeCartProduct,
-    total,
+    productos: cart,
     subtotal,
-    tax,
-  } = useContext(CartContext);
+    impuesto: tax,
+    total,
+  } = useAppSelector((state: AppState) => state.cart);
+
   const onNewCartQuantityValue = (
     product: IProductoCart,
     newQuantityValue: number
   ) => {
-    product.cantidad = newQuantityValue;
-    updateCartQuantity(product);
+    dispatch(actualizarCantidad({ ...product, cantidad: newQuantityValue }));
   };
 
   useEffect(() => {
-    if (isLoaded && cart.length === 0) {
+    if (cart.length === 0) {
       router.replace("/cart/vacio");
     }
-  }, [isLoaded, cart, router]);
+  }, [cart, router]);
 
   return (
     <Layout title="Carrito" pageDescription="Pagina carrito">
@@ -41,7 +42,7 @@ const Cart = () => {
           <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
             Carrito de Compras
           </h1>
-          <form className="mt-12 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12 xl:gap-x-16">
+          <div className="mt-12 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12 xl:gap-x-16">
             <section aria-labelledby="cart-heading" className="lg:col-span-7">
               <h2 id="cart-heading" className="sr-only">
                 Items in your shopping cart
@@ -97,7 +98,7 @@ const Cart = () => {
 
                             <ItemCounter
                               currentValue={item.cantidad}
-                              maxValue={5}
+                              maxValue={20}
                               updatedQuantity={(value) =>
                                 onNewCartQuantityValue(
                                   item as IProductoCart,
@@ -109,7 +110,7 @@ const Cart = () => {
                               <button
                                 type="button"
                                 className="inline-flex  py-2 text-gray-400 hover:text-gray-500"
-                                onClick={() => removeCartProduct(item)}
+                                onClick={() => dispatch(quitarProducto(item))}
                               >
                                 <TrashIcon className="h-6 w-6 text-black" />
                                 <span className="sr-only">Remove</span>
@@ -173,7 +174,7 @@ const Cart = () => {
                 </div>
               </section>
             )}
-          </form>
+          </div>
         </div>
       </div>
     </Layout>

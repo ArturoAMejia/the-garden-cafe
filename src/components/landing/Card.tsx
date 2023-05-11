@@ -3,17 +3,17 @@ import Image from "next/image";
 import React, { FC, useContext, useState } from "react";
 import { toast } from "react-hot-toast";
 import { CartContext } from "../../context/landing/cart";
-import { IProductoCart } from "../../interfaces/producto";
-import { IMenu, IProducto } from "../../interfaces";
+import { useAppDispatch } from "@/hooks/hooks";
+import { añadirProducto } from "@/store/slices/cart";
 
 interface Props {
   producto: any;
 }
 
 export const Card: FC<Props> = ({ producto }) => {
-  const { addProductToCart } = useContext(CartContext);
+  const dispatch = useAppDispatch();
 
-  const [tempCartProducto, setTempCartProducto] = useState<IProductoCart>({
+  const [tempCartProducto, setTempCartProducto] = useState<any>({
     id: Number(producto.id),
     nombre: producto.nombre,
     descripcion: producto.descripcion,
@@ -22,11 +22,12 @@ export const Card: FC<Props> = ({ producto }) => {
     cantidad: 1,
     precio: producto.precio_producto,
     imagen: producto.imagen,
+    detalle: producto.detalle_producto_elaborado,
   });
 
   const onAddProduct = () => {
     toast.success("Producto añadido al carrito!");
-    addProductToCart(tempCartProducto);
+    dispatch(añadirProducto(tempCartProducto));
   };
 
   return (

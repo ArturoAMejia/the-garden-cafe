@@ -1,12 +1,8 @@
-import { Combobox } from "@headlessui/react";
-import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 import React, { FC, useState } from "react";
+
+import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
-
 import { Button } from "@tremor/react";
-
-import { IMenu, IProducto } from "../../../interfaces";
-import { IProductoCart } from "../../../interfaces/producto";
 import { useAppDispatch } from "@/hooks/hooks";
 import { Card, List, ListItem, Title } from "@tremor/react";
 
@@ -15,10 +11,6 @@ interface Props {
   añadirProductoOrden: any;
   isIngredient: boolean;
   isPlate: boolean;
-}
-
-function classNames(...classes: any) {
-  return classes.filter(Boolean).join(" ");
 }
 
 export const ProductoFiltrado: FC<Props> = ({
@@ -38,6 +30,7 @@ export const ProductoFiltrado: FC<Props> = ({
       ? producto.precio_producto![0].precio_venta
       : producto.precio_producto,
     imagen: producto.imagen,
+    detalle: isPlate ? producto.detalle_producto_elaborado : "",
   });
 
   const dispatch = useAppDispatch();
@@ -47,7 +40,7 @@ export const ProductoFiltrado: FC<Props> = ({
     dispatch(añadirProductoOrden(tempCartProducto));
   };
   return (
-    <div className="flex flex-row my-2 px-1 justify-between">
+    <div className="my-2 flex flex-row justify-between px-1">
       <Card className="w-full p-3">
         <List className="p-0">
           <ListItem className="p-0">
