@@ -11,6 +11,7 @@ import {
   useActualizarEstadoCocineroPedidoMutation,
   useActualizarEstadoPedidoMutation,
   useAsignarCocineroPedidoMutation,
+  useObtenerPedidosCocinerosQuery,
 } from "@/store/slices/pedido";
 import React, { FC } from "react";
 import toast from "react-hot-toast";
@@ -23,37 +24,57 @@ interface Props {
   id_estado: number;
   color: "amber" | "blue" | "green";
   undo?: number;
+  asignarCocinero: boolean;
 }
-export const PedidoCard: FC<Props> = ({ pedido, id_estado, color, undo }) => {
+export const PedidoCard: FC<Props> = ({
+  pedido,
+  id_estado,
+  color,
+  undo,
+  asignarCocinero,
+}) => {
   const { data: session } = useSession();
 
   const [actualizarEstadoPedido] = useActualizarEstadoPedidoMutation();
   const [asignarCocineroPedido] = useAsignarCocineroPedidoMutation();
+
   const [actualizarEstadoCocineroPedido] =
     useActualizarEstadoCocineroPedidoMutation();
 
+  const { data: pedidos_cocineros, isLoading } =
+    useObtenerPedidosCocinerosQuery();
+
+  if (isLoading) return <>Cargando...</>;
+
   const handleEstado = async (pedido: IPedido, id_estado) => {
     try {
-      if (id_estado === 4) {
+      if (
+        asignarCocinero &&
+        pedidos_cocineros.includes((pedidos) => pedidos.id_pedido === pedido.id)
+      ) {
         await asignarCocineroPedido({
-          ...pedido,
-          id_tabajador: session.user.id_trabajador,
+          id_pedido: pedido.id,
+          id_trabajador: session.user.id_trabajador,
         }).unwrap();
+        toast.success("Pedido tomado correctamente.");
       }
 
-      if (id_estado !== 4) {
-        await actualizarEstadoCocineroPedido({
-          ...pedido,
-          id_trabajador: session.user.id_trabajador,
-          id_estado,
-        });
-      }
+      await actualizarEstadoCocineroPedido({
+        id_pedido: pedido.id,
+        id_trabajador: session.user.id_trabajador,
+        id_estado,
+      });
+
       await actualizarEstadoPedido({ ...pedido, id_estado }).unwrap();
       toast.success("Estado actualizado correctamente!.");
     } catch (error: any) {
       toast.error(error.data.message);
     }
   };
+
+  console.log(
+    !pedidos_cocineros.includes((pedidos) => pedidos.id_pedido === pedido.id)
+  );
 
   return (
     <Card
@@ -66,6 +87,10 @@ export const PedidoCard: FC<Props> = ({ pedido, id_estado, color, undo }) => {
       <Subtitle>
         Cliente:{""} {pedido.cliente.persona.nombre}{" "}
         {pedido.cliente.persona.apellido_razon_social}{" "}
+      </Subtitle>
+      <Subtitle>
+        Trabajador:{""} {pedido.trabajador.persona.nombre}{" "}
+        {pedido.trabajador.persona.apellido_razon_social}{" "}
       </Subtitle>
       <Subtitle className="mb-2">
         Hora: {getHours(new Date(pedido.fecha_pedido))}

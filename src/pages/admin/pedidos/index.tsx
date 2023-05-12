@@ -25,6 +25,8 @@ const PedidosPage = () => {
         session?.user.id_rol === 1) ||
         (pedido.id_trabajador !== session?.user?.id_trabajador &&
           session?.user.id_rol === 2) ||
+        (pedido.id_trabajador !== session?.user?.id_trabajador &&
+          session?.user.id_rol === 4) ||
         pedido.id_trabajador === session?.user?.id_trabajador)
   );
   const pedidosPreparación = data.filter(
@@ -34,6 +36,8 @@ const PedidosPage = () => {
         session?.user.id_rol === 1) ||
         (pedido.id_trabajador !== session?.user?.id_trabajador &&
           session?.user.id_rol === 2) ||
+        (pedido.id_trabajador !== session?.user?.id_trabajador &&
+          session?.user.id_rol === 4) ||
         pedido.id_trabajador === session?.user?.id_trabajador)
   );
 
@@ -44,6 +48,8 @@ const PedidosPage = () => {
         session?.user.id_rol === 1) ||
         (pedido.id_trabajador !== session?.user?.id_trabajador &&
           session?.user.id_rol === 2) ||
+        (pedido.id_trabajador !== session?.user?.id_trabajador &&
+          session?.user.id_rol === 4) ||
         pedido.id_trabajador === session?.user?.id_trabajador)
   );
 
@@ -54,6 +60,8 @@ const PedidosPage = () => {
         session?.user.id_rol === 1) ||
         (pedido.id_trabajador !== session?.user?.id_trabajador &&
           session?.user.id_rol === 2) ||
+        (pedido.id_trabajador !== session?.user?.id_trabajador &&
+          session?.user.id_rol === 4) ||
         pedido.id_trabajador === session?.user?.id_trabajador)
   );
 
@@ -91,6 +99,7 @@ const PedidosPage = () => {
                   id_estado={4}
                   pedido={pedido}
                   color="amber"
+                  asignarCocinero={true}
                 />
               ))}
           </div>
@@ -106,6 +115,7 @@ const PedidosPage = () => {
                   pedido={pedido}
                   color="amber"
                   undo={3}
+                  asignarCocinero={false}
                 />
               ))}
           </div>
@@ -120,6 +130,7 @@ const PedidosPage = () => {
                   pedido={pedido}
                   color="blue"
                   undo={4}
+                  asignarCocinero={false}
                 />
               ))}
           </div>
@@ -134,6 +145,7 @@ const PedidosPage = () => {
                   pedido={pedido}
                   color="green"
                   undo={5}
+                  asignarCocinero={false}
                 />
               ))}
           </div>
@@ -151,6 +163,7 @@ const PedidosPage = () => {
                   id_estado={4}
                   pedido={pedido}
                   color="amber"
+                  asignarCocinero={true}
                 />
               ))}
           </div>
@@ -165,6 +178,7 @@ const PedidosPage = () => {
                   id_estado={5}
                   pedido={pedido}
                   color="amber"
+                  asignarCocinero={false}
                 />
               ))}
           </div>
@@ -179,6 +193,7 @@ const PedidosPage = () => {
                   pedido={pedido}
                   color="blue"
                   undo={3}
+                  asignarCocinero={false}
                 />
               ))}
           </div>
@@ -193,6 +208,7 @@ const PedidosPage = () => {
                   pedido={pedido}
                   color="green"
                   undo={4}
+                  asignarCocinero={false}
                 />
               ))}
           </div>
@@ -210,6 +226,7 @@ const PedidosPage = () => {
                   id_estado={4}
                   pedido={pedido}
                   color="amber"
+                  asignarCocinero={true}
                 />
               ))}
           </div>
@@ -224,6 +241,7 @@ const PedidosPage = () => {
                   id_estado={5}
                   pedido={pedido}
                   color="amber"
+                  asignarCocinero={false}
                 />
               ))}
           </div>
@@ -238,6 +256,7 @@ const PedidosPage = () => {
                   pedido={pedido}
                   color="blue"
                   undo={3}
+                  asignarCocinero={false}
                 />
               ))}
           </div>
@@ -252,6 +271,7 @@ const PedidosPage = () => {
                   pedido={pedido}
                   color="green"
                   undo={4}
+                  asignarCocinero={false}
                 />
               ))}
           </div>

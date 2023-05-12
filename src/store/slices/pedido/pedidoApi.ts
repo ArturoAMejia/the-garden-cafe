@@ -44,6 +44,10 @@ export const pedidoApi = createApi({
       }),
       invalidatesTags: ["Pedidos"],
     }),
+    obtenerPedidosCocineros: builder.query<any[], void>({
+      query: () => "pedido/cocinero",
+      providesTags: ["Pedidos"],
+    }),
     asignarCocineroPedido: builder.mutation<any, any>({
       query: (pedido) => ({
         url: "/pedido/cocinero",
@@ -70,6 +74,7 @@ export const {
   useAnularPedidoMutation,
   useActualizarEstadoPedidoMutation,
   // Cocinero
+  useObtenerPedidosCocinerosQuery,
   useAsignarCocineroPedidoMutation,
   useActualizarEstadoCocineroPedidoMutation,
 } = pedidoApi;
