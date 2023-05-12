@@ -56,12 +56,12 @@ const obtenerInventarioAbc = async (
     if (!porcentaje) {
       porcentaje = 0;
     }
-    console.log({ porcentaje });
 
     const cantidad_total = producto.detalle_venta.reduce(
       (acc, curr) => acc + curr.cantidad,
       0
     );
+    
     const demanda_total =
       Number(cantidad_total) * Number(producto._count.detalle_venta);
 
