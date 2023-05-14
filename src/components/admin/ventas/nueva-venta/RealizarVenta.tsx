@@ -86,7 +86,7 @@ export const RealizarVenta: FC<Props> = ({ pedido }) => {
       toast.success("Venta realizada correctamente.", {
         duration: 3000,
       });
-      await actualizarEstadoPedido({ ...pedido, id_estado: 6 }).unwrap();
+      await actualizarEstadoPedido({ ...pedido, id_estado: 8 }).unwrap();
       closeModal();
       reset();
     } catch (error: any) {

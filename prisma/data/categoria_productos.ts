@@ -92,12 +92,12 @@ export const sub_categoria_producto = [
     nombre: "Batido",
   },
   {
-    id_estado: 4,
+    id_estado: 1,
     id_categoria_producto: 1,
     nombre: "Tostadas",
   },
   {
-    id_estado: 4,
+    id_estado: 1,
     id_categoria_producto: 1,
     nombre: "Bowls",
   },
@@ -117,12 +117,12 @@ export const sub_categoria_producto = [
     nombre: "Carnes",
   },
   {
-    id_estado: 2,
+    id_estado: 1,
     id_categoria_producto: 1,
     nombre: "Ensaladas",
   },
   {
-    id_estado: 2,
+    id_estado: 1,
     id_categoria_producto: 4,
     nombre: "Cócteles",
   },

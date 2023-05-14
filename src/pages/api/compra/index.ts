@@ -286,7 +286,7 @@ const cancelarCompras = async (
 
   const compra = await prisma.compra.update({
     data: {
-      id_estado: 2,
+      id_estado: 15,
     },
     where: {
       id: Number(id),

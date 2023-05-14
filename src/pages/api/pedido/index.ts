@@ -265,7 +265,7 @@ const cancelarPedido = async (
   await prisma.$connect();
   const pedido = await prisma.pedido.update({
     data: {
-      id_estado: 13,
+      id_estado: 15,
     },
     where: {
       id,

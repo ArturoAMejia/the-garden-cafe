@@ -98,6 +98,7 @@ const crearProducto = async (
       .status(400)
       .json({ message: "Todos los campos son obligatorios" });
 
+
   await prisma.$connect();
   const producto = await prisma.producto.create({
     data: {
@@ -162,7 +163,7 @@ const actualizarProducto = async (
     !id_categoria_producto ||
     !id_marca ||
     !id_unidad_medida ||
-    !id_sub_categoria_producto 
+    !id_sub_categoria_producto
   )
     return res
       .status(400)

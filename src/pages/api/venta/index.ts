@@ -129,12 +129,12 @@ const crearVenta = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     },
   });
 
-  await prisma.pedido.update({
+  const pedido = await prisma.pedido.update({
     where: {
       id: id_pedido,
     },
     data: {
-      id_estado: 6,
+      id_estado: 8,
     },
   });
 
@@ -258,7 +258,7 @@ const anularVenta = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
 
   const venta = await prisma.venta.update({
     data: {
-      id_estado: 2,
+      id_estado: 15,
     },
     where: {
       id,
