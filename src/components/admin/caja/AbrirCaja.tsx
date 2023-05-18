@@ -3,7 +3,7 @@ import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import React, { FC, Fragment, useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { AdminContext, AuthContext, CartContext } from "../../../context";
+import { AdminContext, AuthContext } from "../../../context";
 import { ICaja, IMoneda, IPedido } from "../../../interfaces";
 import tgcApi from "../../../api/tgcApi";
 import axios from "axios";

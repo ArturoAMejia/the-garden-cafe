@@ -128,6 +128,7 @@ model proveedor {
   compra             compra[]
   devolucion_compra  devolucion_compra[]
   producto           producto[]
+  producto_proveedor producto_proveedor[]
 }
 
 model contacto_proveedor {
@@ -360,6 +361,7 @@ model producto {
   coste_producto             coste_producto[]
   inventario                 inventario?
   detalle_pedido_ingrediente detalle_pedido_ingrediente[]
+  producto_proveedor         producto_proveedor[]
 }
 
 model coste_producto {
@@ -435,6 +437,14 @@ model precio_producto {
   precio_compra   Float
   margen_ganancia Float
   precio_venta    Float
+}
+
+model producto_proveedor {
+  producto     producto  @relation(fields: [id_producto], references: [id])
+  id_producto  Int
+  proveedor    proveedor @relation(fields: [id_proveedor], references: [id])
+  id_proveedor Int
+  @@id([id_producto, id_proveedor])
 }
 
 model coste_producto_elaborado {
@@ -956,13 +966,14 @@ model historial_password_usuario {
 }
 
 model rol {
-  id          Int           @id @default(autoincrement())
-  nombre      String
-  cat_estado  cat_estado    @relation(fields: [id_estado], references: [id])
-  id_estado   Int
-  rol_modulo  rol_modulo[]
-  usuario     usuario[]
-  rol_permiso rol_permiso[]
+  id             Int              @id @default(autoincrement())
+  nombre         String
+  cat_estado     cat_estado       @relation(fields: [id_estado], references: [id])
+  id_estado      Int
+  rol_modulo     rol_modulo[]
+  usuario        usuario[]
+  rol_permiso    rol_permiso[]
+  rol_sub_modulo rol_sub_modulo[]
 }
 
 model modulo {
@@ -978,11 +989,12 @@ model modulo {
 }
 
 model sub_modulo {
-  id        Int    @id @default(autoincrement())
-  modulo    modulo @relation(fields: [id_modulo], references: [id])
-  id_modulo Int
-  nombre    String
-  url       String
+  id             Int              @id @default(autoincrement())
+  modulo         modulo           @relation(fields: [id_modulo], references: [id])
+  id_modulo      Int
+  nombre         String
+  url            String
+  rol_sub_modulo rol_sub_modulo[]
 }
 
 model rol_modulo {
@@ -993,6 +1005,16 @@ model rol_modulo {
   nombre    String
 
   @@id([id_modulo, id_rol])
+}
+
+model rol_sub_modulo {
+  rol           rol        @relation(fields: [id_rol], references: [id])
+  id_rol        Int
+  sub_modulo    sub_modulo @relation(fields: [id_sub_modulo], references: [id])
+  id_sub_modulo Int
+  nombre        String
+
+  @@id([id_sub_modulo, id_rol])
 }
 
 model permiso {

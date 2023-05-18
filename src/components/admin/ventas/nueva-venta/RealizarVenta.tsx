@@ -240,7 +240,7 @@ export const RealizarVenta: FC<Props> = ({ pedido }) => {
                           htmlFor="pago_cliente"
                           className="block font-medium text-gray-700"
                         >
-                          Descuento
+                          Descuento (%)
                         </label>
                         <div className="mt-1">
                           <input

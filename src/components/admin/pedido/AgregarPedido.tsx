@@ -27,31 +27,40 @@ export const AgregarPedido: FC<Props> = ({ estados }) => {
 
   const { data: session } = useSession();
   const { register, handleSubmit, reset } = useForm<FormData>();
-  const [crearPedido] = useCrearPedidoMutation();
+  const [crearPedido, { isLoading: creandoPedido, isSuccess }] =
+    useCrearPedidoMutation();
 
   const productos = useAppSelector((state: AppState) => state.pedido.productos);
 
   const dispatch = useAppDispatch();
   const { data: clientes, isLoading } = useObtenerClientesQuery();
 
+  const createPedido = async () => {};
+
   const onCrearPedido = async (data: FormData) => {
     // TODO Crear pedidoApi con redux
 
-    try {
-      await crearPedido({
+    toast.promise(
+      crearPedido({
         ...data,
         id_trabajador: Number(session.user.id),
         id_cliente: Number(data.id_cliente),
         productos,
-      }).unwrap();
-      toast.success("Pedido realizado correctamente.");
+      })
+        .unwrap()
+        .then(() => {
+          dispatch(pedidoCompletado());
+          closeModal();
+          reset();
+        }),
+      {
+        loading: "Creando pedido...",
+        success: "Pedido realizado correctamente",
+        error: "No se pudo crear el pedido",
+      }
+      // toast.success("Pedido realizado correctamente.");
       // orderComplete();
-      dispatch(pedidoCompletado());
-      closeModal();
-      reset();
-    } catch (error: any) {
-      toast.error("error");
-    }
+    );
   };
 
   if (isLoading) return <>Cargando...</>;
@@ -187,7 +196,11 @@ export const AgregarPedido: FC<Props> = ({ estados }) => {
                     </div>
                     <button
                       type="submit"
-                      className="mt-4 inline-flex items-center rounded-md border border-transparent bg-[#388C04] px-4 py-2 font-medium text-white shadow-sm"
+                      className={`mt-4 inline-flex items-center rounded-md border border-transparent px-4 py-2 font-medium text-white shadow-sm ${
+                        creandoPedido === true ? "bg-[#c8e8b5" : "bg-[#388c04]"
+                      } 
+                      `}
+                      disabled={creandoPedido === true ? true : false}
                     >
                       Crear Pedido
                       <PlusCircleIcon

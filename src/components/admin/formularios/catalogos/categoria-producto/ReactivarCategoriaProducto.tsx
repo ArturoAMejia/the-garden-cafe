@@ -1,7 +1,7 @@
 import { FC, Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import {
-  ArrowDownCircleIcon,
+  ArrowUpCircleIcon,
   ExclamationCircleIcon,
   XCircleIcon,
 } from "@heroicons/react/24/outline";
@@ -13,7 +13,7 @@ interface Props {
   id: number;
 }
 
-export const DesactivarCategoriaProducto: FC<Props> = ({ id }) => {
+export const ReactivarCategoriaProducto: FC<Props> = ({ id }) => {
   // const { desactivarCategoria } = useContext(AdminContext);
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
@@ -37,9 +37,9 @@ export const DesactivarCategoriaProducto: FC<Props> = ({ id }) => {
         <button
           type="button"
           onClick={openModal}
-          className="rounded-md bg-red-600 px-3 py-2 text-sm font-medium text-white  hover:bg-red-500"
+          className="ml-2 rounded-md bg-amber-400 px-4 py-2 text-sm font-medium text-white  hover:bg-amber-300"
         >
-          <ArrowDownCircleIcon className="h-4 w-4"/>
+          <ArrowUpCircleIcon className="h-4 w-4" />
         </button>
       </div>
 
@@ -90,9 +90,9 @@ export const DesactivarCategoriaProducto: FC<Props> = ({ id }) => {
                   </button>
                 </div>
                 <div className="sm:flex sm:items-start">
-                  <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                  <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-amber-300 sm:mx-0 sm:h-10 sm:w-10">
                     <ExclamationCircleIcon
-                      className="h-6 w-6 text-red-600"
+                      className="h-6 w-6 text-black"
                       aria-hidden="true"
                     />
                   </div>
@@ -101,11 +101,11 @@ export const DesactivarCategoriaProducto: FC<Props> = ({ id }) => {
                       as="h3"
                       className="text-lg font-medium leading-6 text-gray-900"
                     >
-                      Desactivar categoria
+                      Reactivar categoria
                     </Dialog.Title>
                     <div className="mt-2">
                       <p className="text-sm text-gray-500">
-                        ¿Está seguro que quiere desactivar la categoria?
+                        ¿Está seguro que quiere reactivar la categoria?
                       </p>
                     </div>
                   </div>
@@ -113,10 +113,10 @@ export const DesactivarCategoriaProducto: FC<Props> = ({ id }) => {
                 <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                   <button
                     type="button"
-                    className="inline-flex w-full justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
+                    className="inline-flex w-full justify-center rounded-md border border-transparent bg-amber-400 px-4 py-2 text-base font-medium text-black shadow-sm hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
                     onClick={() => onDesactivarCategoriaProducto()}
                   >
-                    Desactivar
+                    Reactivar
                   </button>
                   <button
                     type="button"

@@ -2,7 +2,7 @@ import { ICatEstado } from "@/interfaces/general";
 import { IProducto } from "./producto";
 
 export interface IPrecioProducto {
-  id?: number;
+  id: number;
   id_producto: number;
   producto?: IProducto;
   id_estado: number;

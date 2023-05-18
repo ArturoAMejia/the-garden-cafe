@@ -2,6 +2,7 @@ import { SubCategoriaProductoTable } from "@/components/tables/subcategoria/Subc
 import { AdminLayout } from "../../../../components/Layout/AdminLayout";
 import { AgregarSubCategoriaProducto } from "@/components/admin/formularios/catalogos/sub-categoria-producto/AgregarSubCategoriaProducto";
 import { AgregarPrecioProducto } from "@/components/admin/inventario/producto/AgregarPrecioProducto";
+import { PrecioProductoTable } from "@/components/tables/inventario/PrecioProductoTable";
 
 const PrecioProductoPage = () => {
   return (
@@ -23,7 +24,7 @@ const PrecioProductoPage = () => {
         </div>
       </div>
       {/* // todo precio producto table */}
-      <SubCategoriaProductoTable />
+      <PrecioProductoTable />
     </AdminLayout>
   );
 };

@@ -8,17 +8,12 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import {
-  ICategoriaProducto,
+  ICatEstado,
   IIngrediente,
   IPrecioProducto,
-  IUnidadMedida,
+  IProducto,
 } from "../../../interfaces";
-
-import {
-  useObtenerPlatillosQuery,
-  useObtenerProductosQuery,
-} from "@/store/slices/inventario";
-import { DesactivarProducto } from "@/components/admin/inventario/producto/DesactivarProducto";
+import { useObtenerPrecioProductoQuery } from "@/store/slices/inventario";
 import {
   Table,
   TableHead,
@@ -27,28 +22,57 @@ import {
   TableBody,
   TableCell,
 } from "@tremor/react";
-import { DetallePlatillo } from "@/components/admin/inventario/producto/DetallePlatillo";
 
 const columnHelper = createColumnHelper<any>();
 
 export const PrecioProductoTable = () => {
   const columns = useMemo<ColumnDef<any, any>[]>(
     () => [
-      columnHelper.accessor<"gasto", number>("gasto", {
-        header: "Nombre",
+      columnHelper.accessor<"id", number>("id", {
+        header: "Código",
         cell: (info) => info.getValue(),
       }),
-      // columnHelper.accessor<"descripcion", string>("descripcion", {
-      //   header: "descripcion",
-      //   cell: (info) => info.getValue(),
-      // }),
-      columnHelper.accessor<"producto", IIngrediente>("producto", {
-        header: "Categoría",
+      columnHelper.accessor<"producto", IProducto>("producto", {
+        header: "Nombre",
         cell: (info) => info.getValue().nombre,
       }),
-      columnHelper.accessor<"precio_compra", number>("precio_compra", {
-        header: "Precio de compra",
+      columnHelper.accessor<"gasto", number>("gasto", {
+        header: "Gasto",
         cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor<"precio_compra", number>("precio_compra", {
+        header: "Precio de Compra",
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor<"margen_ganancia", number>("margen_ganancia", {
+        header: "Margen de Ganancia",
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor<"precio_venta", number>("precio_venta", {
+        header: "Precio de Venta",
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor<"cat_estado", ICatEstado>("cat_estado", {
+        header: "Estado",
+        cell: (props) =>
+          props.getValue().nombre === "Activo" ||
+          props.getValue().nombre === "Cancelado" ? (
+            <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+              {props.getValue().nombre}
+            </span>
+          ) : props.getValue().nombre === "Servido" ? (
+            <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
+              {props.getValue().nombre}
+            </span>
+          ) : props.getValue().nombre === "Listos" ? (
+            <span className="inline-flex items-center rounded-full bg-blue-200 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+              {props.getValue().nombre}
+            </span>
+          ) : (
+            <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
+              {props.getValue().nombre}
+            </span>
+          ),
       }),
       columnHelper.display({
         id: "actions",
@@ -65,10 +89,10 @@ export const PrecioProductoTable = () => {
     []
   );
 
-  const { data: productos, isLoading } = useObtenerPlatillosQuery();
+  const { data: precio_producto, isLoading } = useObtenerPrecioProductoQuery();
 
   const table = useReactTable({
-    data: productos!,
+    data: precio_producto!,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),

@@ -40,6 +40,7 @@ const obtenerPrecioProducto = async (
       margen_ganancia: true,
       gasto: true,
       id_estado: true,
+      cat_estado: true,
       id_producto: true,
       producto: true,
     },

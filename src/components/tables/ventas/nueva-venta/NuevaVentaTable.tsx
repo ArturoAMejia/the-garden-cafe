@@ -81,7 +81,13 @@ export const NuevaVentaTable = () => {
         header: () => <span>Acciones</span>,
         cell: (props) => (
           <div className="flex justify-center gap-2">
-            <RealizarVenta pedido={props.row.original} />
+            <Link
+              href={`/admin/pedidos/pedidos-realizados/${props.row.original.id}`}
+              className="rounded-lg bg-lime-600 px-4 py-2 text-sm font-medium text-white  hover:bg-lime-700"
+            >
+              Realizar venta
+            </Link>
+            {/* <RealizarVenta pedido={props.row.original} /> */}
             <Link
               className="flex flex-row items-center gap-2 pt-1 text-center text-black"
               href={`/admin/pedidos/pedidos-realizados/${props.row.original.id}`}

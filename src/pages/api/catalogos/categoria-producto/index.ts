@@ -114,6 +114,7 @@ const actualizarCategoriaProducto = async (
   await prisma.$disconnect();
   res.status(200).json(categoria);
 };
+
 const desactivarCategoria = async (
   req: NextApiRequest,
   res: NextApiResponse<Data>

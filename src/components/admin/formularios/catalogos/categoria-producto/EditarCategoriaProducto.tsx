@@ -1,7 +1,11 @@
 import { FC, Fragment, useState } from "react";
 
 import { Dialog, Transition } from "@headlessui/react";
-import { PlusCircleIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowTopRightOnSquareIcon,
+  ArrowUpCircleIcon,
+  PlusCircleIcon,
+} from "@heroicons/react/24/outline";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
@@ -52,9 +56,9 @@ export const EditarCatProducto: FC<Props> = ({ cat_producto }) => {
         <button
           type="button"
           onClick={openModal}
-          className="inline-flex items-center justify-center rounded-md border border-transparent bg-lime-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#8CA862] sm:w-auto"
+          className="inline-flex items-center justify-center rounded-md border border-transparent bg-blue-500 px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-400 sm:w-auto"
         >
-          Editar
+          <ArrowTopRightOnSquareIcon className="h-4 w-4" />
         </button>
       </div>
 

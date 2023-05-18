@@ -14,7 +14,15 @@ import {
   DesactivarCategoriaProducto,
 } from "../admin/formularios/catalogos";
 import { useObtenerCategoriasQuery } from "@/store/slices/inventario";
-import { Table, TableHead, TableRow, TableHeaderCell, TableBody, TableCell } from "@tremor/react";
+import {
+  Table,
+  TableHead,
+  TableRow,
+  TableHeaderCell,
+  TableBody,
+  TableCell,
+} from "@tremor/react";
+import { ReactivarCategoriaProducto } from "../admin/formularios/catalogos/categoria-producto/ReactivarCategoriaProducto";
 
 const columHelper = createColumnHelper<ICategoriaProducto>();
 
@@ -53,6 +61,7 @@ export const CategoriaProductoTable = () => {
           <div className="flex justify-center">
             <EditarCatProducto cat_producto={props.row.original} />{" "}
             <DesactivarCategoriaProducto id={props.row.original.id} />
+            <ReactivarCategoriaProducto id={props.row.original.id} />
           </div>
         ),
       }),

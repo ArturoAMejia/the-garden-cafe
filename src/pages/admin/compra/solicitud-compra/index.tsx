@@ -1,23 +1,20 @@
-import { useContext } from "react";
-
 import { AdminLayout } from "../../../../components/Layout/AdminLayout";
 import { FilterBar, ResumenPedido } from "../../../../components";
 
-import { AdminContext } from "../../../../context";
 import { useObtenerIngredientesQuery } from "@/store/slices/inventario";
 import { ResumenSolicitud } from "@/components/admin/compra/solicitud-compra/ResumenSolicitud";
+import {
+  actualizarCantidadProductoSolicitud,
+  añadirProductoSolicitud,
+  quitarProductoSolicitud,
+} from "@/store/slices/compra";
+import { useAppSelector } from "@/hooks/hooks";
+import { AppState } from "@/store/store";
+import { ResumenSolicitudCompra } from "@/components/admin/compra/solicitud-compra/ResumenSolicitudCompra";
 
 const NuevaOrdenCompraPage = () => {
-  const {
-    productos,
-    actualizarCantidadProducto,
-    quitarProducto,
-    subtotal,
-    tax,
-    total,
-    añadirProductoOrden,
-  } = useContext(AdminContext);
-
+  const { descuento, impuesto, productos, subtotal, total, total_productos } =
+    useAppSelector((state: AppState) => state.compra);
   const { data: prod, isLoading } = useObtenerIngredientesQuery();
 
   return (
@@ -39,21 +36,27 @@ const NuevaOrdenCompraPage = () => {
               isIngredient={true}
               isPlate={false}
               productos={prod!}
-              añadirProductoOrden={añadirProductoOrden}
+              añadirProductoOrden={añadirProductoSolicitud}
             />
           )}
         </div>
       </div>
       <div className="flex-row gap-4 md:flex">
         <div className="w-3/4">
-          <ResumenPedido
+          <ResumenSolicitudCompra
             productos={productos}
-            actualizarCantidadProducto={actualizarCantidadProducto}
-            quitarProducto={quitarProducto}
+            quitarProducto={quitarProductoSolicitud}
             subtotal={subtotal}
             total={total}
-            tax={tax}
           />
+          {/* <ResumenPedido
+            productos={productos}
+            actualizarCantidadProducto={actualizarCantidadProductoSolicitud}
+            quitarProducto={quitarProductoSolicitud}
+            subtotal={subtotal}
+            total={total}
+            tax={impuesto}
+          /> */}
         </div>
         <div className="w-1/4">
           <ResumenSolicitud />

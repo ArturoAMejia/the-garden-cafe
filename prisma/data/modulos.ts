@@ -278,3 +278,11 @@ export const roles_modulos = [
     nombre: "Modulo de Inventario",
   },
 ];
+
+export const rol_sub_modulos = [
+  {
+    id_rol: 7,
+    id_modulo: 3,
+    nombre: "Modulo de Inventario",
+  },
+];

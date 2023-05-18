@@ -36,9 +36,24 @@ export const compraSlice = createSlice({
           productoExistente.cantidad!++;
         }
       }
+
+      state.subtotal = state.productos.reduce(
+        (acc, p) => acc + p.precio! * p.cantidad!,
+        0
+      );
+      state.total =
+        state.subtotal +
+        state.subtotal * Number(process.env.NEXT_PUBLIC_TAX_RATE);
     },
     actualizarProductosSolicitud: (state, action) => {
       state.productos = [...action.payload];
+      state.subtotal = state.productos.reduce(
+        (acc, p) => acc + p.precio! * p.cantidad!,
+        0
+      );
+      state.total =
+        state.subtotal +
+        state.subtotal * Number(process.env.NEXT_PUBLIC_TAX_RATE);
     },
     actualizarCantidadProductoSolicitud: (state, action) => {
       state.productos = state.productos.map((producto) => {
@@ -46,6 +61,13 @@ export const compraSlice = createSlice({
 
         return action.payload;
       });
+      state.subtotal = state.productos.reduce(
+        (acc, p) => acc + p.precio! * p.cantidad!,
+        0
+      );
+      state.total =
+        state.subtotal +
+        state.subtotal * Number(process.env.NEXT_PUBLIC_TAX_RATE);
     },
     quitarProductoSolicitud: (state, action) => {
       state.productos = state.productos.filter(
@@ -55,6 +77,13 @@ export const compraSlice = createSlice({
             producto.nombre === action.payload.nombre
           )
       );
+      state.subtotal = state.productos.reduce(
+        (acc, p) => acc + p.precio! * p.cantidad!,
+        0
+      );
+      state.total =
+        state.subtotal +
+        state.subtotal * Number(process.env.NEXT_PUBLIC_TAX_RATE);
     },
     solicitudCompleta: (state) => {
       state.productos = [];

@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import {
   useCrearPrecioProductoMutation,
   useObtenerIngredientesQuery,
-  useObtenerProductosQuery,
+  useObtenerPrecioProductoQuery,
 } from "@/store/slices/inventario";
 
 type FormData = {
@@ -28,6 +28,9 @@ export const AgregarPrecioProducto = () => {
 
   const { data: productos, isLoading } = useObtenerIngredientesQuery();
 
+  const { data: preciosProducto, isLoading: isLoadingPreciosProducto } =
+    useObtenerPrecioProductoQuery();
+
   const onAgregarPrecioProducto = async (data: FormData) => {
     try {
       await crearPrecioProducto(data).unwrap();
@@ -40,6 +43,8 @@ export const AgregarPrecioProducto = () => {
   };
 
   if (isLoading) return <>Cargando...</>;
+
+  if (isLoadingPreciosProducto) return <>Cargando...</>;
 
   return (
     <>
@@ -78,7 +83,7 @@ export const AgregarPrecioProducto = () => {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="h-auto w-full	 max-w-screen-xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="h-auto w-full max-w-screen-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title
                     as="h3"
                     className="text-xl font-bold leading-6 text-gray-900"
@@ -90,17 +95,17 @@ export const AgregarPrecioProducto = () => {
                     className="w-full"
                     onSubmit={handleSubmit(onAgregarPrecioProducto)}
                   >
-                    <div className="grid grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                       <div className="mt-2">
                         <label
-                          htmlFor="marca"
+                          htmlFor="producto"
                           className="block font-medium text-gray-700"
                         >
-                          Marca
+                          Producto
                         </label>
                         <div className="mt-1 flex items-center">
                           <select
-                            id="marca"
+                            id="producto"
                             {...register("id_producto", {
                               valueAsNumber: true,
                             })}
@@ -112,26 +117,6 @@ export const AgregarPrecioProducto = () => {
                               </option>
                             ))}
                           </select>
-                        </div>
-                      </div>
-                      {/* Precio de compra */}
-
-                      <div className="mt-2">
-                        <label
-                          htmlFor="precio_compra"
-                          className="block font-medium text-gray-700"
-                        >
-                          Precio de compra
-                        </label>
-                        <div className="mt-1">
-                          <input
-                            type="number"
-                            id="nombre"
-                            {...register("precio_compra", {
-                              valueAsNumber: true,
-                            })}
-                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                          />
                         </div>
                       </div>
                       {/* Gasto */}
@@ -151,6 +136,25 @@ export const AgregarPrecioProducto = () => {
                           />
                         </div>
                       </div>
+                      {/* Precio de compra */}
+                      <div className="mt-2">
+                        <label
+                          htmlFor="precio_compra"
+                          className="block font-medium text-gray-700"
+                        >
+                          Precio de compra
+                        </label>
+                        <div className="mt-1">
+                          <input
+                            type="number"
+                            id="nombre"
+                            {...register("precio_compra", {
+                              valueAsNumber: true,
+                            })}
+                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                          />
+                        </div>
+                      </div>
                       {/* Margen de Ganancias */}
                       <div className="mt-2">
                         <label
@@ -170,32 +174,13 @@ export const AgregarPrecioProducto = () => {
                           />
                         </div>
                       </div>
-                      {/* Subcategoria */}
+                      {/* Precio de Venta */}
                       <div className="mt-2">
                         <label
                           htmlFor="margen_de_ganancias"
                           className="block font-medium text-gray-700"
                         >
-                          Margen de Ganancias
-                        </label>
-                        <div className="mt-1 flex items-center">
-                          <input
-                            type="number"
-                            id="gasto"
-                            {...register("margen_ganancia", {
-                              valueAsNumber: true,
-                            })}
-                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                          />
-                        </div>
-                      </div>
-                      {/* Margen de Ganancias */}
-                      <div className="mt-2">
-                        <label
-                          htmlFor="margen_de_ganancias"
-                          className="block font-medium text-gray-700"
-                        >
-                          Margen de Ganancias
+                          Precio de Venta
                         </label>
                         <div className="mt-1 flex items-center">
                           <input
@@ -209,9 +194,10 @@ export const AgregarPrecioProducto = () => {
                         </div>
                       </div>
                     </div>
+
                     <button
                       type="submit"
-                      className="mt-4 mr-2 inline-flex items-center rounded-md border border-transparent bg-[#388C04] px-4 py-2 font-medium text-white shadow-sm"
+                      className="mt-4 mr-2 inline-flex items-center  rounded-md border border-transparent bg-[#388C04] px-4 py-2 font-medium text-white shadow-sm sm:justify-center md:justify-start"
                     >
                       Agregar Producto
                       <PlusCircleIcon
@@ -221,7 +207,7 @@ export const AgregarPrecioProducto = () => {
                     </button>
                     <button
                       type="button"
-                      className="mt-4 ml-16 inline-flex items-center rounded-md border border-transparent bg-[#CA1514] px-4 py-2 font-medium text-white shadow-sm"
+                      className="mt-4 inline-flex items-center rounded-md border border-transparent bg-[#CA1514] px-4 py-2 text-center font-medium text-white shadow-sm md:ml-16"
                       onClick={closeModal}
                     >
                       Cancelar
