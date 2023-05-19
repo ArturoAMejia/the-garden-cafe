@@ -48,7 +48,7 @@ export const RealizarVenta: FC<Props> = ({ pedido }) => {
 
   const dispatch = useAppDispatch();
 
-  const { total, subtotal, cambio, descuento } = useAppSelector(
+  const { total, subtotal, cambio, descuento, pago_cliente } = useAppSelector(
     (state: AppState) => state.pedido
   );
 
@@ -70,6 +70,12 @@ export const RealizarVenta: FC<Props> = ({ pedido }) => {
 
   const onRealizarVenta = async (data: FormData) => {
     const { descripcion, id_forma_pago, id_moneda, tipo_venta } = data;
+
+    if (pago_cliente < total) {
+      toast.error("El pago del cliente no cubre el total de la venta.");
+      return;
+    }
+
     try {
       toast.promise(
         crearVenta({
@@ -82,13 +88,11 @@ export const RealizarVenta: FC<Props> = ({ pedido }) => {
           tipo_venta,
           id_moneda,
           subtotal,
-          descuento: 0,
+          descuento: descuento,
+          pago_cliente: pago_cliente,
         })
           .unwrap()
           .then(() => {
-            toast.success("Venta realizada correctamente.", {
-              duration: 3000,
-            });
             closeModal();
             reset();
           }),
