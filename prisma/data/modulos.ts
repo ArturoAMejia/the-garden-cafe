@@ -239,18 +239,8 @@ export const roles_modulos = [
   },
   {
     id_rol: 3,
-    id_modulo: 2,
-    nombre: "Modulo de Ventas",
-  },
-  {
-    id_rol: 3,
     id_modulo: 4,
     nombre: "Modulo de Pedidos",
-  },
-  {
-    id_rol: 3,
-    id_modulo: 5,
-    nombre: "Modulo de Caja",
   },
   {
     id_rol: 4,

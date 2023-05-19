@@ -71,24 +71,34 @@ export const RealizarVenta: FC<Props> = ({ pedido }) => {
   const onRealizarVenta = async (data: FormData) => {
     const { descripcion, id_forma_pago, id_moneda, tipo_venta } = data;
     try {
-      await crearVenta({
-        id_pedido: id,
-        id_trabajador,
-        id_cliente,
-        productos: productosPedido,
-        descripcion,
-        id_cat_forma_pago: id_forma_pago,
-        tipo_venta,
-        id_moneda,
-        subtotal,
-        descuento: 0,
-      }).unwrap();
-      toast.success("Venta realizada correctamente.", {
-        duration: 3000,
-      });
+      toast.promise(
+        crearVenta({
+          id_pedido: id,
+          id_trabajador,
+          id_cliente,
+          productos: productosPedido,
+          descripcion,
+          id_cat_forma_pago: id_forma_pago,
+          tipo_venta,
+          id_moneda,
+          subtotal,
+          descuento: 0,
+        })
+          .unwrap()
+          .then(() => {
+            toast.success("Venta realizada correctamente.", {
+              duration: 3000,
+            });
+            closeModal();
+            reset();
+          }),
+        {
+          loading: "Realizando venta...",
+          success: "¡Venta realizada correctamente!",
+          error: "No se pudo realizar la venta.",
+        }
+      );
       await actualizarEstadoPedido({ ...pedido, id_estado: 8 }).unwrap();
-      closeModal();
-      reset();
     } catch (error: any) {
       toast.error(error.data.message);
     }

@@ -35,8 +35,6 @@ export const AgregarPedido: FC<Props> = ({ estados }) => {
   const dispatch = useAppDispatch();
   const { data: clientes, isLoading } = useObtenerClientesQuery();
 
-  const createPedido = async () => {};
-
   const onCrearPedido = async (data: FormData) => {
     // TODO Crear pedidoApi con redux
 

@@ -69,6 +69,16 @@ export const personas = [
     fecha_nacimiento_constitucion: new Date(),
     tipo_persona: "Natural",
   },
+  {
+    nombre: "Luis",
+    apellido_razon_social: "Bravo",
+    cedula_ruc: "001-110203-1235-F",
+    telefono: "88221199",
+    direccion_domicilio: "Villaflor",
+    correo: "luis@gmail.com",
+    fecha_nacimiento_constitucion: new Date(),
+    tipo_persona: "Natural",
+  },
 ];
 
 export const proveedor = [
@@ -141,6 +151,13 @@ export const trabajador = [
     id_estado: 1,
     codigo_inss: "2022-0205-3120-V",
     genero: "Femenino",
+  },
+  {
+    id_persona: 8,
+    id_estado_civil: 1,
+    id_estado: 1,
+    codigo_inss: "2022-0205-3120-V",
+    genero: "Masculino",
   },
 ];
 export const grupos_usuarios = [
@@ -217,6 +234,15 @@ export const usuarios = [
     correo: "fernanda@gmail.com",
     password: "$2y$10$5GV7mc8fYfP33xtcdf7.b../IpuVpElyLb1eAt1O.vch8jM4mylaq",
     id_rol: 5,
+  },
+  {
+    id_perfil: 1,
+    id_estado: 1,
+    usuario: "luis@gmail.com",
+    id_persona: 8,
+    correo: "luis@gmail.com",
+    password: "$2y$10$5GV7mc8fYfP33xtcdf7.b../IpuVpElyLb1eAt1O.vch8jM4mylaq",
+    id_rol: 7,
   },
 ];
 
