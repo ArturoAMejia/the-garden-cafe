@@ -70,6 +70,9 @@ const obtenerVentas = async (res: NextApiResponse<Data>) => {
       total: true,
       detalle_venta: true,
     },
+    orderBy: {
+      id: "desc",
+    },
   });
   await prisma.$disconnect();
   return res.status(200).json(ventas);
@@ -87,6 +90,7 @@ const crearVenta = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     id_moneda,
     id_pedido,
     productos,
+    pago_cliente,
   } = req.body;
 
   console.log(req.body);
@@ -98,9 +102,16 @@ const crearVenta = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     !id_cat_forma_pago ||
     !id_moneda ||
     !id_pedido ||
-    !productos
+    !productos ||
+    !pago_cliente
   ) {
     return res.status(400).json({ message: "Los campos son obligatorios" });
+  }
+
+  if (pago_cliente < (subtotal * 1.15)) {
+    return res
+      .status(400)
+      .json({ message: "El pago del cliente es menor al total de la venta" });
   }
   await prisma.$connect();
 
