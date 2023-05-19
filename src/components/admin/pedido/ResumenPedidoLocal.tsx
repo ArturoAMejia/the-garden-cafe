@@ -23,11 +23,11 @@ import {
 } from "@/store/slices/pedido/pedidoSlice";
 import { useSession } from "next-auth/react";
 
-import { Modal } from "@/components/ui/Modal";
 import { CambiarEstadoProductoPedido } from "./CambiarEstadoProductoPedido";
 import { ICatEstado } from "@/interfaces";
 
 interface Props {
+  id_estado: number;
   productos: IProductoCart[];
   // actualizarCantidadProducto: any;
   quitarProducto: any;
@@ -40,7 +40,7 @@ interface Props {
 
 export const ResumenPedidoLocal: FC<Props> = ({
   productos,
-  // actualizarCantidadProducto,
+  id_estado,
   quitarProducto,
   subtotal,
   total,
@@ -74,11 +74,15 @@ export const ResumenPedidoLocal: FC<Props> = ({
                 Cantidad
               </TableHeaderCell>
               <TableHeaderCell className="text-center">Total</TableHeaderCell>
-              {!nuevo_pedido && (
-                <TableHeaderCell className="text-center">
-                  Estado
-                </TableHeaderCell>
-              )}
+              {!nuevo_pedido ? (
+                id_estado !== 8 ? (
+                  id_estado !== 15 ? (
+                    <TableHeaderCell className="text-center">
+                      Estado
+                    </TableHeaderCell>
+                  ) : null
+                ) : null
+              ) : null}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -89,7 +93,7 @@ export const ResumenPedidoLocal: FC<Props> = ({
                   <Text>{item.nombre}</Text>
                 </TableCell>
                 <TableCell className="text-center">
-                  <Text>{item.precio}</Text>
+                  <Text>$ {item.precio.toFixed(2)}</Text>
                 </TableCell>
 
                 <TableCell className="flex justify-center">
@@ -99,30 +103,44 @@ export const ResumenPedidoLocal: FC<Props> = ({
                   (id_trabajador !== session?.user?.id_trabajador &&
                     session?.user.id_rol === 2) ||
                   (id_trabajador !== session?.user?.id_trabajador &&
+                    session?.user.id_rol === 3) ||
+                  (id_trabajador !== session?.user?.id_trabajador &&
                     session?.user.id_rol === 5) ? (
-                    <ItemCounter
-                      currentValue={item.cantidad}
-                      maxValue={20}
-                      updatedQuantity={(value) =>
-                        onNewCartQuantityValue(item as IProductoCart, value)
-                      }
-                    />
+                    id_estado !== 8 ? (
+                      id_estado !== 15 ? (
+                        <ItemCounter
+                          currentValue={item.cantidad}
+                          maxValue={20}
+                          updatedQuantity={(value) =>
+                            onNewCartQuantityValue(item as IProductoCart, value)
+                          }
+                        />
+                      ) : (
+                        <h1 className="w-8 text-center"> {item.cantidad} </h1>
+                      )
+                    ) : (
+                      <h1 className="w-8 text-center"> {item.cantidad} </h1>
+                    )
                   ) : (
                     <h1 className="w-8 text-center"> {item.cantidad} </h1>
                   )}
                   {/* <Text>{item.cantidad}</Text> */}
                 </TableCell>
                 <TableCell className="text-center">
-                  <Text>{item.precio * item.cantidad}</Text>
+                  <Text>${Number(item.precio * item.cantidad).toFixed(2)}</Text>
                 </TableCell>
 
                 {!nuevo_pedido ? (
-                  <TableCell className="text-center">
-                    <CambiarEstadoProductoPedido
-                      id_estado={item.id_estado}
-                      estados={estados}
-                    />
-                  </TableCell>
+                  id_estado !== 8 ? (
+                    id_estado !== 15 ? (
+                      <TableCell className="text-center">
+                        <CambiarEstadoProductoPedido
+                          id_estado={item.id_estado}
+                          estados={estados}
+                        />
+                      </TableCell>
+                    ) : null
+                  ) : null
                 ) : null}
 
                 <TableCell className="text-center">
@@ -132,15 +150,21 @@ export const ResumenPedidoLocal: FC<Props> = ({
                   (id_trabajador !== session?.user?.id_trabajador &&
                     session?.user.id_rol === 2) ||
                   (id_trabajador !== session?.user?.id_trabajador &&
+                    session?.user.id_rol === 3) ||
+                  (id_trabajador !== session?.user?.id_trabajador &&
                     session?.user.id_rol === 5) ? (
-                    <button
-                      type="button"
-                      className="inline-flex  py-2 text-gray-400 hover:text-gray-500"
-                      onClick={() => dispatch(quitarProductoPedido(item))}
-                    >
-                      <TrashIcon className="h-4 w-4 text-black" />
-                      <span className="sr-only">Remove</span>
-                    </button>
+                    id_estado !== 8 ? (
+                      id_estado !== 15 ? (
+                        <button
+                          type="button"
+                          className="inline-flex  py-2 text-gray-400 hover:text-gray-500"
+                          onClick={() => dispatch(quitarProductoPedido(item))}
+                        >
+                          <TrashIcon className="h-4 w-4 text-black" />
+                          <span className="sr-only">Remove</span>
+                        </button>
+                      ) : null
+                    ) : null
                   ) : null}
                 </TableCell>
                 <TableCell>

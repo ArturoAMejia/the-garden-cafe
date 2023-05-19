@@ -92,7 +92,10 @@ export const PedidosRealizadosTable = () => {
         header: () => <span>Acciones</span>,
         cell: (props) => (
           <div className="flex justify-center gap-2">
-            <EditarPedido pedido={props.row.original} />
+            {props.row.original.cat_estado.nombre === "Anulado" ||
+            props.row.original.cat_estado.nombre === "Cancelado" ? null : (
+              <EditarPedido pedido={props.row.original} />
+            )}
             <AnularPedido
               id={props.row.original.id}
               disable={props.row.original.id_estado !== 2 ? false : true}
@@ -115,7 +118,6 @@ export const PedidosRealizadosTable = () => {
               }
             >
               <IdentificationIcon className="h-6 w-6 text-black" />
-              Ver Detalles
             </Link>
           </div>
         ),

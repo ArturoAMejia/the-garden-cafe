@@ -43,7 +43,7 @@ export const InventarioABCTable = () => {
         header: "Nombre",
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor<"demanda_total", number>("demanda_total", {
+      columnHelper.accessor<"demanda", number>("demanda", {
         header: "Demanda",
         cell: (info) => Number(info.getValue()),
       }),

@@ -3,6 +3,7 @@ import { Transition, Dialog } from "@headlessui/react";
 import {
   XCircleIcon,
   ExclamationCircleIcon,
+  ArrowDownCircleIcon,
 } from "@heroicons/react/24/outline";
 import { toast } from "react-hot-toast";
 import { useAnularPedidoMutation } from "@/store/slices/pedido";
@@ -36,7 +37,7 @@ export const AnularPedido: FC<Props> = ({ id, disable }) => {
           disabled={disable}
           className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white  hover:bg-red-500"
         >
-          Anular
+          <ArrowDownCircleIcon className="h-4 w-4" />
         </button>
       </div>
 

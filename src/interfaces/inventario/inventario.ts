@@ -67,26 +67,47 @@ export interface IDetalleProductoElaborado {
   cantidad: number;
   id_estado: number;
 }
+// export interface IInventarioABC {
+//   id: number;
+//   id_estado: number;
+//   id_categoria_producto: number;
+//   id_sub_categoria_producto: number;
+//   id_zona_preparacion: number;
+//   id_unidad_medida: number;
+//   cod_producto: string;
+//   nombre: string;
+//   descripcion: string;
+//   imagen: string;
+//   precio_producto: number;
+//   fecha_ingreso: Date;
+//   _count: Count;
+//   porcentaje: number;
+//   porcentaje_acumulado: number;
+//   clasificacion?: string;
+//   cantidad_total?: number;
+//   demanda_total?: number;
+// }
+
 export interface IInventarioABC {
-  id: number;
-  id_estado: number;
-  id_categoria_producto: number;
+  id:                        number;
+  id_estado:                 number;
+  id_categoria_producto:     number;
   id_sub_categoria_producto: number;
-  id_zona_preparacion: number;
-  id_unidad_medida: number;
-  cod_producto: string;
-  nombre: string;
-  descripcion: string;
-  imagen: string;
-  precio_producto: number;
-  fecha_ingreso: Date;
-  _count: Count;
-  porcentaje: number;
-  porcentaje_acumulado: number;
+  id_zona_preparacion:       number;
+  id_unidad_medida:          number;
+  cod_producto:              string;
+  nombre:                    string;
+  descripcion:               string;
+  imagen:                    string;
+  precio_producto:           number;
+  fecha_ingreso:             Date;
+  demanda:                   number;
+  porcentaje:                number;
+  porcentaje_acumulado:      number;
   clasificacion?: string;
-  cantidad_total?: number;
-  demanda_total?: number;
+
 }
+
 
 export interface Count {
   detalle_pedido: number;

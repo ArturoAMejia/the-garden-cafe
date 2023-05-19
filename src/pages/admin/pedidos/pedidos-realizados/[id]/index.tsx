@@ -5,7 +5,6 @@ import { prisma } from "../../../../../database";
 import {
   ICatEstado,
   IPedido,
-  IProducto,
   IProductoElaborado,
 } from "../../../../../interfaces";
 import { ProductoFiltrado } from "../../../../../components";
@@ -81,7 +80,6 @@ const DetallePedidoRealizadoPage: FC<Props> = ({ detalle, estados }) => {
     );
   }, [dispatch, detalle]);
 
-  console.log(detalle);
 
   return (
     <AdminLayout title={`Detalle del Pedido - ${detalle.id}`}>
@@ -127,11 +125,21 @@ const DetallePedidoRealizadoPage: FC<Props> = ({ detalle, estados }) => {
               {detalle.observacion}
             </span>
           </p>
+          <p className="text-xl font-bold">
+            Estado:{" "}
+            <span className="text-lg font-medium capitalize">
+              {detalle.cat_estado.nombre}
+            </span>
+          </p>
         </div>
         {session?.user.id_rol === 5 ||
         session?.user.id_rol === 1 ||
         session?.user.id_rol === 2 ? (
-          <RealizarVenta pedido={detalle} />
+          detalle.cat_estado.id !== 8 ? (
+            detalle.cat_estado.id !== 15 ? (
+              <RealizarVenta pedido={detalle} />
+            ) : null
+          ) : null
         ) : null}
       </div>
       <div className="mt-4 flex-row gap-4 md:flex">
@@ -147,6 +155,7 @@ const DetallePedidoRealizadoPage: FC<Props> = ({ detalle, estados }) => {
           }`}
         >
           <ResumenPedidoLocal
+            id_estado={detalle.cat_estado.id}
             productos={productos}
             quitarProducto={quitarProductoPedido}
             subtotal={subtotal}
@@ -163,7 +172,11 @@ const DetallePedidoRealizadoPage: FC<Props> = ({ detalle, estados }) => {
               session?.user.id_rol === 2) ||
             (session?.user.id_trabajador !== detalle.id_trabajador &&
               session?.user.id_rol === 5) ? (
-              <EditarPedido pedido={detalle} />
+              detalle.cat_estado.id !== 8 ? (
+                detalle.cat_estado.id !== 15 ? (
+                  <EditarPedido pedido={detalle} />
+                ) : null
+              ) : null
             ) : null}
           </div>
         </div>
@@ -173,75 +186,80 @@ const DetallePedidoRealizadoPage: FC<Props> = ({ detalle, estados }) => {
         (session?.user.id_trabajador !== detalle.id_trabajador &&
           session?.user.id_rol === 2) ? (
           <>
-            <div
-              className={`w-full md:h-5/6
-        ${
-          session?.user.id_trabajador === detalle.id_trabajador ||
-          (session?.user.id_trabajador !== detalle.id_trabajador &&
-            session?.user.id_rol === 1) ||
-          (session?.user.id_trabajador === detalle.id_trabajador &&
-            session?.user.id_rol === 2)
-            ? "md:w-2/5"
-            : ""
-        }`}
-            >
-              <TextInput
-                className="mt-4 md:mt-0"
-                icon={MagnifyingGlassIcon}
-                placeholder="Buscar..."
-                onChange={(e) => setQuery(e.target.value)}
-              />
-              <div className="flex justify-end pr-2 pt-2">
-                <Button variant="light" onClick={() => setFiltro("")}>
-                  Borrar Filtro
-                </Button>
-              </div>
-              {isLoadingCategorias ? (
-                <>Cargando...</>
-              ) : (
-                <CategoriaFilter
-                  categorias={categorias}
-                  setFiltro={setFiltro}
-                />
-              )}
+            {detalle.cat_estado.id !== 8 ? (
+              detalle.cat_estado.id !== 15 ? (
+                <div
+                  className={`w-full md:h-5/6 ${
+                    session?.user.id_trabajador === detalle.id_trabajador ||
+                    (session?.user.id_trabajador !== detalle.id_trabajador &&
+                      session?.user.id_rol === 1 &&
+                      detalle.cat_estado.id !== 8) ||
+                    (session?.user.id_trabajador === detalle.id_trabajador &&
+                      session?.user.id_rol === 2 &&
+                      detalle.cat_estado.id !== 15)
+                      ? "md:w-2/5"
+                      : ""
+                  }`}
+                >
+                  <TextInput
+                    className="mt-4 md:mt-0"
+                    icon={MagnifyingGlassIcon}
+                    placeholder="Buscar..."
+                    onChange={(e) => setQuery(e.target.value)}
+                  />
+                  <div className="flex justify-end pr-2 pt-2">
+                    <Button variant="light" onClick={() => setFiltro("")}>
+                      Borrar Filtro
+                    </Button>
+                  </div>
+                  {isLoadingCategorias ? (
+                    <>Cargando...</>
+                  ) : (
+                    <CategoriaFilter
+                      categorias={categorias}
+                      setFiltro={setFiltro}
+                    />
+                  )}
 
-              {isLoading ? (
-                <>Cargando...</>
-              ) : (
-                <div className="mt-4 overflow-y-auto ">
-                  {filtro
-                    ? menuFiltrado?.map((prod) => (
-                        <ProductoFiltrado
-                          key={prod.nombre}
-                          añadirProductoOrden={añadirProductoPedido}
-                          isIngredient={false}
-                          isPlate={true}
-                          producto={prod}
-                        />
-                      ))
-                    : query
-                    ? platillosFiltrados.map((platillo) => (
-                        <ProductoFiltrado
-                          key={platillo.nombre}
-                          añadirProductoOrden={añadirProductoPedido}
-                          isIngredient={false}
-                          isPlate={true}
-                          producto={platillo}
-                        />
-                      ))
-                    : platillos?.map((prod) => (
-                        <ProductoFiltrado
-                          key={prod.nombre}
-                          añadirProductoOrden={añadirProductoPedido}
-                          isIngredient={false}
-                          isPlate={true}
-                          producto={prod}
-                        />
-                      ))}
-                  {}
+                  {isLoading ? (
+                    <>Cargando...</>
+                  ) : (
+                    <div className="mt-4 overflow-y-auto ">
+                      {filtro
+                        ? menuFiltrado?.map((prod) => (
+                            <ProductoFiltrado
+                              key={prod.nombre}
+                              añadirProductoOrden={añadirProductoPedido}
+                              isIngredient={false}
+                              isPlate={true}
+                              producto={prod}
+                            />
+                          ))
+                        : query
+                        ? platillosFiltrados.map((platillo) => (
+                            <ProductoFiltrado
+                              key={platillo.nombre}
+                              añadirProductoOrden={añadirProductoPedido}
+                              isIngredient={false}
+                              isPlate={true}
+                              producto={platillo}
+                            />
+                          ))
+                        : platillos?.map((prod) => (
+                            <ProductoFiltrado
+                              key={prod.nombre}
+                              añadirProductoOrden={añadirProductoPedido}
+                              isIngredient={false}
+                              isPlate={true}
+                              producto={prod}
+                            />
+                          ))}
+                      {}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
+              ) : null
+            ) : null}
           </>
         ) : null}
       </div>

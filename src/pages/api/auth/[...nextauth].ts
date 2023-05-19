@@ -43,7 +43,7 @@ export const authOptions: NextAuthOptions = {
         username: { label: "Username", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         await prisma.$connect();
 
         const user = await prisma.usuario.findUnique({

@@ -1,6 +1,9 @@
 import React, { FC, Fragment, useState } from "react";
 import { Transition, Dialog } from "@headlessui/react";
-import { PlusCircleIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowTopRightOnSquareIcon,
+  PlusCircleIcon,
+} from "@heroicons/react/24/outline";
 import { useForm } from "react-hook-form";
 import { IPedido } from "../../../interfaces";
 import { toast } from "react-hot-toast";
@@ -66,7 +69,7 @@ export const EditarPedido: FC<Props> = ({ pedido }) => {
         onClick={openModal}
         className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white  hover:bg-sky-300"
       >
-        Editar
+        <ArrowTopRightOnSquareIcon className="h-4 w-4" />
       </button>
 
       <Transition appear show={isOpen} as={Fragment}>

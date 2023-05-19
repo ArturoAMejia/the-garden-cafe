@@ -87,193 +87,219 @@ const PedidosPage = () => {
       </TabList>
 
       {showCard === 1 ? (
-        <div className="grid grid-cols-4 gap-8">
-          <div className="">
+        <div className="grid grid-rows-4 gap-8">
+          <div className="overflow-x-auto">
             <h2 className="text-lg font-bold">En Cola</h2>
-
-            {pedidoEnCola
-              .filter((pedido) => pedido.tipo_pedido === "Local")
-              .map((pedido) => (
-                <PedidoCard
-                  key={pedido.id}
-                  id_estado={4}
-                  pedido={pedido}
-                  color="amber"
-                  asignarCocinero={true}
-                />
-              ))}
+            <div className="flex gap-4">
+              {pedidoEnCola
+                .filter((pedido) => pedido.tipo_pedido === "Local")
+                .map((pedido) => (
+                  <PedidoCard
+                    key={pedido.id}
+                    id_estado={4}
+                    pedido={pedido}
+                    color="amber"
+                    asignarCocinero={true}
+                  />
+                ))}
+            </div>
           </div>
-          <div className="">
+          <div className="overflow-x-auto">
             <h2 className="text-lg font-bold">En Preparación</h2>
-
-            {pedidosPreparación
-              .filter((pedido) => pedido.tipo_pedido === "Local")
-              .map((pedido) => (
-                <PedidoCard
-                  key={pedido.id}
-                  id_estado={5}
-                  pedido={pedido}
-                  color="amber"
-                  undo={3}
-                  asignarCocinero={false}
-                />
-              ))}
+            <div className="flex gap-4">
+              {pedidosPreparación
+                .filter((pedido) => pedido.tipo_pedido === "Local")
+                .map((pedido) => (
+                  <PedidoCard
+                    key={pedido.id}
+                    id_estado={5}
+                    pedido={pedido}
+                    color="amber"
+                    undo={3}
+                    asignarCocinero={false}
+                  />
+                ))}
+            </div>
           </div>
-          <div className="">
+          <div className="overflow-x-auto">
             <h2 className="text-lg font-bold">Listos</h2>
-            {pedidosListos
-              .filter((pedido) => pedido.tipo_pedido === "Local")
-              .map((pedido) => (
-                <PedidoCard
-                  key={pedido.id}
-                  id_estado={6}
-                  pedido={pedido}
-                  color="blue"
-                  undo={4}
-                  asignarCocinero={false}
-                />
-              ))}
+            <div className="flex gap-4">
+              {pedidosListos
+                .filter((pedido) => pedido.tipo_pedido === "Local")
+                .map((pedido) => (
+                  <PedidoCard
+                    key={pedido.id}
+                    id_estado={6}
+                    pedido={pedido}
+                    color="blue"
+                    undo={4}
+                    asignarCocinero={false}
+                  />
+                ))}
+            </div>
           </div>
-          <div className="">
+          <div className="overflow-x-auto">
             <h2 className="text-lg font-bold">Servido</h2>
-            {pedidosServido
-              .filter((pedido) => pedido.tipo_pedido === "Local")
-              .map((pedido) => (
-                <PedidoCard
-                  key={pedido.id}
-                  id_estado={7}
-                  pedido={pedido}
-                  color="green"
-                  undo={5}
-                  asignarCocinero={false}
-                />
-              ))}
+            <div className="flex gap-4">
+              {pedidosServido
+                .filter((pedido) => pedido.tipo_pedido === "Local")
+                .map((pedido) => (
+                  <PedidoCard
+                    key={pedido.id}
+                    id_estado={7}
+                    pedido={pedido}
+                    color="green"
+                    undo={5}
+                    asignarCocinero={false}
+                  />
+                ))}
+            </div>
           </div>
         </div>
       ) : showCard === 2 ? (
-        <div className="grid grid-cols-4 gap-8">
-          <div className="">
+        <div className="grid grid-rows-4 gap-8">
+          <div className="overflow-x-auto">
             <h2 className="text-lg font-bold">En Cola</h2>
-
-            {pedidoEnCola
-              .filter((pedido) => pedido.tipo_pedido === "Para llevar")
-              .map((pedido) => (
-                <PedidoCard
-                  key={pedido.id}
-                  id_estado={4}
-                  pedido={pedido}
-                  color="amber"
-                  asignarCocinero={true}
-                />
-              ))}
+            <div className="flex gap-4">
+              {pedidoEnCola
+                .filter((pedido) => pedido.tipo_pedido === "Para llevar")
+                .map((pedido) => (
+                  <PedidoCard
+                    key={pedido.id}
+                    id_estado={4}
+                    pedido={pedido}
+                    color="amber"
+                    asignarCocinero={true}
+                  />
+                ))}
+            </div>
           </div>
-          <div className="">
+          <div className="overflow-x-auto">
             <h2 className="text-lg font-bold">En Preparación para llevar</h2>
-
-            {pedidosPreparación
-              .filter((pedido) => pedido.tipo_pedido === "Para llevar")
-              .map((pedido) => (
-                <PedidoCard
-                  key={pedido.id}
-                  id_estado={5}
-                  pedido={pedido}
-                  color="amber"
-                  asignarCocinero={false}
-                />
-              ))}
+            <div className="flex gap-4">
+              {pedidosPreparación
+                .filter((pedido) => pedido.tipo_pedido === "Para llevar")
+                .map((pedido) => (
+                  <PedidoCard
+                    key={pedido.id}
+                    id_estado={5}
+                    pedido={pedido}
+                    color="amber"
+                    asignarCocinero={false}
+                  />
+                ))}
+            </div>
           </div>
-          <div className="">
+          <div className="overflow-x-auto">
             <h2 className="text-lg font-bold">Listos</h2>
-            {pedidosListos
-              .filter((pedido) => pedido.tipo_pedido === "Para llevar")
-              .map((pedido) => (
-                <PedidoCard
-                  key={pedido.id}
-                  id_estado={6}
-                  pedido={pedido}
-                  color="blue"
-                  undo={3}
-                  asignarCocinero={false}
-                />
-              ))}
+            <div className="flex gap-4">
+              {pedidosListos
+                .filter((pedido) => pedido.tipo_pedido === "Para llevar")
+                .map((pedido) => (
+                  <PedidoCard
+                    key={pedido.id}
+                    id_estado={6}
+                    pedido={pedido}
+                    color="blue"
+                    undo={3}
+                    asignarCocinero={false}
+                  />
+                ))}
+            </div>
           </div>
-          <div className="">
+          <div className="overflow-x-auto">
             <h2 className="text-lg font-bold">Servido</h2>
-            {pedidosServido
-              .filter((pedido) => pedido.tipo_pedido === "Para llevar")
-              .map((pedido) => (
-                <PedidoCard
-                  key={pedido.id}
-                  id_estado={7}
-                  pedido={pedido}
-                  color="green"
-                  undo={4}
-                  asignarCocinero={false}
-                />
-              ))}
+            <div className="flex gap-4">
+              {pedidosServido
+                .filter((pedido) => pedido.tipo_pedido === "Para llevar")
+                .map((pedido) => (
+                  <PedidoCard
+                    key={pedido.id}
+                    id_estado={7}
+                    pedido={pedido}
+                    color="green"
+                    undo={4}
+                    asignarCocinero={false}
+                  />
+                ))}
+            </div>
           </div>
         </div>
       ) : (
         <div className="grid grid-cols-4 gap-8">
-          <div className="">
+          <div className="overflow-x-auto">
             <h2 className="text-lg font-bold">En Cola</h2>
-
-            {pedidoEnCola
-              .filter((pedido) => pedido.tipo_pedido === "Entrega a domicilio")
-              .map((pedido) => (
-                <PedidoCard
-                  key={pedido.id}
-                  id_estado={4}
-                  pedido={pedido}
-                  color="amber"
-                  asignarCocinero={true}
-                />
-              ))}
+            <div className="flex gap-4">
+              {pedidoEnCola
+                .filter(
+                  (pedido) => pedido.tipo_pedido === "Entrega a domicilio"
+                )
+                .map((pedido) => (
+                  <PedidoCard
+                    key={pedido.id}
+                    id_estado={4}
+                    pedido={pedido}
+                    color="amber"
+                    asignarCocinero={true}
+                  />
+                ))}
+            </div>
           </div>
-          <div className="">
+          <div className="overflow-x-auto">
             <h2 className="text-lg font-bold">En Preparación para domicilio</h2>
-
-            {pedidosPreparación
-              .filter((pedido) => pedido.tipo_pedido === "Entrega a domicilio")
-              .map((pedido) => (
-                <PedidoCard
-                  key={pedido.id}
-                  id_estado={5}
-                  pedido={pedido}
-                  color="amber"
-                  asignarCocinero={false}
-                />
-              ))}
+            <div className="flex gap-4">
+              {pedidosPreparación
+                .filter(
+                  (pedido) => pedido.tipo_pedido === "Entrega a domicilio"
+                )
+                .map((pedido) => (
+                  <PedidoCard
+                    key={pedido.id}
+                    id_estado={5}
+                    pedido={pedido}
+                    color="amber"
+                    asignarCocinero={false}
+                  />
+                ))}
+            </div>
           </div>
-          <div className="">
+          <div className="overflow-x-auto">
             <h2 className="text-lg font-bold">Listos</h2>
-            {pedidosListos
-              .filter((pedido) => pedido.tipo_pedido === "Entrega a domicilio")
-              .map((pedido) => (
-                <PedidoCard
-                  key={pedido.id}
-                  id_estado={6}
-                  pedido={pedido}
-                  color="blue"
-                  undo={3}
-                  asignarCocinero={false}
-                />
-              ))}
+            <div className="flex gap-4">
+              {pedidosListos
+                .filter(
+                  (pedido) => pedido.tipo_pedido === "Entrega a domicilio"
+                )
+                .map((pedido) => (
+                  <PedidoCard
+                    key={pedido.id}
+                    id_estado={6}
+                    pedido={pedido}
+                    color="blue"
+                    undo={3}
+                    asignarCocinero={false}
+                  />
+                ))}
+            </div>
           </div>
-          <div className="">
+          <div className="overflow-x-auto">
             <h2 className="text-lg font-bold">Servido</h2>
-            {pedidosServido
-              .filter((pedido) => pedido.tipo_pedido === "Entrega a domicilio")
-              .map((pedido) => (
-                <PedidoCard
-                  key={pedido.id}
-                  id_estado={7}
-                  pedido={pedido}
-                  color="green"
-                  undo={4}
-                  asignarCocinero={false}
-                />
-              ))}
+            <div className="flex gap-4">
+              {pedidosServido
+                .filter(
+                  (pedido) => pedido.tipo_pedido === "Entrega a domicilio"
+                )
+                .map((pedido) => (
+                  <PedidoCard
+                    key={pedido.id}
+                    id_estado={7}
+                    pedido={pedido}
+                    color="green"
+                    undo={4}
+                    asignarCocinero={false}
+                  />
+                ))}
+            </div>
           </div>
         </div>
       )}

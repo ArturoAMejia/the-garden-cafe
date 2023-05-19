@@ -2,11 +2,17 @@ import { IPedido } from "@/interfaces";
 import {
   CheckIcon,
   ArrowTopRightOnSquareIcon,
-  XMarkIcon,
   ArrowUturnDownIcon,
 } from "@heroicons/react/24/outline";
 import { Card, Title, Subtitle, Button } from "@tremor/react";
-import { getHours, getMinutes } from "date-fns";
+import {
+  getHours,
+  getMinutes,
+  getDay,
+  getMonth,
+  getYear,
+  intlFormat,
+} from "date-fns";
 import {
   useActualizarEstadoCocineroPedidoMutation,
   useActualizarEstadoPedidoMutation,
@@ -46,12 +52,14 @@ export const PedidoCard: FC<Props> = ({
 
   if (isLoading) return <>Cargando...</>;
 
+  const pedidoAsignado = pedidos_cocineros.includes(
+    (pedidos) => pedidos.id_pedido === pedido.id
+  );
+
   const handleEstado = async (pedido: IPedido, id_estado) => {
     try {
-      if (
-        asignarCocinero &&
-        pedidos_cocineros.includes((pedidos) => pedidos.id_pedido === pedido.id)
-      ) {
+      await actualizarEstadoPedido({ ...pedido, id_estado }).unwrap();
+      if (asignarCocinero && pedidoAsignado === false) {
         await asignarCocineroPedido({
           id_pedido: pedido.id,
           id_trabajador: session.user.id_trabajador,
@@ -65,23 +73,18 @@ export const PedidoCard: FC<Props> = ({
         id_estado,
       });
 
-      await actualizarEstadoPedido({ ...pedido, id_estado }).unwrap();
       toast.success("Estado actualizado correctamente!.");
     } catch (error: any) {
       toast.error(error.data.message);
     }
   };
 
-  console.log(
-    !pedidos_cocineros.includes((pedidos) => pedidos.id_pedido === pedido.id)
-  );
-
   return (
     <Card
       key={pedido.id}
       decoration="top"
       decorationColor={color}
-      className="my-2 w-full"
+      className="my-2 w-60"
     >
       <Title>Pedido º{pedido.id}</Title>
       <Subtitle>
@@ -91,6 +94,20 @@ export const PedidoCard: FC<Props> = ({
       <Subtitle>
         Trabajador:{""} {pedido.trabajador.persona.nombre}{" "}
         {pedido.trabajador.persona.apellido_razon_social}{" "}
+      </Subtitle>
+      <Subtitle>
+        Fecha:{""}
+        {intlFormat(
+          new Date(pedido.fecha_pedido),
+          {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          },
+          {
+            locale: "es-NI",
+          }
+        )}
       </Subtitle>
       <Subtitle className="mb-2">
         Hora: {getHours(new Date(pedido.fecha_pedido))}

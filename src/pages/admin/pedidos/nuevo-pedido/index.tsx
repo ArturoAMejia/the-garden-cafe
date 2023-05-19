@@ -64,6 +64,7 @@ const NuevoPedidoPage: FC<Props> = ({ estados }) => {
       <div className="flex-row gap-4 md:flex">
         <div className="w-full md:h-80 md:w-3/5">
           <ResumenPedidoLocal
+            id_estado={1}
             productos={productos}
             quitarProducto={quitarProductoPedido}
             subtotal={subtotal}
