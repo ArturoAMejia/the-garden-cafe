@@ -86,4 +86,9 @@ export const estados = [
     nombre: "Anulado",
     descripcion: "Estado Anulado",
   },
+  {
+    id_categoria_estado: 1,
+    nombre: "Revertido",
+    descripcion: "Estado Revertido",
+  },
 ];

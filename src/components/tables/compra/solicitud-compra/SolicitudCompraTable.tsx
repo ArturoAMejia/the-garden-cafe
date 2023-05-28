@@ -6,19 +6,19 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useContext, useMemo } from "react";
+import { FC, useMemo } from "react";
 import {
   ICatEstado,
   IComprobante,
   ISolicitudCompra,
   ITrabajador,
 } from "../../../../interfaces";
-import { AdminContext, CartContext } from "../../../../context";
-import { AceptarOrden, RechazarOrden } from "../../../admin";
+
+import { RechazarOrden } from "../../../admin";
 
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { useObtenerSolicitudesCompraQuery } from "@/store/slices/compra/compraApi";
+
 import Link from "next/link";
 import { IdentificationIcon } from "@heroicons/react/24/outline";
 import {
@@ -29,14 +29,17 @@ import {
   TableBody,
   TableCell,
 } from "@tremor/react";
-import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
+import { useAppDispatch } from "@/hooks/hooks";
 import { cargarSolicitud } from "@/store/slices/compra";
+import { AceptarSolicitudCompra } from "@/components/admin/compra/solicitud-compra/AceptarSolicitudCompra";
 
 const columnHelper = createColumnHelper<ISolicitudCompra>();
 
-export const OrdenCompraTable = () => {
-  const { cargarPedido } = useContext(CartContext);
+interface Props {
+  solicitudes: ISolicitudCompra[];
+}
 
+export const SolicitudCompraTable: FC<Props> = ({ solicitudes }) => {
   const dispatch = useAppDispatch();
 
   const columns = useMemo<ColumnDef<ISolicitudCompra, any>[]>(
@@ -96,7 +99,9 @@ export const OrdenCompraTable = () => {
         header: () => <span>Acciones</span>,
         cell: (props) => (
           <div className="flex justify-center gap-2">
-            <AceptarOrden solicitud_compra={props.row.original} />
+            {/* <AceptarOrden solicitud_compra={props.row.original} />
+             */}
+            <AceptarSolicitudCompra solicitud={props.row.original} />
             <RechazarOrden solicitud_compra={props.row.original} />
             <Link
               href={`/admin/compra/solicitud-compra/${props.row.original.id}`}
@@ -110,7 +115,7 @@ export const OrdenCompraTable = () => {
                         id: producto.id_producto,
                         nombre: producto.producto.nombre,
                         descripcion: producto.producto.descripcion,
-                        unidad_medida: producto.producto.unidad_medida,
+                        unidad_medida: producto.producto.unidad_medida.nombre,
                         precio: producto.precio_unitario,
                         cantidad: producto.cantidad,
                       })
@@ -128,19 +133,14 @@ export const OrdenCompraTable = () => {
     ],
     [dispatch]
   );
-  const { data: solicitudes_compra, isLoading } =
-    useObtenerSolicitudesCompraQuery();
 
   const table = useReactTable({
-    data: solicitudes_compra?.filter((solicitud: ISolicitudCompra) => {
-      return solicitud.id_estado === 13;
-    })!,
+    data: solicitudes,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  if (isLoading) return <>Cargando...</>;
   return (
     <div>
       <Table className="mt-5 rounded-md">

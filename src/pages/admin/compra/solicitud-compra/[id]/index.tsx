@@ -1,56 +1,117 @@
+import { FC, useEffect } from "react";
 import { GetServerSideProps } from "next";
 import { prisma } from "@/database";
 import { AdminLayout } from "@/components/Layout/AdminLayout";
-import { FC, useContext } from "react";
 import { ISolicitudCompra } from "@/interfaces";
-import { DetallePedido, FilterBar, ResumenPedido } from "@/components";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { ResumenSolicitudCompra } from "@/components/admin/compra/solicitud-compra/ResumenSolicitudCompra";
+import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
+import { AppState } from "@/store/store";
+import {
+  añadirProductoSolicitud,
+  cargarSolicitud,
+} from "@/store/slices/compra";
+import { ResumenSolicitud } from "@/components/admin/compra/solicitud-compra/ResumenSolicitud";
+import { FilterBar } from "@/components";
+import { useObtenerIngredientesQuery } from "@/store/slices/inventario";
 
 interface Props {
   detalle: ISolicitudCompra;
 }
 const DetalleSolicitudCompra: FC<Props> = ({ detalle }) => {
+  console.log(detalle.detalle_solicitud_compra);
+
+  const { productos } = useAppSelector((state: AppState) => state.compra);
+  const dispatch = useAppDispatch();
+
+  const { data: prod, isLoading } = useObtenerIngredientesQuery();
+
+  useEffect(() => {
+    dispatch(
+      cargarSolicitud(
+        detalle.detalle_solicitud_compra.map((producto) => ({
+          id: producto.id_producto,
+          nombre: producto.producto.nombre,
+          descripcion: producto.producto.descripcion,
+          unidad_medida: producto.producto.unidad_medida.nombre,
+          precio: producto.precio_unitario,
+          cantidad: producto.cantidad,
+        }))
+      )
+    );
+  }, [dispatch, detalle.detalle_solicitud_compra]);
+
   return (
     <AdminLayout title={`Detalle Solicitud de Compra - ${detalle.id}`}>
-      <div className="px-1 sm:flex-auto">
-        <h1 className="mb-2 text-2xl font-semibold text-gray-900">
-          Solicitud Nº - {detalle.id}
-        </h1>
+      <div className="sm:flex sm:items-center">
+        <div className="px-1 sm:flex-auto">
+          <h1 className="mb-2 text-2xl font-semibold text-gray-900">
+            Solicitud Nº - {detalle.id}
+          </h1>
 
-        <div className="grid grid-cols-2 gap-2">
-          <p className="text-xl font-bold">
-            Trabajador:{" "}
-            <span className="text-lg font-medium capitalize">
-              {detalle.trabajador?.persona?.nombre}{" "}
-              {detalle.trabajador?.persona?.apellido_razon_social}
-            </span>
-          </p>
-          <p className="text-xl font-bold">
-            Fecha de Solicitud:{" "}
-            <span className="text-lg font-medium">
-              {format(
-                new Date(detalle.fecha_solicitud),
-                "EEEE dd 'de' MMMM 'del' yyyy",
-                { locale: es }
-              )}
-            </span>
-          </p>
+          <div className="grid grid-cols-2 gap-2">
+            <p className="text-xl font-bold">
+              Trabajador:{" "}
+              <span className="text-lg font-medium capitalize">
+                {detalle.trabajador?.persona?.nombre}{" "}
+                {detalle.trabajador?.persona?.apellido_razon_social}
+              </span>
+            </p>
+            <p className="text-xl font-bold">
+              Fecha de Solicitud:{" "}
+              <span className="text-lg font-medium">
+                {format(
+                  new Date(detalle.fecha_solicitud),
+                  "EEEE dd 'de' MMMM 'del' yyyy",
+                  { locale: es }
+                )}
+              </span>
+            </p>
 
-          <p className="text-xl font-bold">
-            Tipo de Orden de Compra:{" "}
-            <span className="text-lg font-medium capitalize">
-              {detalle.motivo}
-            </span>
-          </p>
+            <p className="text-xl font-bold">
+              Tipo de Orden de Compra:{" "}
+              <span className="text-lg font-medium capitalize">
+                {detalle.tipo_orden_compra.nombre}
+              </span>
+            </p>
+            <p className="text-xl font-bold">
+              Observación:{" "}
+              <span className="text-lg font-medium capitalize">
+                {detalle.observacion}
+              </span>
+            </p>
+            <p className="text-xl font-bold">
+              Estado:{" "}
+              <span className="text-lg font-medium capitalize">
+                {detalle.cat_estado.nombre}
+              </span>
+            </p>
+          </div>
+        </div>
+        {/* // TODO Mostrar unicamente a los roles asignados  */}
+        <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+          {isLoading ? (
+            <>Cargando...</>
+          ) : (
+            <FilterBar
+              isIngredient={true}
+              isPlate={false}
+              productos={prod!}
+              añadirProductoOrden={añadirProductoSolicitud}
+            />
+          )}
         </div>
       </div>
-      <DetallePedido
-        detalle={detalle.detalle_solicitud_compra}
-        subtotal={detalle.subtotal}
-        impuesto={detalle.impuesto}
-        total={detalle.total}
-      />
+
+      <div className="mt-4 flex flex-col gap-4 md:flex-row">
+        <div className="w-full">
+          <ResumenSolicitudCompra productos={productos} />
+        </div>
+        <div className="w-96">
+          <ResumenSolicitud editar_solicitud={true} detalle={detalle} />
+        </div>
+      </div>
     </AdminLayout>
   );
 };
@@ -87,13 +148,23 @@ export const getServerSideProps: GetServerSideProps = async ({
       total: true,
       comprobante: true,
       fecha_solicitud: true,
+      id_tipo_orden_compra: true,
+      observacion: true,
+      tipo_orden_compra: true,
       fecha_vigencia: true,
       cantidad: true,
       motivo: true,
       detalle_solicitud_compra: {
         select: {
           id_producto: true,
-          producto: true,
+          producto: {
+            select: {
+              id: true,
+              nombre: true,
+              descripcion: true,
+              unidad_medida: true,
+            },
+          },
           monto: true,
           cantidad: true,
           precio_unitario: true,

@@ -1,38 +1,43 @@
-import React, { FC, Fragment, useState } from "react";
-import { ISolicitudCompra } from "../../../../interfaces";
-import { Transition, Dialog } from "@headlessui/react";
+import { FC, Fragment, useState } from "react";
+import { Dialog, Transition } from "@headlessui/react";
 import {
-  XCircleIcon,
   ExclamationCircleIcon,
+  XCircleIcon,
 } from "@heroicons/react/24/outline";
-import { toast } from "react-hot-toast";
-import { useRechazarSolicitudCompraMutation } from "@/store/slices/compra";
+
+import toast from "react-hot-toast";
+import { IProveedor, ISolicitudCompra } from "../../../../interfaces";
+import {
+  useAceptarSolicitudCompraMutation,
+  useDesactivarProveedorMutation,
+} from "@/store/slices/compra/compraApi";
 import { useForm } from "react-hook-form";
 
 interface Props {
-  solicitud_compra: ISolicitudCompra;
+  solicitud: ISolicitudCompra;
 }
 
 type FormData = {
   observacion: string;
 };
+export const AceptarSolicitudCompra: FC<Props> = ({ solicitud }) => {
+  const id = solicitud.id;
 
-export const RechazarOrden: FC<Props> = ({ solicitud_compra }) => {
   const [isOpen, setIsOpen] = useState(false);
+
   const closeModal = () => setIsOpen(!isOpen);
+
   const openModal = () => setIsOpen(!isOpen);
 
-  const { id } = solicitud_compra;
+  const { register, handleSubmit } = useForm<FormData>();
 
-  const { register, handleSubmit, reset } = useForm<FormData>();
+  const [aceptarSolicitudCompra] = useAceptarSolicitudCompraMutation();
 
-  const [rechazarSolicitudCompra] = useRechazarSolicitudCompraMutation();
-
-  const revertirSolicitudCompra = async ({ observacion }: FormData) => {
-    rechazarSolicitudCompra({ id, id_estado: 16, observacion })
+  const onAceptarSolicitudCompra = async ({ observacion }: FormData) => {
+    aceptarSolicitudCompra({ id, id_estado: 14, observacion })
       .unwrap()
       .then((res) => {
-        toast.success("Solicitud de compra revertida correctamente.");
+        toast.success("Solicitud de compra aceptada correctamente");
         closeModal();
       })
       .catch((error) => toast.error(error.data.message));
@@ -44,9 +49,9 @@ export const RechazarOrden: FC<Props> = ({ solicitud_compra }) => {
         <button
           type="button"
           onClick={openModal}
-          className="rounded-2xl bg-red-600 px-4 py-2 text-sm font-medium text-white  hover:bg-red-500"
+          className="rounded-2xl bg-green-600 px-4 py-2 text-sm font-medium text-white  hover:bg-green-500"
         >
-          Revertir
+          Aceptar
         </button>
       </div>
 
@@ -97,9 +102,9 @@ export const RechazarOrden: FC<Props> = ({ solicitud_compra }) => {
                   </button>
                 </div>
                 <div className="sm:flex sm:items-start">
-                  <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                  <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
                     <ExclamationCircleIcon
-                      className="h-6 w-6 text-red-600"
+                      className="h-6 w-6 text-green-600"
                       aria-hidden="true"
                     />
                   </div>
@@ -108,14 +113,14 @@ export const RechazarOrden: FC<Props> = ({ solicitud_compra }) => {
                       as="h3"
                       className="text-lg font-medium leading-6 text-gray-900"
                     >
-                      Revertir la solicitud de compra
+                      Aceptar Solicitud de Compra
                     </Dialog.Title>
                     <div className="mt-2">
                       <p className="text-sm text-gray-500">
-                        ¿Está seguro que quiere revertir la solicitud de compra?
+                        ¿Está seguro que quiere aceptar la solicitud de compra?
                       </p>
                     </div>
-                    <form onSubmit={handleSubmit(revertirSolicitudCompra)}>
+                    <form onSubmit={handleSubmit(onAceptarSolicitudCompra)}>
                       <div className="col-span-2 mt-2">
                         <label
                           htmlFor="direccion"
@@ -135,9 +140,9 @@ export const RechazarOrden: FC<Props> = ({ solicitud_compra }) => {
                       <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                         <button
                           type="submit"
-                          className="inline-flex w-full justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
+                          className="inline-flex w-full justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
                         >
-                          Revertir
+                          Aceptar
                         </button>
                         <button
                           type="button"

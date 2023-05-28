@@ -12,31 +12,32 @@ import {
 } from "@tremor/react";
 
 import { IProductoCart } from "@/interfaces/producto";
-import { useAppDispatch } from "@/hooks/hooks";
+import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
 
-import {
-  actualizarCantidadProducto,
-  quitarProductoPedido,
-} from "@/store/slices/pedido/pedidoSlice";
+import { actualizarCantidadProducto } from "@/store/slices/pedido/pedidoSlice";
+
 import { useSession } from "next-auth/react";
 
 import { ICatEstado } from "@/interfaces";
 import { CantidadProducto } from "./CantidadProducto";
+import { quitarProductoSolicitud } from "@/store/slices/compra";
+import { AppState } from "@/store/store";
 
 interface Props {
   productos: IProductoCart[];
   // actualizarCantidadProducto: any;
-  quitarProducto: any;
-  subtotal: number;
-  total: number;
+  // quitarProducto: any;
+  // subtotal: number;
+  // total: number;
   id_trabajador?: number;
-  estados?: ICatEstado[];
+  // estados?: ICatEstado[];
 }
 
 export const ResumenSolicitudCompra: FC<Props> = ({
   productos,
   id_trabajador,
 }) => {
+  console.log(productos);
   const dispatch = useAppDispatch();
 
   const { data: session } = useSession();
@@ -70,7 +71,7 @@ export const ResumenSolicitudCompra: FC<Props> = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {productos.map((item) => (
+            {productos.map((item: any) => (
               <TableRow key={item.nombre} className="text-center">
                 <TableCell className="text-center">{item.id}</TableCell>
                 <TableCell className="text-center">
@@ -80,7 +81,7 @@ export const ResumenSolicitudCompra: FC<Props> = ({
                   <Text>{item.descripcion}</Text>
                 </TableCell>
                 <TableCell className="text-center">
-                  <Text>{item.unidad_medida}</Text>
+                  <Text>{item?.unidad_medida}</Text>
                 </TableCell>
 
                 <TableCell className="flex justify-center">
@@ -108,7 +109,7 @@ export const ResumenSolicitudCompra: FC<Props> = ({
                     <button
                       type="button"
                       className="inline-flex  py-2 text-gray-400 hover:text-gray-500"
-                      onClick={() => dispatch(quitarProductoPedido(item))}
+                      onClick={() => dispatch(quitarProductoSolicitud(item))}
                     >
                       <TrashIcon className="h-4 w-4 text-black" />
                       <span className="sr-only">Remove</span>

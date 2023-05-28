@@ -1,20 +1,16 @@
 import { AdminLayout } from "../../../../components/Layout/AdminLayout";
-import { FilterBar, ResumenPedido } from "../../../../components";
+import { FilterBar } from "../../../../components";
 
 import { useObtenerIngredientesQuery } from "@/store/slices/inventario";
 import { ResumenSolicitud } from "@/components/admin/compra/solicitud-compra/ResumenSolicitud";
-import {
-  actualizarCantidadProductoSolicitud,
-  añadirProductoSolicitud,
-  quitarProductoSolicitud,
-} from "@/store/slices/compra";
+import { añadirProductoSolicitud } from "@/store/slices/compra";
 import { useAppSelector } from "@/hooks/hooks";
 import { AppState } from "@/store/store";
 import { ResumenSolicitudCompra } from "@/components/admin/compra/solicitud-compra/ResumenSolicitudCompra";
 
 const NuevaOrdenCompraPage = () => {
-  const { descuento, impuesto, productos, subtotal, total, total_productos } =
-    useAppSelector((state: AppState) => state.compra);
+  const { productos } = useAppSelector((state: AppState) => state.compra);
+
   const { data: prod, isLoading } = useObtenerIngredientesQuery();
 
   return (
@@ -41,25 +37,12 @@ const NuevaOrdenCompraPage = () => {
           )}
         </div>
       </div>
-      <div className="flex-row gap-4 md:flex">
-        <div className="w-3/4">
-          <ResumenSolicitudCompra
-            productos={productos}
-            quitarProducto={quitarProductoSolicitud}
-            subtotal={subtotal}
-            total={total}
-          />
-          {/* <ResumenPedido
-            productos={productos}
-            actualizarCantidadProducto={actualizarCantidadProductoSolicitud}
-            quitarProducto={quitarProductoSolicitud}
-            subtotal={subtotal}
-            total={total}
-            tax={impuesto}
-          /> */}
+      <div className="mt-4 flex flex-col gap-4 md:flex-row">
+        <div className="w-full">
+          <ResumenSolicitudCompra productos={productos} />
         </div>
-        <div className="w-1/4">
-          <ResumenSolicitud />
+        <div className="w-96">
+          <ResumenSolicitud editar_solicitud={false} />
         </div>
       </div>
     </AdminLayout>

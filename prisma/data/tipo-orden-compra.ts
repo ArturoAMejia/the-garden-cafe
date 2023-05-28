@@ -1,10 +1,10 @@
 export const tipo_orden_compra = [
   {
-    nombre: "Ingredientes",
+    nombre: "Por cotización",
     id_estado: 1,
   },
   {
-    nombre: "Productos para vender",
+    nombre: "Compra directa",
     id_estado: 1,
   },
   {

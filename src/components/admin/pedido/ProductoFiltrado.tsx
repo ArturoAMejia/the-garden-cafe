@@ -4,7 +4,7 @@ import { ShoppingCartIcon } from "@heroicons/react/24/outline";
 import toast from "react-hot-toast";
 import { Button } from "@tremor/react";
 import { useAppDispatch } from "@/hooks/hooks";
-import { Card, List, ListItem, Title } from "@tremor/react";
+import { Card, List, ListItem } from "@tremor/react";
 
 interface Props {
   producto: any;
@@ -44,7 +44,9 @@ export const ProductoFiltrado: FC<Props> = ({
       <Card className="w-full p-3">
         <List className="p-0">
           <ListItem className="p-0">
-            <span>{producto.nombre}</span>
+            <span>
+              {producto.nombre} {producto.unidad_medida.siglas}
+            </span>
             <Button size="xs" onClick={onAddProduct} icon={ShoppingCartIcon}>
               Añadir
             </Button>

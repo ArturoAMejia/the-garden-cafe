@@ -3,6 +3,7 @@ import {
   IOrdenCompra,
   IProveedor,
   ISolicitudCompra,
+  ITipoOrdenCompra,
 } from "@/interfaces";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
@@ -13,6 +14,9 @@ export const compraApi = createApi({
   }),
   tagTypes: ["Proveedores", "Solicitudes", "Ordenes", "Compras"],
   endpoints: (builder) => ({
+    obtenerTiposSolicitudCompra: builder.query<ITipoOrdenCompra[], void>({
+      query: () => "/catalogos/tipo-orden-compra",
+    }),
     obtenerProveedores: builder.query<IProveedor[], void>({
       query: () => "/compra/proveedor",
       providesTags: ["Proveedores"],
@@ -53,7 +57,7 @@ export const compraApi = createApi({
       }),
       invalidatesTags: ["Solicitudes"],
     }),
-    actualuzarSolicitudCompra: builder.mutation<ISolicitudCompra, any>({
+    actualizarSolicitudCompra: builder.mutation<ISolicitudCompra, any>({
       query: (solicitud_compra) => ({
         url: "/compra/solicitud",
         method: "PUT",
@@ -61,7 +65,15 @@ export const compraApi = createApi({
       }),
       invalidatesTags: ["Solicitudes"],
     }),
-    rechazarSolicitudCompra: builder.mutation<ISolicitudCompra, number>({
+    rechazarSolicitudCompra: builder.mutation<ISolicitudCompra, any>({
+      query: ({ id, id_estado, observacion }) => ({
+        url: "/compra/solicitud",
+        method: "PATCH",
+        body: { id, id_estado, observacion },
+      }),
+      invalidatesTags: ["Solicitudes"],
+    }),
+    aceptarSolicitudCompra: builder.mutation<ISolicitudCompra, any>({
       query: (id) => ({
         url: "/compra/solicitud",
         method: "PATCH",
@@ -112,6 +124,8 @@ export const compraApi = createApi({
 });
 
 export const {
+  // Tipo Orden Compra
+  useObtenerTiposSolicitudCompraQuery,
   // Proveedor
   useObtenerProveedoresQuery,
   useCrearProveedorMutation,
@@ -119,8 +133,9 @@ export const {
   useDesactivarProveedorMutation,
   // Solicitud Compra
   useObtenerSolicitudesCompraQuery,
+  useAceptarSolicitudCompraMutation,
   useCrearSolicitudCompraMutation,
-  useActualuzarSolicitudCompraMutation,
+  useActualizarSolicitudCompraMutation,
   useRechazarSolicitudCompraMutation,
   // Orden Compra
   useObtenerOrdenesCompraQuery,

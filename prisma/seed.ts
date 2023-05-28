@@ -94,9 +94,9 @@ const main = async (): Promise<void> => {
     await prisma.rol_modulo.createMany({
       data: roles_modulos,
     });
-    // await prisma.rol_permiso.createMany({
-    //   data: rol_permiso,
-    // });
+    await prisma.rol_permiso.createMany({
+      data: rol_permiso,
+    });
     await prisma.usuario.createMany({
       data: usuarios,
     });

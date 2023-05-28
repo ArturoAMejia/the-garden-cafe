@@ -117,7 +117,10 @@ export const PedidoCard: FC<Props> = ({
       <div className="flex gap-2">
         {(pedido.id_estado !== 7 && session.user.id_rol === 4) ||
         (pedido.id_estado !== 7 && session.user.id_rol === 1) ||
+        (session.user.id_rol === 3 && pedido.id_estado === 5) ||
+        (session.user.id_rol === 3 && pedido.id_estado === 6) ||
         (pedido.id_estado !== 7 && session.user.id_rol === 2) ? (
+          
           <Button
             color="emerald"
             className="p-2"
