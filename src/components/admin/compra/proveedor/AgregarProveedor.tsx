@@ -220,7 +220,7 @@ export const AgregarProveedor = () => {
                           htmlFor="nombre"
                           className="block font-medium text-gray-700"
                         >
-                          Fecha de Nacimiento
+                          Fecha Nacimiento-Constitución
                         </label>
                         <div className="mt-1">
                           <input

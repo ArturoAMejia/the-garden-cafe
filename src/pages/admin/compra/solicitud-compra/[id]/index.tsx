@@ -90,23 +90,30 @@ const DetalleSolicitudCompra: FC<Props> = ({ detalle }) => {
           </div>
         </div>
         {/* // TODO Mostrar unicamente a los roles asignados  */}
-        <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-          {isLoading ? (
-            <>Cargando...</>
-          ) : (
-            <FilterBar
-              isIngredient={true}
-              isPlate={false}
-              productos={prod!}
-              añadirProductoOrden={añadirProductoSolicitud}
-            />
-          )}
-        </div>
+        {detalle.id_estado !== 14 ? (
+          <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+            {isLoading ? (
+              <>Cargando...</>
+            ) : (
+              <FilterBar
+                isIngredient={true}
+                isPlate={false}
+                productos={prod!}
+                añadirProductoOrden={añadirProductoSolicitud}
+              />
+            )}
+          </div>
+        ) : (
+          ""
+        )}
       </div>
 
       <div className="mt-4 flex flex-col gap-4 md:flex-row">
         <div className="w-full">
-          <ResumenSolicitudCompra productos={productos} />
+          <ResumenSolicitudCompra
+            productos={productos}
+            id_estado_solicitud={detalle.id_estado}
+          />
         </div>
         <div className="w-96">
           <ResumenSolicitud editar_solicitud={true} detalle={detalle} />

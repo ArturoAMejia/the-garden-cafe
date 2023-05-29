@@ -32,6 +32,8 @@ import {
 import { useAppDispatch } from "@/hooks/hooks";
 import { cargarSolicitud } from "@/store/slices/compra";
 import { AceptarSolicitudCompra } from "@/components/admin/compra/solicitud-compra/AceptarSolicitudCompra";
+import { RevertirSolicitud } from "@/components/admin/compra/solicitud-compra/RevertirSolicitud";
+import { RechazarSolicitud } from "@/components/admin/compra/solicitud-compra/RechazarSolicitud";
 
 const columnHelper = createColumnHelper<ISolicitudCompra>();
 
@@ -44,9 +46,9 @@ export const SolicitudCompraTable: FC<Props> = ({ solicitudes }) => {
 
   const columns = useMemo<ColumnDef<ISolicitudCompra, any>[]>(
     () => [
-      columnHelper.accessor<"comprobante", IComprobante>("comprobante", {
-        header: "Num Comprobante",
-        cell: (info) => info.getValue().numeracion,
+      columnHelper.accessor<"id", number>("id", {
+        header: "Num Sol.",
+        cell: (info) => info.row.original.id,
       }),
       columnHelper.accessor<"trabajador", ITrabajador>("trabajador", {
         header: "Trabajador",
@@ -57,10 +59,6 @@ export const SolicitudCompraTable: FC<Props> = ({ solicitudes }) => {
       }),
       columnHelper.accessor<"motivo", string>("motivo", {
         header: "Motivo de la Solicitud",
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor<"total", number>("total", {
-        header: "Total",
         cell: (info) => info.getValue(),
       }),
       columnHelper.accessor<"fecha_solicitud", Date>("fecha_solicitud", {
@@ -101,8 +99,29 @@ export const SolicitudCompraTable: FC<Props> = ({ solicitudes }) => {
           <div className="flex justify-center gap-2">
             {/* <AceptarOrden solicitud_compra={props.row.original} />
              */}
-            <AceptarSolicitudCompra solicitud={props.row.original} />
-            <RechazarOrden solicitud_compra={props.row.original} />
+            {props.row.original.id_estado !== 14 ? (
+              props.row.original.id_estado !== 15 ? (
+                <AceptarSolicitudCompra solicitud={props.row.original} />
+              ) : (
+                ""
+              )
+            ) : (
+              ""
+            )}
+            {props.row.original.id_estado !== 16 ? (
+              props.row.original.id_estado !== 14 ? (
+                <RevertirSolicitud solicitud_compra={props.row.original} />
+              ) : (
+                ""
+              )
+            ) : (
+              ""
+            )}
+            {props.row.original.id_estado !== 15 ? (
+              <RechazarSolicitud solicitud_compra={props.row.original} />
+            ) : (
+              ""
+            )}
             <Link
               href={`/admin/compra/solicitud-compra/${props.row.original.id}`}
               passHref
@@ -125,7 +144,6 @@ export const SolicitudCompraTable: FC<Props> = ({ solicitudes }) => {
               }
             >
               <IdentificationIcon className="h-6 w-6 text-black" />
-              Ver Detalles
             </Link>
           </div>
         ),

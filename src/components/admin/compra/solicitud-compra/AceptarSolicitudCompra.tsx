@@ -1,6 +1,7 @@
 import { FC, Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import {
+  CheckIcon,
   ExclamationCircleIcon,
   XCircleIcon,
 } from "@heroicons/react/24/outline";
@@ -51,7 +52,7 @@ export const AceptarSolicitudCompra: FC<Props> = ({ solicitud }) => {
           onClick={openModal}
           className="rounded-2xl bg-green-600 px-4 py-2 text-sm font-medium text-white  hover:bg-green-500"
         >
-          Aceptar
+          <CheckIcon className="h-4 w-4" />
         </button>
       </div>
 

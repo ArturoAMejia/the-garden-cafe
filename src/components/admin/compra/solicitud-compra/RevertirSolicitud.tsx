@@ -18,7 +18,7 @@ type FormData = {
   observacion: string;
 };
 
-export const RechazarOrden: FC<Props> = ({ solicitud_compra }) => {
+export const RevertirSolicitud: FC<Props> = ({ solicitud_compra }) => {
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
@@ -45,9 +45,9 @@ export const RechazarOrden: FC<Props> = ({ solicitud_compra }) => {
         <button
           type="button"
           onClick={openModal}
-          className="rounded-2xl bg-red-600 px-4 py-2 text-sm font-medium text-white  hover:bg-red-500"
+          className="rounded-2xl bg-blue-600 px-4 py-2 text-sm font-medium text-white  hover:bg-blue-500"
         >
-          <ArrowUturnDownIcon className='h-4 w-4'/>
+          <ArrowUturnDownIcon className="h-4 w-4" />
         </button>
       </div>
 

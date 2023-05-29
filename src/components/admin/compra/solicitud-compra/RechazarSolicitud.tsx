@@ -18,7 +18,7 @@ type FormData = {
   observacion: string;
 };
 
-export const RechazarOrden: FC<Props> = ({ solicitud_compra }) => {
+export const RechazarSolicitud: FC<Props> = ({ solicitud_compra }) => {
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
@@ -30,7 +30,7 @@ export const RechazarOrden: FC<Props> = ({ solicitud_compra }) => {
   const [rechazarSolicitudCompra] = useRechazarSolicitudCompraMutation();
 
   const revertirSolicitudCompra = async ({ observacion }: FormData) => {
-    rechazarSolicitudCompra({ id, id_estado: 16, observacion })
+    rechazarSolicitudCompra({ id, id_estado: 15, observacion })
       .unwrap()
       .then((res) => {
         toast.success("Solicitud de compra revertida correctamente.");
@@ -47,7 +47,7 @@ export const RechazarOrden: FC<Props> = ({ solicitud_compra }) => {
           onClick={openModal}
           className="rounded-2xl bg-red-600 px-4 py-2 text-sm font-medium text-white  hover:bg-red-500"
         >
-          <ArrowUturnDownIcon className='h-4 w-4'/>
+          <XCircleIcon className="h-4 w-4" />
         </button>
       </div>
 

@@ -9,6 +9,8 @@ import {
   TableBody,
   TableCell,
   Text,
+  Divider,
+  Subtitle,
 } from "@tremor/react";
 
 import { IProductoCart } from "@/interfaces/producto";
@@ -22,25 +24,27 @@ import { ICatEstado } from "@/interfaces";
 import { CantidadProducto } from "./CantidadProducto";
 import { quitarProductoSolicitud } from "@/store/slices/compra";
 import { AppState } from "@/store/store";
+import { PrecioProductoCompra } from "./PrecioProductoCompra";
 
 interface Props {
   productos: IProductoCart[];
-  // actualizarCantidadProducto: any;
-  // quitarProducto: any;
-  // subtotal: number;
-  // total: number;
+  id_estado_solicitud?: number;
   id_trabajador?: number;
-  // estados?: ICatEstado[];
 }
 
 export const ResumenSolicitudCompra: FC<Props> = ({
   productos,
+  id_estado_solicitud,
   id_trabajador,
 }) => {
   console.log(productos);
   const dispatch = useAppDispatch();
 
   const { data: session } = useSession();
+
+  const { descuento, impuesto, total, subtotal } = useAppSelector(
+    (state: AppState) => state.compra
+  );
 
   const onNewCartQuantityValue = (
     product: IProductoCart,
@@ -68,6 +72,22 @@ export const ResumenSolicitudCompra: FC<Props> = ({
               <TableHeaderCell className="text-center">
                 Cantidad
               </TableHeaderCell>
+              {id_estado_solicitud === 14 ? (
+                <TableHeaderCell className="text-center">
+                  Precio Unitario
+                </TableHeaderCell>
+              ) : (
+                ""
+              )}
+              {id_estado_solicitud === 14 ? (
+                <TableHeaderCell className="text-center">
+                  Precio Total
+                  </TableHeaderCell>
+                  ) : (
+                    
+                    
+                    ""
+                    )}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -93,51 +113,77 @@ export const ResumenSolicitudCompra: FC<Props> = ({
                   (id_trabajador !== session?.user?.id_trabajador &&
                     session?.user.id_rol === 5) ? (
                     // <h1 className="w-8 text-center"> {item.cantidad} </h1>
-                    <CantidadProducto producto={item} />
+                    <CantidadProducto
+                      producto={item}
+                      id_estado={id_estado_solicitud}
+                    />
                   ) : (
                     <h1 className="w-8 text-center"> {item.cantidad} </h1>
                   )}
                 </TableCell>
-                <TableCell className="text-center">
-                  {id_trabajador === session?.user?.id_trabajador ||
-                  (id_trabajador !== session?.user?.id_trabajador &&
-                    session?.user.id_rol === 1) ||
-                  (id_trabajador !== session?.user?.id_trabajador &&
-                    session?.user.id_rol === 2) ||
-                  (id_trabajador !== session?.user?.id_trabajador &&
-                    session?.user.id_rol === 5) ? (
-                    <button
-                      type="button"
-                      className="inline-flex  py-2 text-gray-400 hover:text-gray-500"
-                      onClick={() => dispatch(quitarProductoSolicitud(item))}
-                    >
-                      <TrashIcon className="h-4 w-4 text-black" />
-                      <span className="sr-only">Remove</span>
-                    </button>
-                  ) : null}
-                </TableCell>
-                <TableCell>
-                  {/* <Badge color="emerald" icon={SignalIcon}>
-                  {item.}
-                </Badge> */}
-                </TableCell>
+                {id_estado_solicitud !== 14 ? (
+                  <TableCell className="text-center">
+                    {id_trabajador === session?.user?.id_trabajador ||
+                    (id_trabajador !== session?.user?.id_trabajador &&
+                      session?.user.id_rol === 1) ||
+                    (id_trabajador !== session?.user?.id_trabajador &&
+                      session?.user.id_rol === 2) ||
+                    (id_trabajador !== session?.user?.id_trabajador &&
+                      session?.user.id_rol === 5) ? (
+                      <button
+                        type="button"
+                        className="inline-flex  py-2 text-gray-400 hover:text-gray-500"
+                        onClick={() => dispatch(quitarProductoSolicitud(item))}
+                      >
+                        <TrashIcon className="h-4 w-4 text-black" />
+                        <span className="sr-only">Remove</span>
+                      </button>
+                    ) : null}
+                  </TableCell>
+                ) : (
+                  ""
+                )}
+
+                {id_estado_solicitud === 14 ? (
+                  <TableCell className="text-center">
+                    <PrecioProductoCompra
+                      producto={item}
+                      id_estado={id_estado_solicitud}
+                    />
+                  </TableCell>
+                ) : (
+                  ""
+                )}
+                {id_estado_solicitud === 14 ? (
+                  <TableCell className="text-center">
+                    <Text>${item.cantidad * Number(item.precio)}</Text>
+                  </TableCell>
+                ) : (
+                  ""
+                )}
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </Card>
-      {/* <Divider /> */}
-      {/* <Subtitle className="text-lg font-bold text-black">
-        {" "}
-        Subtotal: ${subtotal.toFixed(2)}
-      </Subtitle>
-      <Subtitle className="text-lg font-bold text-black">
-        Impuesto: $
-        {(subtotal * Number(process.env.NEXT_PUBLIC_TAX_RATE)).toFixed(2)}
-      </Subtitle>
-      <Subtitle className="text-lg font-bold text-black">
-        Total: ${total.toFixed(2)}
-      </Subtitle> */}
+      {id_estado_solicitud === 14 ? (
+        <>
+          <Divider />
+          <Subtitle className="text-lg font-bold text-black">
+            {" "}
+            Subtotal: ${subtotal.toFixed(2)}
+          </Subtitle>
+          <Subtitle className="text-lg font-bold text-black">
+            Impuesto: $
+            {(subtotal * Number(process.env.NEXT_PUBLIC_TAX_RATE)).toFixed(2)}
+          </Subtitle>
+          <Subtitle className="text-lg font-bold text-black">
+            Total: ${total.toFixed(2)}
+          </Subtitle>
+        </>
+      ) : (
+        ""
+      )}
     </div>
   );
 };

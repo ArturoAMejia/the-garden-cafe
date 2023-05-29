@@ -6,14 +6,13 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useContext, useMemo } from "react";
+import { useMemo } from "react";
 import {
   ICatEstado,
-  IComprobante,
   ISolicitudCompra,
   ITrabajador,
 } from "../../../../interfaces";
-import { AdminContext, CartContext } from "../../../../context";
+
 import { AceptarOrden, RechazarOrden } from "../../../admin";
 
 import { format } from "date-fns";
@@ -29,21 +28,19 @@ import {
   TableBody,
   TableCell,
 } from "@tremor/react";
-import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
+import { useAppDispatch } from "@/hooks/hooks";
 import { cargarSolicitud } from "@/store/slices/compra";
 
 const columnHelper = createColumnHelper<ISolicitudCompra>();
 
 export const OrdenCompraTable = () => {
-  const { cargarPedido } = useContext(CartContext);
-
   const dispatch = useAppDispatch();
 
   const columns = useMemo<ColumnDef<ISolicitudCompra, any>[]>(
     () => [
-      columnHelper.accessor<"comprobante", IComprobante>("comprobante", {
-        header: "Num Comprobante",
-        cell: (info) => info.getValue().numeracion,
+      columnHelper.accessor<"id", number>("id", {
+        header: "Num Sol.",
+        cell: (info) => info.row.original.id,
       }),
       columnHelper.accessor<"trabajador", ITrabajador>("trabajador", {
         header: "Trabajador",
@@ -54,10 +51,6 @@ export const OrdenCompraTable = () => {
       }),
       columnHelper.accessor<"motivo", string>("motivo", {
         header: "Motivo de la Solicitud",
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor<"total", number>("total", {
-        header: "Total",
         cell: (info) => info.getValue(),
       }),
       columnHelper.accessor<"fecha_solicitud", Date>("fecha_solicitud", {
@@ -110,7 +103,7 @@ export const OrdenCompraTable = () => {
                         id: producto.id_producto,
                         nombre: producto.producto.nombre,
                         descripcion: producto.producto.descripcion,
-                        unidad_medida: producto.producto.unidad_medida,
+                        unidad_medida: producto.producto.unidad_medida.nombre,
                         precio: producto.precio_unitario,
                         cantidad: producto.cantidad,
                       })
@@ -120,7 +113,6 @@ export const OrdenCompraTable = () => {
               }
             >
               <IdentificationIcon className="h-6 w-6 text-black" />
-              Ver Detalles
             </Link>
           </div>
         ),
@@ -133,7 +125,7 @@ export const OrdenCompraTable = () => {
 
   const table = useReactTable({
     data: solicitudes_compra?.filter((solicitud: ISolicitudCompra) => {
-      return solicitud.id_estado === 13;
+      return solicitud.id_estado === 14;
     })!,
     columns,
     getCoreRowModel: getCoreRowModel(),

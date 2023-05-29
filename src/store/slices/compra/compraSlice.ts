@@ -70,9 +70,7 @@ export const compraSlice = createSlice({
         state.subtotal * Number(process.env.NEXT_PUBLIC_TAX_RATE);
     },
     actualizarProductoCantidad: (state, action) => {
-      const { id, nueva_cantidad } = action.payload;
-
-      console.log(action.payload);
+      const { id } = action.payload;
 
       state.productos = state.productos.map((prod) => {
         if (prod.id !== id) return prod;
@@ -81,6 +79,31 @@ export const compraSlice = createSlice({
           ...action.payload,
         };
       });
+      state.subtotal = state.productos.reduce(
+        (acc, p) => acc + p.precio! * p.cantidad!,
+        0
+      );
+      state.total =
+        state.subtotal +
+        state.subtotal * Number(process.env.NEXT_PUBLIC_TAX_RATE);
+    },
+    actualizarProductoPrecio: (state, action) => {
+      const { id } = action.payload;
+
+      state.productos = state.productos.map((prod) => {
+        if (prod.id !== id) return prod;
+
+        return {
+          ...action.payload,
+        };
+      });
+      state.subtotal = state.productos.reduce(
+        (acc, p) => acc + p.precio! * p.cantidad!,
+        0
+      );
+      state.total =
+        state.subtotal +
+        state.subtotal * Number(process.env.NEXT_PUBLIC_TAX_RATE);
     },
     quitarProductoSolicitud: (state, action) => {
       state.productos = state.productos.filter(
@@ -123,6 +146,7 @@ export const {
   actualizarCantidadProductoSolicitud,
   actualizarProductosSolicitud,
   actualizarProductoCantidad,
+  actualizarProductoPrecio,
   añadirProductoSolicitud,
   cargarSolicitud,
   quitarProductoSolicitud,

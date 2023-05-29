@@ -39,7 +39,7 @@ const NuevaOrdenCompraPage = () => {
       </div>
       <div className="mt-4 flex flex-col gap-4 md:flex-row">
         <div className="w-full">
-          <ResumenSolicitudCompra productos={productos} />
+          <ResumenSolicitudCompra productos={productos}  />
         </div>
         <div className="w-96">
           <ResumenSolicitud editar_solicitud={false} />

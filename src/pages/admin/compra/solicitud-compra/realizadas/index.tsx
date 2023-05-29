@@ -7,6 +7,7 @@ import { SolicitudCompraTable } from "@/components/tables/compra/solicitud-compr
 import { prisma } from "database";
 import { Tab, TabList } from "@tremor/react";
 import {
+  ArrowUturnDownIcon,
   CheckBadgeIcon,
   ClockIcon,
   XMarkIcon,
@@ -28,6 +29,9 @@ const NuevaOrdenPage: FC<Props> = ({ permisos }) => {
   );
   const solicitudes_aceptadas = solicitudes_compra?.filter(
     (solicitud) => solicitud.id_estado === 14
+  );
+  const solicitudes_revertidas = solicitudes_compra?.filter(
+    (solicitud) => solicitud.id_estado === 16
   );
   const solicitudes_rechazadas = solicitudes_compra?.filter(
     (solicitud) => solicitud.id_estado === 15
@@ -53,12 +57,12 @@ const NuevaOrdenPage: FC<Props> = ({ permisos }) => {
       >
         <Tab value="1" text="En espera" icon={ClockIcon} />
         <Tab value="2" text="Aceptadas" icon={CheckBadgeIcon} />
-        <Tab value="3" text="Rechazadas" icon={XMarkIcon} />
+        <Tab value="3" text="Revertidas" icon={ArrowUturnDownIcon} />
+        <Tab value="4" text="Rechazadas" icon={XMarkIcon} />
       </TabList>
 
       {showCard === 1 ? (
         <>
-
           {isLoading && <p>Cargando...</p>}
           <SolicitudCompraTable solicitudes={solicitudes_en_espera} />
         </>
@@ -66,13 +70,16 @@ const NuevaOrdenPage: FC<Props> = ({ permisos }) => {
         <>
           {isLoading && <p>Cargando...</p>}
           <SolicitudCompraTable solicitudes={solicitudes_aceptadas} />
-
+        </>
+      ) : showCard === 3 ? (
+        <>
+          {isLoading && <p>Cargando...</p>}
+          <SolicitudCompraTable solicitudes={solicitudes_revertidas} />
         </>
       ) : (
         <>
           {isLoading && <p>Cargando...</p>}
           <SolicitudCompraTable solicitudes={solicitudes_rechazadas} />
-
         </>
       )}
     </AdminLayout>

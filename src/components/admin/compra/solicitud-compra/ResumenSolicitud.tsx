@@ -1,8 +1,10 @@
-import { FC, useContext } from "react";
-import {  useAppSelector } from "@/hooks/hooks";
+import { FC } from "react";
+import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
 import {
+  solicitudCompleta,
   useActualizarSolicitudCompraMutation,
   useCrearSolicitudCompraMutation,
+  useObtenerProveedoresQuery,
   useObtenerTiposSolicitudCompraQuery,
 } from "@/store/slices/compra";
 import { AppState } from "@/store/store";
@@ -15,6 +17,7 @@ type FormData = {
   motivo: string;
   observacion: string;
   id_tipo_orden_compra: number;
+  id_proveedor?: number;
 };
 
 interface Props {
@@ -26,6 +29,8 @@ export const ResumenSolicitud: FC<Props> = ({ editar_solicitud, detalle }) => {
 
   const trabajador_id = Number(session?.user?.id_trabajador);
 
+  const dispatch = useAppDispatch();
+
   const { productos, total, impuesto, subtotal } = useAppSelector(
     (state: AppState) => state.compra
   );
@@ -33,6 +38,9 @@ export const ResumenSolicitud: FC<Props> = ({ editar_solicitud, detalle }) => {
 
   const { data: tipo_solicitud, isLoading } =
     useObtenerTiposSolicitudCompraQuery();
+
+  const { data: proveedores, isLoading: isLoadingProveedores } =
+    useObtenerProveedoresQuery();
 
   const [crearSolicitudCompra] = useCrearSolicitudCompraMutation();
 
@@ -45,6 +53,26 @@ export const ResumenSolicitud: FC<Props> = ({ editar_solicitud, detalle }) => {
     observacion,
   }: FormData) => {
     if (editar_solicitud) {
+      actualizarSolicitud({
+        id: detalle.id,
+        fecha_vigencia,
+        motivo,
+        productos,
+        id_comprobante: detalle.id_comprobante,
+        id_trabajador: trabajador_id,
+        impuesto,
+        id_tipo_orden_compra,
+        subtotal,
+        observacion,
+        total,
+      })
+        .unwrap()
+        .then((res) => {
+          toast.success("Solicitud de Compra actualizada correctamente.");
+          reset();
+        })
+        .catch((error) => toast.error(error.data.message));
+    } else if (detalle?.id_estado === 14) {
       actualizarSolicitud({
         id: detalle.id,
         fecha_vigencia,
@@ -80,6 +108,7 @@ export const ResumenSolicitud: FC<Props> = ({ editar_solicitud, detalle }) => {
         .then((res) => {
           toast.success("Solicitud de Compra realizada correctamente.");
           reset();
+          dispatch(solicitudCompleta());
         })
         .catch((error) => toast.error(error.data.message));
     }
@@ -87,14 +116,45 @@ export const ResumenSolicitud: FC<Props> = ({ editar_solicitud, detalle }) => {
 
   if (isLoading) return <p>Cargando...</p>;
 
+  if (isLoadingProveedores) return <p>Cargando...</p>;
+
   return (
     <>
       <form
-        className="rounded-md bg-gray-100 p-8 pt-4 first-letter:shadow-md"
+        className="rounded-md bg-gray-100 p-8 pt-4 "
         onSubmit={handleSubmit(onCrearSolicitudCompra)}
       >
         <div className="space-y-6">
           <ul className="space-y-4">
+            {detalle?.id_estado === 14 ? (
+              <div className="mt-2">
+                <label
+                  htmlFor="tipo_orden_compra"
+                  className="block font-medium text-gray-700"
+                >
+                  Proveedor
+                </label>
+                <div className="mt-1">
+                  <select
+                    id="tipo_orden_compra"
+                    {...register("id_proveedor", {
+                      valueAsNumber: true,
+                    })}
+                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                  >
+                    {proveedores?.map((proveedor) => (
+                      <option
+                        key={proveedor.id}
+                        value={proveedor.id}
+                      >{`${proveedor.persona.nombre} ${proveedor.persona.apellido_razon_social}`}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            ) : (
+              ""
+            )}
+
             <div className="col-span-2 mt-2">
               <label
                 htmlFor="direccion"
@@ -183,7 +243,11 @@ export const ResumenSolicitud: FC<Props> = ({ editar_solicitud, detalle }) => {
               type="submit"
               className="mt-4 w-full items-center rounded-md border border-transparent bg-[#388C04] px-4 py-1 text-center font-medium text-white shadow-sm"
             >
-              {editar_solicitud ? "Actualizar Solicitud" : "Realizar Solicitud"}
+              {detalle?.id_estado !== 14
+                ? editar_solicitud
+                  ? "Actualizar Solicitud"
+                  : "Realizar Solicitud"
+                : "Establcer precios de compra"}
             </button>
           </div>
         </div>
