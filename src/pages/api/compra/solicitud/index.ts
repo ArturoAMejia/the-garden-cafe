@@ -161,13 +161,16 @@ const actualizarSolicitudCompra = async (
 ) => {
   const {
     id,
-    id_trabajador,
-    id_comprobante,
     fecha_vigencia,
-    id_estado,
-    observacion,
     motivo,
     productos,
+    id_comprobante,
+    id_trabajador,
+    impuesto,
+    id_tipo_orden_compra,
+    subtotal,
+    observacion,
+    total,
   } = req.body;
 
   if (!id)
@@ -197,10 +200,12 @@ const actualizarSolicitudCompra = async (
       id_comprobante,
       cantidad: productos.length,
       fecha_solicitud: new Date(),
-      // 7 = En espera
-      id_estado,
       observacion,
       motivo,
+      impuesto,
+      subtotal,
+      total,
+      id_tipo_orden_compra,
       fecha_vigencia: new Date(fecha_vigencia),
     },
     where: {
@@ -250,11 +255,9 @@ const cambiarEstadoSolicitudCompra = async (
       .json({ message: "El id es necesario para actualizar la solicitud" });
 
   if (!id_estado)
-    return res
-      .status(400)
-      .json({
-        message: "El id_estado es necesario para actualizar la solicitud",
-      });
+    return res.status(400).json({
+      message: "El id_estado es necesario para actualizar la solicitud",
+    });
 
   await prisma.$connect();
   const s = await prisma.solicitud_compra.findFirst({

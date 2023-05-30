@@ -23,5 +23,6 @@ export interface IProductoCart {
   imagen: string;
   categoria?: string;
   cantidad: number;
+  cantidad_recepcionada?: number;
   id_estado?: number;
 }

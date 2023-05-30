@@ -2,26 +2,22 @@ import { FC, useEffect } from "react";
 import { GetServerSideProps } from "next";
 import { prisma } from "@/database";
 import { AdminLayout } from "@/components/Layout/AdminLayout";
-import { ISolicitudCompra } from "@/interfaces";
+import { IOrdenCompra, ISolicitudCompra } from "@/interfaces";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { ResumenSolicitudCompra } from "@/components/admin/compra/solicitud-compra/ResumenSolicitudCompra";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
 import { AppState } from "@/store/store";
-import {
-  añadirProductoSolicitud,
-  cargarSolicitud,
-} from "@/store/slices/compra";
-import { ResumenSolicitud } from "@/components/admin/compra/solicitud-compra/ResumenSolicitud";
-import { AceptarOrden, FilterBar } from "@/components";
+import { cargarSolicitud } from "@/store/slices/compra";
 import { useObtenerIngredientesQuery } from "@/store/slices/inventario";
-import { AceptarSolicitudCompra } from "@/components/admin/compra/solicitud-compra/AceptarSolicitudCompra";
+
+import { RecepcionOrdenCompraProducto } from "@/components/tables/compra/recepcion-orden-compra/RecepcionOrdenCompraTable";
+import { CrearRecepcionOrdenCompra } from "@/components/admin/compra/recepcion-orden-compra/CrearRecepcionOrdenCompra";
 
 interface Props {
-  detalle: ISolicitudCompra;
+  detalle: IOrdenCompra;
 }
 const DetalleSolicitudCompra: FC<Props> = ({ detalle }) => {
-  console.log(detalle.detalle_solicitud_compra);
+  console.log(detalle.detalle_orden_compra);
 
   const { productos } = useAppSelector((state: AppState) => state.compra);
   const dispatch = useAppDispatch();
@@ -31,7 +27,7 @@ const DetalleSolicitudCompra: FC<Props> = ({ detalle }) => {
   useEffect(() => {
     dispatch(
       cargarSolicitud(
-        detalle.detalle_solicitud_compra.map((producto) => ({
+        detalle.detalle_orden_compra.map((producto) => ({
           id: producto.id_producto,
           nombre: producto.producto.nombre,
           descripcion: producto.producto.descripcion,
@@ -41,14 +37,14 @@ const DetalleSolicitudCompra: FC<Props> = ({ detalle }) => {
         }))
       )
     );
-  }, [dispatch, detalle.detalle_solicitud_compra]);
+  }, [dispatch, detalle.detalle_orden_compra]);
 
   return (
     <AdminLayout title={`Detalle Solicitud de Compra - ${detalle.id}`}>
       <div className="sm:flex sm:items-center">
         <div className="px-1 sm:flex-auto">
           <h1 className="mb-2 text-2xl font-semibold text-gray-900">
-            Solicitud Nº - {detalle.id}
+            Orden Nº - {detalle.id}
           </h1>
 
           <div className="grid grid-cols-2 gap-2">
@@ -60,10 +56,10 @@ const DetalleSolicitudCompra: FC<Props> = ({ detalle }) => {
               </span>
             </p>
             <p className="text-xl font-bold">
-              Fecha de Solicitud:{" "}
+              Fecha de Orden:{" "}
               <span className="text-lg font-medium">
                 {format(
-                  new Date(detalle.fecha_solicitud),
+                  new Date(detalle.fecha_orden),
                   "EEEE dd 'de' MMMM 'del' yyyy",
                   { locale: es }
                 )}
@@ -76,12 +72,12 @@ const DetalleSolicitudCompra: FC<Props> = ({ detalle }) => {
                 {detalle.tipo_orden_compra.nombre}
               </span>
             </p>
-            <p className="text-xl font-bold">
+            {/* <p className="text-xl font-bold">
               Observación:{" "}
               <span className="text-lg font-medium capitalize">
                 {detalle.observacion}
               </span>
-            </p>
+            </p> */}
             <p className="text-xl font-bold">
               Estado:{" "}
               <span className="text-lg font-medium capitalize">
@@ -90,36 +86,16 @@ const DetalleSolicitudCompra: FC<Props> = ({ detalle }) => {
             </p>
           </div>
         </div>
-        {/* // TODO Mostrar unicamente a los roles asignados  */}
-        {detalle.id_estado !== 14 ? (
-          <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-            {isLoading ? (
-              <>Cargando...</>
-            ) : (
-              <FilterBar
-                isIngredient={true}
-                isPlate={false}
-                productos={prod!}
-                añadirProductoOrden={añadirProductoSolicitud}
-              />
-            )}
-          </div>
-        ) : (
-          ""
-        )}
       </div>
 
       <div className="mt-4 flex flex-col gap-4 md:flex-row">
         <div className="w-full">
-          <ResumenSolicitudCompra
+          <RecepcionOrdenCompraProducto
             productos={productos}
             id_estado_solicitud={detalle.id_estado}
           />
-          <AceptarOrden solicitud_compra={detalle} />
         </div>
-        <div className="w-96">
-          <ResumenSolicitud editar_solicitud={true} detalle={detalle} />
-        </div>
+        <CrearRecepcionOrdenCompra orden_compra={detalle} />
       </div>
     </AdminLayout>
   );
@@ -132,12 +108,12 @@ export const getServerSideProps: GetServerSideProps = async ({
 }) => {
   await prisma.$connect();
 
-  const detalle = await prisma.solicitud_compra.findFirst({
+  const detalle = await prisma.orden_compra.findFirst({
     select: {
       id: true,
       id_estado: true,
       cat_estado: true,
-      id_trabajador: true,
+      autorizado_por: true,
       trabajador: {
         select: {
           id: true,
@@ -156,14 +132,10 @@ export const getServerSideProps: GetServerSideProps = async ({
       subtotal: true,
       total: true,
       comprobante: true,
-      fecha_solicitud: true,
+      fecha_orden: true,
       id_tipo_orden_compra: true,
-      observacion: true,
       tipo_orden_compra: true,
-      fecha_vigencia: true,
-      cantidad: true,
-      motivo: true,
-      detalle_solicitud_compra: {
+      detalle_orden_compra: {
         select: {
           id_producto: true,
           producto: {

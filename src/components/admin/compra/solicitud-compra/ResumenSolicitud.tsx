@@ -1,6 +1,7 @@
 import { FC } from "react";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
 import {
+  seleccionarProveedor,
   solicitudCompleta,
   useActualizarSolicitudCompraMutation,
   useCrearSolicitudCompraMutation,
@@ -141,6 +142,9 @@ export const ResumenSolicitud: FC<Props> = ({ editar_solicitud, detalle }) => {
                       valueAsNumber: true,
                     })}
                     className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    onChange={(e) =>
+                      dispatch(seleccionarProveedor(Number(e.target.value)))
+                    }
                   >
                     {proveedores?.map((proveedor) => (
                       <option

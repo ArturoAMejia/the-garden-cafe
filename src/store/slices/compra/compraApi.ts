@@ -120,6 +120,13 @@ export const compraApi = createApi({
         body: id,
       }),
     }),
+    crearRecepcionOrdenCompra: builder.mutation<any, any>({
+      query: (recepcion) => ({
+        url: "/compra/recepcion",
+        method: "POST",
+        body: recepcion,
+      }),
+    }),
   }),
 });
 
@@ -145,4 +152,6 @@ export const {
   useObtenerComprasQuery,
   useCrearCompraMutation,
   useAnularCompraMutation,
+  // Recepcion Orden Compra
+  useCrearRecepcionOrdenCompraMutation,
 } = compraApi;

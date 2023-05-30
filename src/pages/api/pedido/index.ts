@@ -176,12 +176,7 @@ const registerPedido = async (
 
   const detalles = detalle[0];
 
-  console.log("----------------------");
-
   const { detalle: deta } = detalles;
-
-  console.log(deta);
-  console.log("----------------------");
 
   await prisma.detalle_pedido_ingrediente.createMany({
     data: deta.map((producto: any) => ({

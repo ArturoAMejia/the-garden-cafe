@@ -8,6 +8,7 @@ interface CompraState {
   total: number;
   impuesto: number;
   descuento: number;
+  id_proveedor?: number;
 }
 const initialState: CompraState = {
   productos: [],
@@ -87,6 +88,24 @@ export const compraSlice = createSlice({
         state.subtotal +
         state.subtotal * Number(process.env.NEXT_PUBLIC_TAX_RATE);
     },
+    actualizarCantidadRecepcionada: (state, action) => {
+      const { id } = action.payload;
+
+      state.productos = state.productos.map((prod) => {
+        if (prod.id !== id) return prod;
+
+        return {
+          ...action.payload,
+        };
+      });
+      state.subtotal = state.productos.reduce(
+        (acc, p) => acc + p.precio! * p.cantidad!,
+        0
+      );
+      state.total =
+        state.subtotal +
+        state.subtotal * Number(process.env.NEXT_PUBLIC_TAX_RATE);
+    },
     actualizarProductoPrecio: (state, action) => {
       const { id } = action.payload;
 
@@ -104,6 +123,9 @@ export const compraSlice = createSlice({
       state.total =
         state.subtotal +
         state.subtotal * Number(process.env.NEXT_PUBLIC_TAX_RATE);
+    },
+    seleccionarProveedor: (state, action) => {
+      state.id_proveedor = action.payload;
     },
     quitarProductoSolicitud: (state, action) => {
       state.productos = state.productos.filter(
@@ -147,6 +169,8 @@ export const {
   actualizarProductosSolicitud,
   actualizarProductoCantidad,
   actualizarProductoPrecio,
+  actualizarCantidadRecepcionada,
+  seleccionarProveedor,
   añadirProductoSolicitud,
   cargarSolicitud,
   quitarProductoSolicitud,

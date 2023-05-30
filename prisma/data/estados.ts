@@ -91,4 +91,9 @@ export const estados = [
     nombre: "Revertido",
     descripcion: "Estado Revertido",
   },
+  {
+    id_categoria_estado: 1,
+    nombre: "Recepcionado",
+    descripcion: "Estado Recepcionado",
+  },
 ];

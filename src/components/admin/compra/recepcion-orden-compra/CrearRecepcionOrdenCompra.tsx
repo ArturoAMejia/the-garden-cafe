@@ -2,69 +2,56 @@ import { Transition, Dialog } from "@headlessui/react";
 import {
   CheckIcon,
   ExclamationCircleIcon,
-  PlusCircleIcon,
   XCircleIcon,
 } from "@heroicons/react/24/outline";
-import React, { FC, Fragment, useContext, useState } from "react";
+import React, { FC, Fragment, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { AuthContext } from "../../../../context";
-import { ISolicitudCompra } from "../../../../interfaces";
-import {
-  useCrearOrdenCompraMutation,
-  useObtenerProveedoresQuery,
-} from "@/store/slices/compra/compraApi";
+
+import { IOrdenCompra, ISolicitudCompra } from "../../../../interfaces";
+import { useCrearRecepcionOrdenCompraMutation } from "@/store/slices/compra/compraApi";
 import { useSession } from "next-auth/react";
 import { useAppSelector } from "@/hooks/hooks";
 import { AppState } from "@/store/store";
 
 type FormData = {
-  id_proveedor: number;
-  id_tipo_orden_compra: number;
+  descripcion: string;
 };
 
 interface Props {
-  solicitud_compra: ISolicitudCompra;
+  orden_compra: IOrdenCompra;
 }
 
-export const AceptarOrden: FC<Props> = ({ solicitud_compra }) => {
+export const CrearRecepcionOrdenCompra: FC<Props> = ({ orden_compra }) => {
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
   const { data: session } = useSession();
 
-  const [crearOrdenCompra] = useCrearOrdenCompraMutation();
+  const [crearRecepcionOrdenCompra] = useCrearRecepcionOrdenCompraMutation();
 
   const { id_proveedor, subtotal, total, impuesto, productos } = useAppSelector(
     (state: AppState) => state.compra
   );
 
-  const onGenerarOrdenCompra = async () => {
-    if (!id_proveedor) {
-      toast.error("Debe seleccionar un proveedor.");
+  const { register, handleSubmit } = useForm<FormData>();
+
+  const onCrearRecepcion = async ({ descripcion }: FormData) => {
+    if (!descripcion) {
+      toast.error("Debe escribir una descripción.");
       return;
     }
 
     try {
-      await crearOrdenCompra({
-        id: 1,
-        id_comprobante: solicitud_compra.id_comprobante,
-        id_estado: 8,
-        descuento: solicitud_compra.descuento,
-        id_proveedor: id_proveedor,
-        id_tipo_orden_compra: solicitud_compra.id_tipo_orden_compra,
-        impuesto: impuesto,
-        subtotal: subtotal,
-        total: total,
-        fecha_orden: new Date(),
-        id_solicitud_compra: solicitud_compra.id,
-        autorizado_por: Number(session?.user?.id),
-        detalle_orden_compra: productos,
-        motivo: solicitud_compra.motivo,
+      await crearRecepcionOrdenCompra({
+        id_orden_compra: orden_compra.id,
+        id_trabajador: Number(session?.user?.id),
+        descripcion,
+        productos,
       }).unwrap();
 
-      toast.success("Orden de Compra generada correctamente.");
+      toast.success("Recepción de compra generada correctamente.");
       closeModal();
     } catch (error: any) {
       toast.error(error.data.message);
@@ -79,7 +66,7 @@ export const AceptarOrden: FC<Props> = ({ solicitud_compra }) => {
           onClick={openModal}
           className="flex flex-row items-center gap-2 rounded-2xl bg-green-600 px-4  py-2 text-sm font-medium text-white hover:bg-green-500"
         >
-          Generar Orden
+          Recepcionar Orden de Compra
           <CheckIcon className="h-4 w-4" />
         </button>
       </div>
@@ -149,23 +136,40 @@ export const AceptarOrden: FC<Props> = ({ solicitud_compra }) => {
                         ¿Está seguro que quiere aceptar la solicitud de compra?
                       </p>
                     </div>
+                    <form onSubmit={handleSubmit(onCrearRecepcion)}>
+                      <div className="col-span-2 mt-2">
+                        <label
+                          htmlFor="direccion"
+                          className="block font-medium text-gray-700"
+                        >
+                          Observación
+                        </label>
+                        <div className="mt-1">
+                          <textarea
+                            rows={6}
+                            id="direccion"
+                            className="block w-full resize-none rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            {...register("descripcion")}
+                          />
+                        </div>
+                      </div>
+                      <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+                        <button
+                          type="submit"
+                          className="inline-flex w-full justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
+                        >
+                          Aceptar
+                        </button>
+                        <button
+                          type="button"
+                          className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
+                          onClick={() => setIsOpen(false)}
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                    </form>
                   </div>
-                </div>
-                <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-                  <button
-                    type="button"
-                    className="inline-flex w-full justify-center rounded-md border border-transparent bg-green-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
-                    onClick={onGenerarOrdenCompra}
-                  >
-                    Aceptar
-                  </button>
-                  <button
-                    type="button"
-                    className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Cancelar
-                  </button>
                 </div>
               </div>
             </Transition.Child>
