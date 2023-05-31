@@ -83,6 +83,24 @@ export const categoria_producto = [
     id_estado: 1,
     id_tipo_categoria: 1,
   },
+  {
+    nombre: "Pan",
+    descripcion: "Pan",
+    id_estado: 1,
+    id_tipo_categoria: 1,
+  },
+  {
+    nombre: "Semillas",
+    descripcion: "Semillas",
+    id_estado: 1,
+    id_tipo_categoria: 1,
+  },
+  {
+    nombre: "Jugos",
+    descripcion: "Jugos",
+    id_estado: 1,
+    id_tipo_categoria: 1,
+  },
 ];
 
 export const sub_categoria_producto = [
@@ -178,8 +196,53 @@ export const sub_categoria_producto = [
   },
   {
     id_estado: 1,
-    id_categoria_producto: 13,
+    id_categoria_producto: 14,
     nombre: "Tortilla",
+  },
+  {
+    id_estado: 1,
+    id_categoria_producto: 15,
+    nombre: "Pan de Molde",
+  },
+  {
+    id_estado: 1,
+    id_categoria_producto: 16,
+    nombre: "Cereal",
+  },
+  {
+    id_estado: 1,
+    id_categoria_producto: 7,
+    nombre: "Carne de Pescado",
+  },
+  {
+    id_estado: 1,
+    id_categoria_producto: 4,
+    nombre: "Vino Espumoso",
+  },
+  {
+    id_estado: 1,
+    id_categoria_producto: 17,
+    nombre: "Jugos de Frutas",
+  },
+  {
+    id_estado: 1,
+    id_categoria_producto: 4,
+    nombre: "Bebida Destilada",
+  },
+  {
+    id_estado: 1,
+    id_categoria_producto: 5,
+    nombre: "Agua",
+  },
+  {
+    id_estado: 1,
+    id_categoria_producto: 5,
+    nombre: "Café",
+  },
+  {
+    id_estado: 1,
+    id_categoria_producto: 11,
+    nombre: "Leche",
   },
 ];
 

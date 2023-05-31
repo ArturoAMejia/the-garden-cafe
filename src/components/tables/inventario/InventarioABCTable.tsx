@@ -7,16 +7,8 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
-import {
-  Count,
-  IInventario,
-  IInventarioABC,
-  IProducto,
-} from "../../../interfaces";
-import {
-  useObtenerInventarioAbcVentaQuery,
-  useObtenerPoliticasInventarioQuery,
-} from "@/store/slices/inventario";
+import { IInventarioABC } from "../../../interfaces";
+import { useObtenerPoliticasInventarioQuery } from "@/store/slices/inventario";
 import {
   Badge,
   Table,
@@ -26,6 +18,7 @@ import {
   TableHeaderCell,
   TableRow,
 } from "@tremor/react";
+import { useObtenerInventarioAbcVentaQuery } from "@/store/slices/pedido";
 
 const columnHelper = createColumnHelper<IInventarioABC>();
 
@@ -47,10 +40,10 @@ export const InventarioABCTable = () => {
         header: "Demanda",
         cell: (info) => Number(info.getValue()),
       }),
-      columnHelper.accessor<"precio_producto", number>("precio_producto", {
-        header: "Valor platillo",
-        cell: (info) => info.getValue(),
-      }),
+      // columnHelper.accessor<"precio_producto", number>("precio_producto", {
+      //   header: "Valor platillo",
+      //   cell: (info) => info.getValue(),
+      // }),
       columnHelper.accessor<"porcentaje", number>("porcentaje", {
         header: "%",
         cell: (info) => info.getValue().toFixed(2),

@@ -24,11 +24,13 @@ import {
   InboxStackIcon,
   ArchiveBoxIcon,
   InboxIcon,
+  FolderMinusIcon,
 } from "@heroicons/react/24/outline";
 import { InventarioABCTable } from "@/components/tables/inventario/InventarioABCTable";
 import PoliticasInventarioStats from "@/components/admin/inventario/PoliticasInventarioStats";
 import { useObtenerPoliticasInventarioQuery } from "@/store/slices/inventario";
 import { ActualizarPoliticasABC } from "@/components/admin/inventario/ActualizarPoliticasABC";
+import { MovimientoInventarioTable } from "@/components/tables/inventario/MovimientoInventarioTable";
 
 const InventarioIndex = () => {
   const [showCard, setShowCard] = useState(1);
@@ -57,6 +59,7 @@ const InventarioIndex = () => {
         <Tab value="2" text="Inventario ABC" icon={ArchiveBoxArrowDownIcon} />
         <Tab value="3" text="MRP" icon={InboxStackIcon} />
         <Tab value="4" text="Punto de Pedido" icon={ArchiveBoxIcon} />
+        <Tab value="5" text="Movimiento de Inventario" icon={FolderMinusIcon} />
       </TabList>
 
       {showCard === 1 ? (
@@ -72,12 +75,11 @@ const InventarioIndex = () => {
       ) : // TODO
       showCard === 3 ? (
         <p>MRP</p>
-      ) : (
-        // TODO MRP
-        // <InventarioMRP/>
+      ) : showCard === 4 ? (
         <p>Punto de Pedido</p>
-        // TODO Punto de Pedido
-        // <PuntoDePedido/>
+      ) : (
+        // <p>Movimiento de Inventario</p>
+        <MovimientoInventarioTable />
       )}
     </AdminLayout>
   );

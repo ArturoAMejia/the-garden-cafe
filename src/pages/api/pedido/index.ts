@@ -170,22 +170,48 @@ const registerPedido = async (
 
   const detalle = productos.map((producto) => {
     return {
+      cantidad: producto.cantidad,
       detalle: producto.detalle,
     };
   });
 
-  const detalles = detalle[0];
-
-  const { detalle: deta } = detalles;
-
-  await prisma.detalle_pedido_ingrediente.createMany({
-    data: deta.map((producto: any) => ({
-      id_pedido: pedido.id,
-      id_producto: producto.id_producto,
-      cantidad: producto.cantidad,
-    })),
+  detalle.map(async (producto: any) => {
+    await prisma.detalle_pedido_ingrediente.createMany({
+      data: producto.detalle.map((p: any) => ({
+        id_pedido: pedido.id,
+        id_producto: p.id_producto,
+        cantidad: p.cantidad * producto.cantidad,
+      })),
+    });
   });
 
+  detalle.map(async (producto: any) => {
+    await prisma.trans_inventario.createMany({
+      data: producto.detalle.map((p: any) => ({
+        id_producto: p.id_producto,
+        cantidad: p.cantidad * producto.cantidad,
+        tipo_movimiento: "Salida",
+        fecha_movimiento: new Date(),
+      })),
+    });
+  });
+
+  detalle.map(async (producto: any) => {
+    producto.detalle.map(async (p: any) => {
+      await prisma.inventario.update({
+        where: {
+          id_producto: p.id_producto,
+        },
+        data: {
+          stock_actual: {
+            decrement: p.cantidad * producto.cantidad,
+          },
+        },
+      });
+    });
+  });
+
+  // await prisma.$transaction();
   await prisma.$disconnect();
 
   return res.status(200).json(pedido);

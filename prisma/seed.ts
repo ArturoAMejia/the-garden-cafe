@@ -35,6 +35,7 @@ import { tipo_orden_compra } from "./data/tipo-orden-compra";
 import { prisma } from "../database";
 import {
   ingredientes,
+  inventario_productos,
   platillo_ingredientes,
   platillos,
   politicas,
@@ -138,6 +139,9 @@ const main = async (): Promise<void> => {
     });
     await prisma.detalle_producto_elaborado.createMany({
       data: platillo_ingredientes,
+    });
+    await prisma.inventario.createMany({
+      data: inventario_productos,
     });
     await prisma.moneda.createMany({
       data: monedas,

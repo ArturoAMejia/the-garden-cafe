@@ -10,6 +10,7 @@ import {
   IIngrediente,
   IPrecioProducto,
   IInventarioABC,
+  ITransaccion,
 } from "@/interfaces";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
 
@@ -279,10 +280,6 @@ export const inventarioApi = createApi({
       }),
       invalidatesTags: ["Inventario"],
     }),
-    obtenerInventarioAbcVenta: builder.query<IInventarioABC[], void>({
-      query: () => "/inventario/inventario-abc/venta",
-      providesTags: ["Inventario"],
-    }),
     obtenerPoliticasInventario: builder.query<any[], void>({
       query: () => "/inventario/politica-inventario",
       providesTags: ["Inventario"],
@@ -294,6 +291,9 @@ export const inventarioApi = createApi({
         body: politica,
       }),
       invalidatesTags: ["Inventario"],
+    }),
+    obtenerMovimientoInventario: builder.query<ITransaccion[], void>({
+      query: () => `/inventario/transaccion`,
     }),
   }),
 });
@@ -345,9 +345,9 @@ export const {
   // Precio Producto
   useObtenerPrecioProductoQuery,
   useCrearPrecioProductoMutation,
-  // Inventario ABC
-  useObtenerInventarioAbcVentaQuery,
   // Politicas de Inventario
   useObtenerPoliticasInventarioQuery,
   useActualizarPoliticaInventarioMutation,
+  // movimiento de inventario
+  useObtenerMovimientoInventarioQuery,
 } = inventarioApi;

@@ -67,7 +67,7 @@ export const sub_modulos = [
   },
   {
     id_modulo: 1,
-    nombre: "Ordenes Compra",
+    nombre: "Recepción de Orden de Compra",
     url: "/admin/compra/recepcion-orden-compra",
   },
   {

@@ -1,4 +1,4 @@
-import { IPedido } from "@/interfaces";
+import { IInventarioABC, IPedido } from "@/interfaces";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const pedidoApi = createApi({
@@ -64,6 +64,10 @@ export const pedidoApi = createApi({
       }),
       invalidatesTags: ["Pedidos"],
     }),
+    obtenerInventarioAbcVenta: builder.query<IInventarioABC[], void>({
+      query: () => "/inventario/inventario-abc/venta",
+      providesTags: ["Pedidos"],
+    }),
   }),
 });
 
@@ -77,4 +81,6 @@ export const {
   useObtenerPedidosCocinerosQuery,
   useAsignarCocineroPedidoMutation,
   useActualizarEstadoCocineroPedidoMutation,
+  // Inventario ABC
+  useObtenerInventarioAbcVentaQuery,
 } = pedidoApi;

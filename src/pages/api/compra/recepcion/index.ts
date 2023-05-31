@@ -62,16 +62,53 @@ const crearRecepcionOrdenCompra = async (
     },
   });
 
-  console.log(productos);
-
   await prisma.detalle_recepcion_compra.createMany({
     data: productos.map((p) => ({
       id_recepcion_compra: recepcionOrdenCompra.id,
       id_producto: p.id,
       cantidad_solicitada: p.cantidad,
-      cantidad_recepcionada: p.cantidad_recepcionada,
+      cantidad_recibida: p.cantidad_recepcionada,
       precio_unitario: p.precio,
       monto: p.cantidad_recepcionada * p.precio,
+    })),
+  });
+
+  await prisma.orden_compra.update({
+    where: {
+      id: id_orden_compra,
+    },
+    data: {
+      id_estado: 17,
+    },
+  });
+
+  await prisma.$transaction(
+    productos.map((producto: any) =>
+      prisma.inventario.upsert({
+        where: {
+          id_producto: producto.id,
+        },
+        update: {
+          stock_actual: {
+            increment: producto.cantidad_recepcionada,
+          },
+        },
+        create: {
+          id_producto: producto.id,
+          stock_min: 1,
+          stock_max: 100,
+          stock_actual: producto.cantidad_recepcionada,
+        },
+      })
+    )
+  );
+
+  await prisma.trans_inventario.createMany({
+    data: productos.map((producto: any) => ({
+      id_producto: producto.id,
+      fecha_movimiento: new Date(),
+      tipo_movimiento: "Entrada",
+      cantidad: producto.cantidad_recepcionada,
     })),
   });
 

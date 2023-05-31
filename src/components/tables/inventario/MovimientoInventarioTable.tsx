@@ -6,107 +6,62 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import React, { useMemo } from "react";
-import {
-  ICatEstado,
-  IOrdenCompra,
-  IProveedor,
-  ITrabajador,
-} from "../../../../interfaces";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
-import Link from "next/link";
-import { IdentificationIcon } from "@heroicons/react/24/outline";
-import { RealizarCompra } from "../../../admin/compra/nueva-compra/RealizarCompra";
-import { AnularCompra } from "../../../admin/compra/nueva-compra/AnularCompra";
-
-import { useObtenerOrdenesCompraQuery } from "@/store/slices/compra/compraApi";
+import { useMemo } from "react";
+import { IProducto } from "../../../interfaces";
+import { useObtenerMovimientoInventarioQuery } from "@/store/slices/inventario";
 import {
   Table,
-  TableHead,
-  TableRow,
-  TableHeaderCell,
   TableBody,
   TableCell,
+  TableHead,
+  TableHeaderCell,
+  TableRow,
 } from "@tremor/react";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
-const columunHelper = createColumnHelper<IOrdenCompra>();
-
-export const NuevaCompraTable = () => {
-  const columns = useMemo<ColumnDef<IOrdenCompra, any>[]>(
+const columnHelper = createColumnHelper<any>();
+export const MovimientoInventarioTable = () => {
+  const columns = useMemo<ColumnDef<any, any>[]>(
     () => [
-      columunHelper.accessor<"trabajador", ITrabajador>("trabajador", {
-        header: "Trabajador",
-        cell: (info) => `${info.getValue().persona?.nombre}
-        ${""} ${info.getValue().persona?.apellido_razon_social}
-        `,
+      columnHelper.accessor<"id", number>("id", {
+        header: "Código",
+        cell: (info) => info.getValue(),
       }),
-      columunHelper.accessor<"proveedor", IProveedor>("proveedor", {
-        header: "Proveedor",
-        cell: (info) => `${info.getValue().persona?.nombre}
-        ${""} ${info.getValue().persona?.apellido_razon_social}
-        `,
+      columnHelper.accessor<"nombre", string>("nombre", {
+        header: "Nombre",
+        cell: (info) => info.getValue(),
       }),
-      columunHelper.accessor<"fecha_orden", Date>("fecha_orden", {
-        header: "Fecha Pedido",
+      columnHelper.accessor<"tipo_movimiento", number>("tipo_movimiento", {
+        header: "Tipo de Movimiento",
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor<"fecha_movimiento", Date>("fecha_movimiento", {
+        header: "Fecha Movimiento",
         cell: (info) =>
           format(new Date(info.getValue()), "EEEE dd 'de' MMMM 'del' yyyy", {
             locale: es,
           }),
       }),
-      columunHelper.accessor<"cat_estado", ICatEstado>("cat_estado", {
-        header: "Estado",
-        cell: (props) =>
-          props.getValue().nombre === "Activo" ? (
-            <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-              {props.getValue().nombre}
-            </span>
-          ) : props.getValue().nombre === "Utilizable" ? (
-            <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
-              {props.getValue().nombre}
-            </span>
-          ) : (
-            <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
-              {props.getValue().nombre}
-            </span>
-          ),
-      }),
-      columunHelper.display({
-        id: "actions",
-        header: () => <span>Acciones</span>,
-        cell: (props) => (
-          <div className="flex justify-center gap-2">
-            {/* // TODO Anular Pedido */}
-            <RealizarCompra orden={props.row.original} />
-            <AnularCompra id={props.row.original.id} />
-            <Link
-              href={`/admin/compra/ordenes/${props.row.original.id}`}
-              passHref
-              className="flex flex-row items-center gap-2 pt-1 text-center text-black"
-            >
-              <IdentificationIcon className="h-6 w-6 text-black" />
-              Ver Detalles
-            </Link>
-          </div>
-        ),
+      columnHelper.accessor<"cantidad", number>("cantidad", {
+        header: "Cantidad",
+        cell: (info) => info.getValue(),
       }),
     ],
     []
   );
 
-  const { data: ordenes_compra, isLoading } = useObtenerOrdenesCompraQuery();
+  const { data: movimiento_inventario, isLoading } =
+    useObtenerMovimientoInventarioQuery();
 
   const table = useReactTable({
-    data: ordenes_compra?.filter((ordenes: IOrdenCompra) => {
-      return ordenes.id_estado === 17;
-    })!,
+    data: movimiento_inventario!,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
 
   if (isLoading) return <>Cargando...</>;
-
   return (
     <div>
       <Table className="mt-5 rounded-md">

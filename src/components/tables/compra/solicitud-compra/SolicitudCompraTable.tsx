@@ -9,12 +9,9 @@ import {
 import { FC, useMemo } from "react";
 import {
   ICatEstado,
-  IComprobante,
   ISolicitudCompra,
   ITrabajador,
 } from "../../../../interfaces";
-
-import { RechazarOrden } from "../../../admin";
 
 import { format } from "date-fns";
 import { es } from "date-fns/locale";

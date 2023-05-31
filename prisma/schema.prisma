@@ -326,43 +326,43 @@ model equivalencia {
 }
 
 model producto {
-  id                             Int                              @id @default(autoincrement())
-  cat_estado                     cat_estado                       @relation(fields: [id_estado], references: [id])
-  id_estado                      Int
-  marca                          marca                            @relation(fields: [id_marca], references: [id])
-  id_marca                       Int
-  categoria_producto             categoria_producto               @relation(fields: [id_categoria_producto], references: [id])
-  id_categoria_producto          Int
-  sub_categoria_producto         sub_categoria_producto           @relation(fields: [id_sub_categoria_producto], references: [id])
-  id_sub_categoria_producto      Int
-  tipo_producto                  tipo_producto                    @relation(fields: [id_tipo_producto], references: [id])
-  id_tipo_producto               Int
-  unidad_medida                  unidad_medida                    @relation(fields: [id_unidad_medida], references: [id])
-  id_unidad_medida               Int
-  proveedor                      proveedor                        @relation(fields: [id_proveedor], references: [id])
-  id_proveedor                   Int                              @default(1)
-  cod_producto                   String                           @default(uuid())
-  nombre                         String
-  descripcion                    String
-  imagen                         String                           @default("")
-  fecha_ingreso                  DateTime                         @default(now())
-  precio_producto                precio_producto[]
-  caducidad                      caducidad[]
-  lote_producto                  lote_producto[]
-  detalle_orden_compra           detalle_orden_compra[]
-  detalle_compra                 detalle_compra[]
-  detalle_pedido                 detalle_pedido[]
-  detalle_venta                  detalle_venta[]
-  trans_inventario               trans_inventario[]
-  detalle_inventario             detalle_inventario[]
-  detalle_entrega                detalle_entrega[]
-  detalle_solicitud_compra       detalle_solicitud_compra[]
-  detalle_producto_elaborado     detalle_producto_elaborado[]
-  coste_producto                 coste_producto[]
-  inventario                     inventario?
-  detalle_pedido_ingrediente     detalle_pedido_ingrediente[]
-  producto_proveedor             producto_proveedor[]
-  detalle_recepcion_compra detalle_recepcion_compra[]
+  id                         Int                          @id @default(autoincrement())
+  cat_estado                 cat_estado                   @relation(fields: [id_estado], references: [id])
+  id_estado                  Int
+  marca                      marca                        @relation(fields: [id_marca], references: [id])
+  id_marca                   Int
+  categoria_producto         categoria_producto           @relation(fields: [id_categoria_producto], references: [id])
+  id_categoria_producto      Int
+  sub_categoria_producto     sub_categoria_producto       @relation(fields: [id_sub_categoria_producto], references: [id])
+  id_sub_categoria_producto  Int
+  tipo_producto              tipo_producto                @relation(fields: [id_tipo_producto], references: [id])
+  id_tipo_producto           Int
+  unidad_medida              unidad_medida                @relation(fields: [id_unidad_medida], references: [id])
+  id_unidad_medida           Int
+  proveedor                  proveedor                    @relation(fields: [id_proveedor], references: [id])
+  id_proveedor               Int                          @default(1)
+  cod_producto               String                       @default(uuid())
+  nombre                     String
+  descripcion                String
+  imagen                     String                       @default("")
+  fecha_ingreso              DateTime                     @default(now())
+  precio_producto            precio_producto[]
+  caducidad                  caducidad[]
+  lote_producto              lote_producto[]
+  detalle_orden_compra       detalle_orden_compra[]
+  detalle_compra             detalle_compra[]
+  detalle_pedido             detalle_pedido[]
+  detalle_venta              detalle_venta[]
+  trans_inventario           trans_inventario[]
+  detalle_inventario         detalle_inventario[]
+  detalle_entrega            detalle_entrega[]
+  detalle_solicitud_compra   detalle_solicitud_compra[]
+  detalle_producto_elaborado detalle_producto_elaborado[]
+  coste_producto             coste_producto[]
+  inventario                 inventario?
+  detalle_pedido_ingrediente detalle_pedido_ingrediente[]
+  producto_proveedor         producto_proveedor[]
+  detalle_recepcion_compra   detalle_recepcion_compra[]
 }
 
 model coste_producto {
@@ -771,14 +771,13 @@ model tipo_bodega {
 }
 
 model bodega {
-  id             Int         @id @default(autoincrement())
-  tipo_bodega    tipo_bodega @relation(fields: [id_tipo_bodega], references: [id])
-  id_tipo_bodega Int
-  cat_estado     cat_estado  @relation(fields: [id_estado], references: [id])
-  id_estado      Int
-  ubicacion      String
-  existencia     Int
-
+  id                  Int                   @id @default(autoincrement())
+  tipo_bodega         tipo_bodega           @relation(fields: [id_tipo_bodega], references: [id])
+  id_tipo_bodega      Int
+  cat_estado          cat_estado            @relation(fields: [id_estado], references: [id])
+  id_estado           Int
+  ubicacion           String
+  existencia          Int
   ubicacion_en_bodega ubicacion_en_bodega[]
 }
 
@@ -795,7 +794,7 @@ model trans_inventario {
   id               Int      @id @default(autoincrement())
   producto         producto @relation(fields: [id_producto], references: [id])
   id_producto      Int
-  fecha_movimiento DateTime
+  fecha_movimiento DateTime @default(dbgenerated("CURRENT_DATE"))
   cod_documento    String   @unique @default(uuid())
   cantidad         Int
   tipo_movimiento  String

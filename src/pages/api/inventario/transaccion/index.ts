@@ -8,7 +8,8 @@ type Data =
       message: string;
     }
   | ITransaccion
-  | ITransaccion[];
+  | ITransaccion[]
+  | any;
 
 export default function handler(
   req: NextApiRequest,
@@ -27,9 +28,42 @@ export default function handler(
 }
 const obtenerTransacciones = async (res: NextApiResponse<Data>) => {
   await prisma.$connect();
-  const transacciones = await prisma.trans_inventario.findMany();
+
+  const transacciones = await prisma.trans_inventario.groupBy({
+    by: ["fecha_movimiento", "id_producto", "tipo_movimiento"],
+    _sum: {
+      cantidad: true,
+    },
+    orderBy: {
+      fecha_movimiento: "desc",
+    },
+  });
+
+  const productos = await prisma.producto.findMany({
+    where: {
+      id: {
+        in: transacciones.map((transaccion) => transaccion.id_producto),
+      },
+    },
+    select: {
+      id: true,
+      nombre: true,
+    },
+  });
+
+  const trans = productos.map((producto) => {
+    const transaccion = transacciones.filter(
+      (t) => t.id_producto === producto.id
+    );
+    return {
+      ...producto,
+      cantidad: transaccion[0]._sum.cantidad,
+      fecha_movimiento: transaccion[0].fecha_movimiento,
+      tipo_movimiento: transaccion[0].tipo_movimiento
+    };
+  });
   await prisma.$disconnect();
-  return res.status(200).json(transacciones);
+  return res.status(200).json(trans);
 };
 
 const crearTransaccion = async (
@@ -62,8 +96,7 @@ const actualizarTransaccion = async (
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) => {
-  const { id, id_producto, cantidad, tipo_movimiento } =
-    req.body;
+  const { id, id_producto, cantidad, tipo_movimiento } = req.body;
 
   if (!id)
     return res
