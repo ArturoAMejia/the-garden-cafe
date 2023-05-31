@@ -27,4 +27,12 @@ export const roles = [
     id_estado: 1,
     nombre: "Bodeguero",
   },
+  {
+    id_estado: 1,
+    nombre: "Comprador",
+  },
+  {
+    id_estado: 1,
+    nombre: "Anfitrión",
+  },
 ];

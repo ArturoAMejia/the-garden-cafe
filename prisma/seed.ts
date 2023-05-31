@@ -9,7 +9,12 @@ import {
   zona_preparacion,
 } from "./data/productos";
 import { roles } from "./data/roles";
-import { modulos, roles_modulos, sub_modulos } from "./data/modulos";
+import {
+  modulos,
+  rol_sub_modulos,
+  roles_modulos,
+  sub_modulos,
+} from "./data/modulos";
 import { permisos, rol_permiso } from "./data/permisos";
 import {
   categoria_producto,
@@ -94,6 +99,9 @@ const main = async (): Promise<void> => {
     });
     await prisma.rol_modulo.createMany({
       data: roles_modulos,
+    });
+    await prisma.rol_sub_modulo.createMany({
+      data: rol_sub_modulos,
     });
     await prisma.rol_permiso.createMany({
       data: rol_permiso,

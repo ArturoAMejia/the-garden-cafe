@@ -250,6 +250,11 @@ export const roles_modulos = [
   },
   {
     id_rol: 3,
+    id_modulo: 2,
+    nombre: "Modulo de Venta",
+  },
+  {
+    id_rol: 3,
     id_modulo: 4,
     nombre: "Modulo de Pedidos",
   },
@@ -260,13 +265,18 @@ export const roles_modulos = [
   },
   {
     id_rol: 5,
-    id_modulo: 5,
-    nombre: "Modulo de Caja",
+    id_modulo: 4,
+    nombre: "Modulo de Pedidos",
   },
   {
     id_rol: 5,
     id_modulo: 2,
     nombre: "Modulo de Venta",
+  },
+  {
+    id_rol: 5,
+    id_modulo: 5,
+    nombre: "Modulo de Caja",
   },
   {
     id_rol: 7,
@@ -278,12 +288,551 @@ export const roles_modulos = [
     id_modulo: 3,
     nombre: "Modulo de Inventario",
   },
+  {
+    id_rol: 8,
+    id_modulo: 1,
+    nombre: "Modulo de Compra",
+  },
+  {
+    id_rol: 9,
+    id_modulo: 2,
+    nombre: "Modulo de Venta",
+  },
 ];
 
 export const rol_sub_modulos = [
+  // ? Rol de Administrador
+  // ! Modulo de compra
+  {
+    id_rol: 1,
+    id_modulo: 1,
+    id_sub_modulo: 1,
+    nombre: "Submodulo de Proveedores",
+  },
+  {
+    id_rol: 1,
+    id_modulo: 1,
+    id_sub_modulo: 2,
+    nombre: "Nueva solicitud de compra",
+  },
+  {
+    id_rol: 1,
+    id_modulo: 1,
+    id_sub_modulo: 3,
+    nombre: "Submodulo de solicitudes de compra",
+  },
+  {
+    id_rol: 1,
+    id_sub_modulo: 4,
+    id_modulo: 1,
+    nombre: "Nueva orden de compra",
+  },
+  {
+    id_rol: 1,
+    id_sub_modulo: 5,
+    id_modulo: 1,
+    nombre: "Ordenes de Compra",
+  },
+  {
+    id_rol: 1,
+    id_sub_modulo: 6,
+    id_modulo: 1,
+    nombre: "Recepcion de solicitud de compra",
+  },
+  {
+    id_rol: 1,
+    id_sub_modulo: 7,
+    id_modulo: 1,
+    nombre: "Nueva compra",
+  },
+  {
+    id_rol: 1,
+    id_sub_modulo: 8,
+    id_modulo: 1,
+    nombre: "Compras realizadas",
+  },
+  // ! Modulo de venta
+  {
+    id_rol: 1,
+    id_sub_modulo: 9,
+    id_modulo: 2,
+    nombre: "Clientes",
+  },
+  {
+    id_rol: 1,
+    id_sub_modulo: 10,
+    id_modulo: 2,
+    nombre: "Reservaciones",
+  },
+  {
+    id_rol: 1,
+    id_sub_modulo: 11,
+    id_modulo: 2,
+    nombre: "Nueva Venta",
+  },
+  {
+    id_rol: 1,
+    id_modulo: 2,
+    id_sub_modulo: 12,
+    nombre: "Ventas Realizadas",
+  },
+  // ! Modulo de inventario
+  {
+    id_rol: 1,
+    id_modulo: 3,
+    id_sub_modulo: 13,
+    nombre: "Submodulo de categorias de productos",
+  },
+  {
+    id_rol: 1,
+    id_modulo: 3,
+    id_sub_modulo: 14,
+    nombre: "Submodulo de subcategorias de productos",
+  },
+  {
+    id_rol: 1,
+    id_modulo: 3,
+    id_sub_modulo: 15,
+    nombre: "Submodulo de unidades de medida",
+  },
+  {
+    id_rol: 1,
+    id_modulo: 3,
+    id_sub_modulo: 16,
+    nombre: "Submodulo de marcas",
+  },
+  {
+    id_rol: 1,
+    id_modulo: 3,
+    id_sub_modulo: 17,
+    nombre: "Submodulo de productos",
+  },
+  {
+    id_rol: 1,
+    id_modulo: 3,
+    id_sub_modulo: 18,
+    nombre: "Submodulo de precio de productos",
+  },
+  {
+    id_rol: 1,
+    id_modulo: 3,
+    id_sub_modulo: 19,
+    nombre: "Submodulo de Inventario",
+  },
+  // ! Modulo de pedidos
+  {
+    id_rol: 1,
+    id_modulo: 4,
+    id_sub_modulo: 20,
+    nombre: "Nuevo pedido",
+  },
+  {
+    id_rol: 1,
+    id_modulo: 4,
+    id_sub_modulo: 21,
+    nombre: "Submodulo de pedidos",
+  },
+  {
+    id_rol: 1,
+    id_modulo: 4,
+    id_sub_modulo: 22,
+    nombre: "Submodulo de pedidos realizados",
+  },
+  {
+    id_rol: 1,
+    id_modulo: 4,
+    id_sub_modulo: 23,
+    nombre: "Submodulo de pedidos anulados",
+  },
+  // ! Modulo de caja
+  {
+    id_rol: 1,
+    id_modulo: 5,
+    id_sub_modulo: 24,
+    nombre: "Apertura de Caja",
+  },
+  {
+    id_rol: 1,
+    id_modulo: 5,
+    id_sub_modulo: 25,
+    nombre: "Arqueo de caja",
+  },
+  {
+    id_rol: 1,
+    id_modulo: 5,
+    id_sub_modulo: 26,
+    nombre: "Cierre de caja",
+  },
+  {
+    id_rol: 1,
+    id_modulo: 5,
+    id_sub_modulo: 27,
+    nombre: "Deposito del dia",
+  },
+  {
+    id_rol: 1,
+    id_modulo: 5,
+    id_sub_modulo: 28,
+    nombre: "Tesoreria",
+  },
+  // ! Modulo de Usuarios
+  {
+    id_rol: 1,
+    id_modulo: 6,
+    id_sub_modulo: 29,
+    nombre: "Trabajadores",
+  },
+  {
+    id_rol: 1,
+    id_modulo: 6,
+    id_sub_modulo: 30,
+    nombre: "Grupos",
+  },
+  // ? Rol de Gerente
+  // ! Modulo de compra
+  {
+    id_rol: 2,
+    id_modulo: 1,
+    id_sub_modulo: 1,
+    nombre: "Submodulo de Proveedores",
+  },
+  {
+    id_rol: 2,
+    id_modulo: 1,
+    id_sub_modulo: 2,
+    nombre: "Nueva solicitud de compra",
+  },
+  {
+    id_rol: 2,
+    id_modulo: 1,
+    id_sub_modulo: 3,
+    nombre: "Submodulo de solicitudes de compra",
+  },
+  {
+    id_rol: 2,
+    id_modulo: 1,
+    id_sub_modulo: 4,
+    nombre: "Nueva orden de compra",
+  },
+  {
+    id_rol: 2,
+    id_modulo: 1,
+    id_sub_modulo: 5,
+    nombre: "Ordenes de Compra",
+  },
+  {
+    id_rol: 2,
+    id_modulo: 1,
+    id_sub_modulo: 6,
+    nombre: "Recepcion de solicitud de compra",
+  },
+  {
+    id_rol: 2,
+    id_modulo: 1,
+    id_sub_modulo: 7,
+    nombre: "Nueva compra",
+  },
+  {
+    id_rol: 2,
+    id_modulo: 1,
+    id_sub_modulo: 8,
+    nombre: "Compras realizadas",
+  },
+  // ! Modulo de venta
+  {
+    id_rol: 2,
+    id_modulo: 2,
+    id_sub_modulo: 9,
+    nombre: "Clientes",
+  },
+  {
+    id_rol: 2,
+    id_modulo: 2,
+    id_sub_modulo: 10,
+    nombre: "Reservaciones",
+  },
+  {
+    id_rol: 2,
+    id_modulo: 2,
+    id_sub_modulo: 11,
+    nombre: "Nueva Venta",
+  },
+  {
+    id_rol: 2,
+    id_modulo: 2,
+    id_sub_modulo: 12,
+    nombre: "Ventas Realizadas",
+  },
+  // ! Modulo de inventario
+  {
+    id_rol: 2,
+    id_modulo: 3,
+    id_sub_modulo: 13,
+    nombre: "Submodulo de categorias de productos",
+  },
+  {
+    id_rol: 2,
+    id_modulo: 3,
+    id_sub_modulo: 14,
+    nombre: "Submodulo de subcategorias de productos",
+  },
+  {
+    id_rol: 2,
+    id_modulo: 3,
+    id_sub_modulo: 15,
+    nombre: "Submodulo de unidades de medida",
+  },
+  {
+    id_rol: 2,
+    id_modulo: 3,
+    id_sub_modulo: 16,
+    nombre: "Submodulo de marcas",
+  },
+  {
+    id_rol: 2,
+    id_modulo: 3,
+    id_sub_modulo: 17,
+    nombre: "Submodulo de productos",
+  },
+  {
+    id_rol: 2,
+    id_modulo: 3,
+    id_sub_modulo: 18,
+    nombre: "Submodulo de precio de productos",
+  },
+  {
+    id_rol: 2,
+    id_modulo: 3,
+    id_sub_modulo: 19,
+    nombre: "Submodulo de Inventario",
+  },
+  // ! Modulo de pedidos
+  {
+    id_rol: 2,
+    id_modulo: 4,
+    id_sub_modulo: 20,
+    nombre: "Nuevo pedido",
+  },
+  {
+    id_rol: 2,
+    id_modulo: 4,
+    id_sub_modulo: 21,
+    nombre: "Submodulo de pedidos",
+  },
+  {
+    id_rol: 2,
+    id_modulo: 4,
+    id_sub_modulo: 22,
+    nombre: "Submodulo de pedidos realizados",
+  },
+  {
+    id_rol: 2,
+    id_modulo: 4,
+    id_sub_modulo: 23,
+    nombre: "Submodulo de pedidos anulados",
+  },
+  // ! Modulo de caja
+  {
+    id_rol: 2,
+    id_modulo: 5,
+    id_sub_modulo: 24,
+    nombre: "Apertura de Caja",
+  },
+  {
+    id_rol: 2,
+    id_modulo: 5,
+    id_sub_modulo: 25,
+    nombre: "Arqueo de caja",
+  },
+  {
+    id_rol: 2,
+    id_modulo: 5,
+    id_sub_modulo: 26,
+    nombre: "Cierre de caja",
+  },
+  {
+    id_rol: 2,
+    id_modulo: 5,
+    id_sub_modulo: 27,
+    nombre: "Deposito del dia",
+  },
+  {
+    id_rol: 2,
+    id_modulo: 5,
+    id_sub_modulo: 28,
+    nombre: "Tesoreria",
+  },
+  // ! Modulo de Usuarios
+  {
+    id_rol: 2,
+    id_modulo: 5,
+    id_sub_modulo: 29,
+    nombre: "Trabajadores",
+  },
+  {
+    id_rol: 2,
+    id_modulo: 5,
+    id_sub_modulo: 30,
+    nombre: "Grupos",
+  },
+  // ? Rol de Mesero
+  // ! Modulo de pedidos
+  {
+    id_rol: 3,
+    id_modulo: 4,
+    id_sub_modulo: 20,
+    nombre: "Nuevo pedido",
+  },
+  {
+    id_rol: 3,
+    id_modulo: 4,
+    id_sub_modulo: 21,
+    nombre: "Submodulo de pedidos",
+  },
+  // ! Modulo de venta
+  {
+    id_modulo: 2,
+    id_rol: 3,
+    id_sub_modulo: 9,
+    nombre: "Clientes",
+  },
+  // ? Rol de Cocinero
+  // ! Modulo de pedidos
+  {
+    id_rol: 4,
+    id_modulo: 4,
+    id_sub_modulo: 21,
+    nombre: "Submodulo de pedidos",
+  },
+  // ? Rol de Cajero
+  // ! Modulo de caja
+  {
+    id_rol: 5,
+    id_modulo: 5,
+    id_sub_modulo: 24,
+    nombre: "Apertura de Caja",
+  },
+  {
+    id_rol: 5,
+    id_modulo: 5,
+    id_sub_modulo: 25,
+    nombre: "Arqueo de caja",
+  },
+  {
+    id_rol: 5,
+    id_modulo: 5,
+    id_sub_modulo: 26,
+    nombre: "Cierre de caja",
+  },
+  {
+    id_rol: 5,
+    id_modulo: 5,
+    id_sub_modulo: 27,
+    nombre: "Deposito del dia",
+  },
+  {
+    id_rol: 5,
+    id_modulo: 5,
+    id_sub_modulo: 28,
+    nombre: "Tesoreria",
+  },
+  // ! Modulo de pedidos
+  {
+    id_rol: 5,
+    id_modulo: 4,
+    id_sub_modulo: 21,
+    nombre: "Submodulo de pedidos",
+  },
+  // ! Modulo de venta
+  {
+    id_rol: 5,
+    id_modulo: 2,
+    id_sub_modulo: 11,
+    nombre: "Nueva Venta",
+  },
+  // ? Rol de Bodeguero
+  // ! Modulo de Compra
+  {
+    id_modulo: 1,
+    id_rol: 7,
+    id_sub_modulo: 2,
+    nombre: "Nueva solicitud de compra",
+  },
+  {
+    id_rol: 7,
+    id_modulo: 1,
+    id_sub_modulo: 3,
+    nombre: "Submodulo de solicitudes de compra",
+  },
+  {
+    id_rol: 7,
+    id_modulo: 1,
+    id_sub_modulo: 6,
+    nombre: "Recepcion de solicitud de compra",
+  },
+  // ! Modulo de inventario
   {
     id_rol: 7,
     id_modulo: 3,
-    nombre: "Modulo de Inventario",
+    id_sub_modulo: 19,
+    nombre: "Submodulo de Inventario",
+  },
+  // ? Rol de Comprador
+  // ! Modulo de Compra
+  {
+    id_modulo: 1,
+    id_rol: 8,
+    id_sub_modulo: 1,
+    nombre: "Submodulo de Proveedores",
+  },
+  {
+    id_rol: 8,
+    id_modulo: 1,
+    id_sub_modulo: 2,
+    nombre: "Nueva solicitud de compra",
+  },
+  {
+    id_rol: 8,
+    id_modulo: 1,
+    id_sub_modulo: 3,
+    nombre: "Submodulo de solicitudes de compra",
+  },
+  {
+    id_rol: 8,
+    id_modulo: 1,
+    id_sub_modulo: 5,
+    nombre: "Ordenes de Compra",
+  },
+  {
+    id_rol: 8,
+    id_modulo: 1,
+    id_sub_modulo: 6,
+    nombre: "Recepcion de solicitud de compra",
+  },
+  {
+    id_rol: 8,
+    id_modulo: 1,
+    id_sub_modulo: 7,
+    nombre: "Nueva compra",
+  },
+  {
+    id_rol: 8,
+    id_modulo: 1,
+    id_sub_modulo: 8,
+    nombre: "Compras realizadas",
+  },
+  // ? Rol de Anfitrion
+  // ! Modulo de venta
+  {
+    id_rol: 9,
+    id_modulo: 2,
+    id_sub_modulo: 9,
+    nombre: "Clientes",
+  },
+  {
+    id_rol: 9,
+    id_modulo: 2,
+    id_sub_modulo: 10,
+    nombre: "Reservaciones",
   },
 ];

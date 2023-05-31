@@ -996,15 +996,16 @@ model rol {
 }
 
 model modulo {
-  id             Int          @id @default(autoincrement())
-  cat_estado     cat_estado   @relation(fields: [id_estado], references: [id])
+  id             Int              @id @default(autoincrement())
+  cat_estado     cat_estado       @relation(fields: [id_estado], references: [id])
   id_estado      Int
   nombre         String
   descripcion    String
-  icono          String       @default("")
-  fecha_registro DateTime     @default(now())
+  icono          String           @default("")
+  fecha_registro DateTime         @default(now())
   sub_modulo     sub_modulo[]
   rol_modulo     rol_modulo[]
+  rol_sub_modulo rol_sub_modulo[]
 }
 
 model sub_modulo {
@@ -1030,6 +1031,8 @@ model rol_modulo {
 model rol_sub_modulo {
   rol           rol        @relation(fields: [id_rol], references: [id])
   id_rol        Int
+  modulo        modulo     @relation(fields: [id_modulo], references: [id])
+  id_modulo     Int
   sub_modulo    sub_modulo @relation(fields: [id_sub_modulo], references: [id])
   id_sub_modulo Int
   nombre        String

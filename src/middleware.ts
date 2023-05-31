@@ -34,7 +34,7 @@ import { withAuth } from "next-auth/middleware";
 export default withAuth(
   // `withAuth` augments your `Request` with the user's token.
   function middleware(req: any) {
-    const rolesValidos = [1, 2, 3, 4, 5, 7];
+    const rolesValidos = [1, 2, 3, 4, 5, 7, 8, 9];
 
     if (
       req.nextUrl.pathname.startsWith("/admin") &&

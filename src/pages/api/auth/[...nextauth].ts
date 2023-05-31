@@ -3,7 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "database";
 
 import bcrypt from "bcryptjs";
-import { IModulo } from "@/interfaces/administracion/modulo";
+import { IModulo, ISubModulo } from "@/interfaces/administracion/modulo";
 import { IRol } from "@/interfaces/seguridad/rol-modulo";
 import { AdapterUser } from "next-auth/adapters";
 
@@ -18,6 +18,7 @@ declare module "next-auth" {
       id: number;
       id_rol: number;
       modulos: IModulo[];
+      sub_modulos: ISubModulo[];
       nombre: string;
       apellido: string;
       roles: IRol[];
@@ -74,13 +75,13 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const modulos = await prisma.rol_modulo.findMany({
+        let modulos = await prisma.rol_modulo.findMany({
           select: {
             modulo: {
               select: {
+                id: true,
                 nombre: true,
                 icono: true,
-                sub_modulo: true,
               },
             },
           },
@@ -88,6 +89,36 @@ export const authOptions: NextAuthOptions = {
             id_rol: user.id_rol,
           },
         });
+
+        const sub_modulos = await prisma.rol_sub_modulo.findMany({
+          select: {
+            sub_modulo: {
+              select: {
+                nombre: true,
+                id: true,
+                id_modulo: true,
+                url: true,
+              },
+            },
+          },
+          where: {
+            id_rol: user.id_rol,
+          },
+        });
+
+        const modulos_submodulos = modulos.map((modulo) => {
+          const sub_modulo = sub_modulos.filter(
+            (sub_modulo) => sub_modulo.sub_modulo.id_modulo === modulo.modulo.id
+          );
+          return {
+            modulos: {
+              ...modulo,
+              sub_modulo,
+            },
+          };
+        });
+
+        // console.log(modulos_submodulos[0]);
 
         const roles = await prisma.rol.findMany({
           where: {
@@ -116,7 +147,8 @@ export const authOptions: NextAuthOptions = {
             id_rol: user.id_rol,
             nombre: user.persona.nombre,
             apellido: user.persona.apellido_razon_social,
-            modulos,
+            modulos: modulos_submodulos,
+            sub_modulos,
             roles,
             id_trabajador: trabajador?.id,
             id_cliente: cliente?.id,
