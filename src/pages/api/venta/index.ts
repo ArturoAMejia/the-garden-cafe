@@ -108,12 +108,22 @@ const crearVenta = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     return res.status(400).json({ message: "Los campos son obligatorios" });
   }
 
-  if (pago_cliente < (subtotal * 1.15)) {
+  if (pago_cliente < subtotal * 1.15) {
     return res
       .status(400)
       .json({ message: "El pago del cliente es menor al total de la venta" });
   }
   await prisma.$connect();
+
+  const caja = await prisma.caja.findFirst({
+    where: {
+      id_estado: 1,
+    },
+  });
+
+  if (!caja) {
+    return res.status(400).json({ message: "No hay caja abierta" });
+  }
 
   const comprobante = await prisma.comprobante.create({
     data: {
@@ -140,7 +150,7 @@ const crearVenta = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     },
   });
 
-  const pedido = await prisma.pedido.update({
+  await prisma.pedido.update({
     where: {
       id: id_pedido,
     },
@@ -149,7 +159,6 @@ const crearVenta = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     },
   });
 
-  // TODO cambiar el any del producto
   await prisma.detalle_venta.createMany({
     data: productos.map((producto: any) => ({
       id_venta: venta.id,

@@ -5,14 +5,8 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import React, { useEffect, useMemo, useState } from "react";
-import {
-  IAperturaCaja,
-  ICaja,
-  IDetalleApertura,
-  ITrabajador,
-} from "../../../interfaces";
-import tgcApi from "../../../api/tgcApi";
+import React, { useMemo } from "react";
+import { ICaja, ICatEstado, ITrabajador } from "../../../interfaces";
 
 import {
   Table,
@@ -22,13 +16,13 @@ import {
   TableHeaderCell,
   TableRow,
 } from "@tremor/react";
-import { format, getHours, getMinutes } from "date-fns";
+import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { useObtenerAperturaCajaQuery } from "@/store/slices/caja/cajaApi";
+import { useObtenerCajasQuery } from "@/store/slices/caja/cajaApi";
 
-const columnHelper = createColumnHelper<IAperturaCaja>();
+const columnHelper = createColumnHelper<ICaja>();
 
-export const AperturaCajaTable = () => {
+export const CajasTable = () => {
   const columns = useMemo(
     () => [
       columnHelper.accessor<"trabajador", ITrabajador>("trabajador", {
@@ -38,42 +32,42 @@ export const AperturaCajaTable = () => {
             info.getValue().persona?.apellido_razon_social
           }`,
       }),
-
-      columnHelper.accessor<"caja", ICaja>("caja", {
-        header: "Caja",
-        cell: (info) => info.getValue().id,
+      columnHelper.accessor<"tipo_caja", string>("tipo_caja", {
+        header: "Tipo de Caja",
+        cell: (info) => info.getValue(),
       }),
-
-      columnHelper.accessor<"fecha_apertura", Date>("fecha_apertura", {
-        header: "Fecha de Apertura",
+      columnHelper.accessor<"fecha_registro", Date>("fecha_registro", {
+        header: "Fecha de Registro",
         cell: (info) =>
           format(new Date(info.getValue()), "EEEE dd 'de' MMMM 'del' yyyy", {
             locale: es,
           }),
       }),
-      columnHelper.accessor<"fecha_apertura", Date>("fecha_apertura", {
-        header: "Hora de Apertura",
-        cell: (info) =>
-          `${getHours(new Date(info.getValue()))}:${getMinutes(
-            new Date(info.getValue())
-          )}`,
+      columnHelper.accessor<"cat_estado", ICatEstado>("cat_estado", {
+        header: "Estado",
+        cell: (props) =>
+          props.getValue().nombre === "Activo" ? (
+            <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+              {props.getValue().nombre}
+            </span>
+          ) : props.getValue().nombre === "Utilizable" ? (
+            <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
+              {props.getValue().nombre}
+            </span>
+          ) : (
+            <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
+              {props.getValue().nombre}
+            </span>
+          ),
       }),
-
-      columnHelper.accessor<"detalle_apertura_caja", IDetalleApertura>(
-        "detalle_apertura_caja",
-        {
-          header: "Monto de Apertura",
-          cell: (info) => `C$ ${info.getValue().monto_cordobas.toFixed()}`,
-        }
-      ),
     ],
     []
   );
 
-  const { data: aperturas, isLoading } = useObtenerAperturaCajaQuery();
-  
+  const { data: cajas, isLoading } = useObtenerCajasQuery();
+
   const table = useReactTable({
-    data: aperturas,
+    data: cajas,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),

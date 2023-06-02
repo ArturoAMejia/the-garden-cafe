@@ -886,6 +886,7 @@ model apertura_caja {
   moneda                moneda                 @relation(fields: [id_moneda], references: [id])
   id_moneda             Int
   fecha_apertura        DateTime
+  fecha_cierre          DateTime?
   detalle_apertura_caja detalle_apertura_caja?
 }
 
@@ -906,6 +907,7 @@ model movimiento_caja {
   moneda           moneda     @relation(fields: [id_moneda], references: [id])
   id_moneda        Int
   num_movimiento   String     @default(cuid())
+  tipo_movimiento  String
   fecha_movimiento DateTime
   concepto         String
   monto            Float
@@ -922,15 +924,16 @@ model arqueo_caja {
 }
 
 model cierre_caja {
-  id            Int        @id @default(autoincrement())
-  caja          caja       @relation(fields: [id_caja], references: [id])
-  id_caja       Int
-  trabajador    trabajador @relation(fields: [id_trabajador], references: [id])
-  id_trabajador Int
-  cat_estado    cat_estado @relation(fields: [id_estado], references: [id])
-  id_estado     Int
-  fecha_cierre  DateTime   @default(now())
-  total         Float
+  id             Int        @id @default(autoincrement())
+  caja           caja       @relation(fields: [id_caja], references: [id])
+  id_caja        Int
+  trabajador     trabajador @relation(fields: [id_trabajador], references: [id])
+  id_trabajador  Int
+  cat_estado     cat_estado @relation(fields: [id_estado], references: [id])
+  id_estado      Int
+  fecha_apertura DateTime?
+  fecha_cierre   DateTime   @default(now())
+  total          Float
 }
 
 //!        Seguridad        //

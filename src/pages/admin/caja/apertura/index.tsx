@@ -1,4 +1,7 @@
 import React, { FC } from "react";
+import { GetServerSideProps } from "next";
+import { prisma } from "../../../../database";
+import { ICaja } from "../../../../interfaces";
 import { AdminLayout } from "../../../../components/Layout/AdminLayout";
 import { AperturaCajaTable } from "../../../../components/tables/caja/AperturaCajaTable";
 import { AbrirCaja } from "../../../../components/admin/caja/AbrirCaja";
@@ -18,11 +21,6 @@ const AperturaCajaIndex: FC<Props> = ({ cajas }) => {
 
 export default AperturaCajaIndex;
 
-// You should use getServerSideProps when:
-// - Only if you need to pre-render a page whose data must be fetched at request time
-import { GetServerSideProps } from "next";
-import { prisma } from "../../../../database";
-import { ICaja } from "../../../../interfaces";
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const cajas = await prisma.caja.findMany();
 

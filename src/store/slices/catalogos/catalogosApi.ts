@@ -8,7 +8,7 @@ export const catalogosApi = createApi({
   }),
   tagTypes: ["Monedas", "Forma Pago"],
   endpoints: (builder) => ({
-    obtenerMonedas: builder.query<IMoneda[], any>({
+    obtenerMonedas: builder.query<IMoneda[], void>({
       query: () => "/catalogos/monedas",
       providesTags: ["Monedas"],
     }),

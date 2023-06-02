@@ -4,6 +4,7 @@ import { AgregarPedido, ProductoFiltrado } from "../../../../components";
 import { AdminLayout } from "../../../../components/Layout/AdminLayout";
 import { prisma } from "./../../../../database";
 import {
+  ICaja,
   ICatEstado,
   IIngrediente,
   IProducto,
@@ -27,9 +28,10 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
 type propFilter = IProducto | IIngrediente | IProductoElaborado;
 interface Props {
-  estados: ICatEstado[];
+  cajas: ICaja[];
 }
-const NuevoPedidoPage: FC<Props> = ({ estados }) => {
+const NuevoPedidoPage: FC<Props> = ({ cajas }) => {
+  console.log(cajas);
   const [query, setQuery] = useState("");
 
   const { filtro, setFiltro, menuFiltrado } = useMenu();
@@ -62,72 +64,85 @@ const NuevoPedidoPage: FC<Props> = ({ estados }) => {
         </div>
       </div>
       <div className="flex-row gap-4 md:flex">
-        <div className="w-full md:h-80 md:w-3/5">
-          <ResumenPedidoLocal
-            id_estado={1}
-            productos={productos}
-            quitarProducto={quitarProductoPedido}
-            subtotal={subtotal}
-            total={total}
-            nuevo_pedido={true}
-          />
-          <AgregarPedido estados={estados} />
-        </div>
-        <div className="w-full md:h-5/6 md:w-2/5">
-          <TextInput
-            className="mt-4 md:mt-0"
-            icon={MagnifyingGlassIcon}
-            placeholder="Buscar..."
-            onChange={(e) => setQuery(e.target.value)}
-          />
-          <div className="flex justify-end pr-2 pt-2">
-            <Button variant="light" onClick={() => setFiltro("")}>
-              Borrar Filtro
-            </Button>
+        {cajas.length === 0 ? (
+          <div className="flex items-center justify-center">
+            <h2 className="ml-2 text-center text-3xl font-bold">
+              No hay cajas abiertas para realizar un pedido
+            </h2>
           </div>
-          {isLoadingCategorias ? (
-            <>Cargando...</>
-          ) : (
-            <CategoriaFilter categorias={categorias} setFiltro={setFiltro} />
-          )}
-
-          {isLoading ? (
-            <>Cargando...</>
-          ) : (
-            <div className="mt-4 overflow-y-auto ">
-              {filtro
-                ? menuFiltrado?.map((prod) => (
-                    <ProductoFiltrado
-                      key={prod.nombre}
-                      añadirProductoOrden={añadirProductoPedido}
-                      isIngredient={false}
-                      isPlate={true}
-                      producto={prod}
-                    />
-                  ))
-                : query
-                ? platillosFiltrados.map((platillo) => (
-                    <ProductoFiltrado
-                      key={platillo.nombre}
-                      añadirProductoOrden={añadirProductoPedido}
-                      isIngredient={false}
-                      isPlate={true}
-                      producto={platillo}
-                    />
-                  ))
-                : platillos?.map((prod) => (
-                    <ProductoFiltrado
-                      key={prod.nombre}
-                      añadirProductoOrden={añadirProductoPedido}
-                      isIngredient={false}
-                      isPlate={true}
-                      producto={prod}
-                    />
-                  ))}
-              {}
+        ) : (
+          <>
+            <div className="w-full md:h-80 md:w-3/5">
+              <ResumenPedidoLocal
+                id_estado={1}
+                productos={productos}
+                quitarProducto={quitarProductoPedido}
+                subtotal={subtotal}
+                total={total}
+                nuevo_pedido={true}
+              />
+              <AgregarPedido />
             </div>
-          )}
-        </div>
+            <div className="w-full md:h-5/6 md:w-2/5">
+              <TextInput
+                className="mt-4 md:mt-0"
+                icon={MagnifyingGlassIcon}
+                placeholder="Buscar..."
+                onChange={(e) => setQuery(e.target.value)}
+              />
+              <div className="flex justify-end pr-2 pt-2">
+                <Button variant="light" onClick={() => setFiltro("")}>
+                  Borrar Filtro
+                </Button>
+              </div>
+              {isLoadingCategorias ? (
+                <>Cargando...</>
+              ) : (
+                <CategoriaFilter
+                  categorias={categorias}
+                  setFiltro={setFiltro}
+                />
+              )}
+
+              {isLoading ? (
+                <>Cargando...</>
+              ) : (
+                <div className="mt-4 overflow-y-auto ">
+                  {filtro
+                    ? menuFiltrado?.map((prod) => (
+                        <ProductoFiltrado
+                          key={prod.nombre}
+                          añadirProductoOrden={añadirProductoPedido}
+                          isIngredient={false}
+                          isPlate={true}
+                          producto={prod}
+                        />
+                      ))
+                    : query
+                    ? platillosFiltrados.map((platillo) => (
+                        <ProductoFiltrado
+                          key={platillo.nombre}
+                          añadirProductoOrden={añadirProductoPedido}
+                          isIngredient={false}
+                          isPlate={true}
+                          producto={platillo}
+                        />
+                      ))
+                    : platillos?.map((prod) => (
+                        <ProductoFiltrado
+                          key={prod.nombre}
+                          añadirProductoOrden={añadirProductoPedido}
+                          isIngredient={false}
+                          isPlate={true}
+                          producto={prod}
+                        />
+                      ))}
+                  {}
+                </div>
+              )}
+            </div>
+          </>
+        )}
       </div>
     </AdminLayout>
   );
@@ -138,12 +153,16 @@ export default NuevoPedidoPage;
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   await prisma.$connect();
 
-  const estados = await prisma.cat_estado.findMany();
+  const cajas = await prisma.caja.findMany({
+    where: {
+      id_estado: 1,
+    },
+  });
   await prisma.$disconnect();
 
   return {
     props: {
-      estados,
+      cajas: JSON.parse(JSON.stringify(cajas)),
     },
   };
 };
