@@ -37,6 +37,10 @@ const NuevaOrdenPage: FC<Props> = ({ permisos }) => {
     (solicitud) => solicitud.id_estado === 15
   );
 
+  const solicitudes_terminadas = solicitudes_compra?.filter(
+    (solicitud) => solicitud.id_estado === 7
+  );
+
   if (isLoading) return <>Cargando...</>;
 
   return (
@@ -59,27 +63,28 @@ const NuevaOrdenPage: FC<Props> = ({ permisos }) => {
         <Tab value="2" text="Aceptadas" icon={CheckBadgeIcon} />
         <Tab value="3" text="Revertidas" icon={ArrowUturnDownIcon} />
         <Tab value="4" text="Rechazadas" icon={XMarkIcon} />
+        <Tab value="5" text="Terminadas" icon={CheckBadgeIcon} />
       </TabList>
 
       {showCard === 1 ? (
         <>
-          {isLoading && <p>Cargando...</p>}
           <SolicitudCompraTable solicitudes={solicitudes_en_espera} />
         </>
       ) : showCard === 2 ? (
         <>
-          {isLoading && <p>Cargando...</p>}
           <SolicitudCompraTable solicitudes={solicitudes_aceptadas} />
         </>
       ) : showCard === 3 ? (
         <>
-          {isLoading && <p>Cargando...</p>}
           <SolicitudCompraTable solicitudes={solicitudes_revertidas} />
+        </>
+      ) : showCard === 4 ? (
+        <>
+          <SolicitudCompraTable solicitudes={solicitudes_rechazadas} />
         </>
       ) : (
         <>
-          {isLoading && <p>Cargando...</p>}
-          <SolicitudCompraTable solicitudes={solicitudes_rechazadas} />
+          <SolicitudCompraTable solicitudes={solicitudes_terminadas} />
         </>
       )}
     </AdminLayout>

@@ -98,7 +98,11 @@ export const SolicitudCompraTable: FC<Props> = ({ solicitudes }) => {
              */}
             {props.row.original.id_estado !== 14 ? (
               props.row.original.id_estado !== 15 ? (
-                <AceptarSolicitudCompra solicitud={props.row.original} />
+                props.row.original.id_estado !== 7 ? (
+                  <AceptarSolicitudCompra solicitud={props.row.original} />
+                ) : (
+                  ""
+                )
               ) : (
                 ""
               )
@@ -107,7 +111,11 @@ export const SolicitudCompraTable: FC<Props> = ({ solicitudes }) => {
             )}
             {props.row.original.id_estado !== 16 ? (
               props.row.original.id_estado !== 14 ? (
-                <RevertirSolicitud solicitud_compra={props.row.original} />
+                props.row.original.id_estado !== 7 ? (
+                  <RevertirSolicitud solicitud_compra={props.row.original} />
+                ) : (
+                  ""
+                )
               ) : (
                 ""
               )
@@ -115,7 +123,11 @@ export const SolicitudCompraTable: FC<Props> = ({ solicitudes }) => {
               ""
             )}
             {props.row.original.id_estado !== 15 ? (
-              <RechazarSolicitud solicitud_compra={props.row.original} />
+              props.row.original.id_estado !== 7 ? (
+                <RechazarSolicitud solicitud_compra={props.row.original} />
+              ) : (
+                ""
+              )
             ) : (
               ""
             )}

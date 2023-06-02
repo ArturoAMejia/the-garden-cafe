@@ -1,4 +1,4 @@
-import { AgregarProducto } from "@/components";
+import { AgregarProducto, EditarProducto } from "@/components";
 import { AdminLayout } from "@/components/Layout/AdminLayout";
 import { IngredienteTable } from "@/components/tables/inventario/IngredienteTable";
 import React from "react";

@@ -142,11 +142,11 @@ export const AceptarOrden: FC<Props> = ({ solicitud_compra }) => {
                       as="h3"
                       className="text-lg font-medium leading-6 text-gray-900"
                     >
-                      Aceptar Solicitud de Compra
+                      Generar Orden de Compra
                     </Dialog.Title>
                     <div className="mt-2">
                       <p className="text-sm text-gray-500">
-                        ¿Está seguro que quiere aceptar la solicitud de compra?
+                        ¿Está seguro que quiere generar la orden de compra?
                       </p>
                     </div>
                   </div>

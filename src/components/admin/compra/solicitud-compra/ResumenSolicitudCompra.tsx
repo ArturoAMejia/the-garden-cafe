@@ -82,12 +82,10 @@ export const ResumenSolicitudCompra: FC<Props> = ({
               {id_estado_solicitud === 14 ? (
                 <TableHeaderCell className="text-center">
                   Precio Total
-                  </TableHeaderCell>
-                  ) : (
-                    
-                    
-                    ""
-                    )}
+                </TableHeaderCell>
+              ) : (
+                ""
+              )}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -111,12 +109,20 @@ export const ResumenSolicitudCompra: FC<Props> = ({
                   (id_trabajador !== session?.user?.id_trabajador &&
                     session?.user.id_rol === 2) ||
                   (id_trabajador !== session?.user?.id_trabajador &&
-                    session?.user.id_rol === 5) ? (
+                    session?.user.id_rol === 5) ||
+                  (id_trabajador !== session?.user?.id_trabajador &&
+                    session?.user.id_rol === 7) ||
+                  (id_trabajador !== session?.user?.id_trabajador &&
+                    session?.user.id_rol === 8) ? (
                     // <h1 className="w-8 text-center"> {item.cantidad} </h1>
-                    <CantidadProducto
-                      producto={item}
-                      id_estado={id_estado_solicitud}
-                    />
+                    id_estado_solicitud === 7 ? (
+                      <h1 className="w-8 text-center"> {item.cantidad} </h1>
+                    ) : (
+                      <CantidadProducto
+                        producto={item}
+                        id_estado={id_estado_solicitud}
+                      />
+                    )
                   ) : (
                     <h1 className="w-8 text-center"> {item.cantidad} </h1>
                   )}
@@ -129,15 +135,25 @@ export const ResumenSolicitudCompra: FC<Props> = ({
                     (id_trabajador !== session?.user?.id_trabajador &&
                       session?.user.id_rol === 2) ||
                     (id_trabajador !== session?.user?.id_trabajador &&
-                      session?.user.id_rol === 5) ? (
-                      <button
-                        type="button"
-                        className="inline-flex  py-2 text-gray-400 hover:text-gray-500"
-                        onClick={() => dispatch(quitarProductoSolicitud(item))}
-                      >
-                        <TrashIcon className="h-4 w-4 text-black" />
-                        <span className="sr-only">Remove</span>
-                      </button>
+                      session?.user.id_rol === 5) ||
+                    (id_trabajador !== session?.user?.id_trabajador &&
+                      session?.user.id_rol === 7) ||
+                    (id_trabajador !== session?.user?.id_trabajador &&
+                      session?.user.id_rol === 8) ? (
+                      id_estado_solicitud === 7 ? (
+                        ""
+                      ) : (
+                        <button
+                          type="button"
+                          className="inline-flex  py-2 text-gray-400 hover:text-gray-500"
+                          onClick={() =>
+                            dispatch(quitarProductoSolicitud(item))
+                          }
+                        >
+                          <TrashIcon className="h-4 w-4 text-black" />
+                          <span className="sr-only">Remove</span>
+                        </button>
+                      )
                     ) : null}
                   </TableCell>
                 ) : (

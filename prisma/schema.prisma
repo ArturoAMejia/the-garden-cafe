@@ -65,6 +65,7 @@ model cat_estado {
   tipo_categoria             tipo_categoria[]
   detalle_pedido             detalle_pedido[]
   pedido_cocinero            pedido_cocinero[]
+  punto_pedido               punto_pedido[]
 }
 
 model categoria_impuesto {
@@ -363,6 +364,8 @@ model producto {
   detalle_pedido_ingrediente detalle_pedido_ingrediente[]
   producto_proveedor         producto_proveedor[]
   detalle_recepcion_compra   detalle_recepcion_compra[]
+  stock_seguridad            stock_seguridad[]
+  punto_pedido               punto_pedido[]
 }
 
 model coste_producto {
@@ -397,23 +400,29 @@ model producto_elaborado {
   detalle_venta              detalle_venta[]
 }
 
-// model punto_pedido {
-//   id          Int      @id @default(autoincrement())
-//   cat_estado  cat_estado @relation(fields: [id_estado], references: [id])
-//   id_estado   Int
-//   nombre      String
-//   descripcion String
+model stock_seguridad {
+  id                          Int      @id @default(autoincrement())
+  producto                    producto @relation(fields: [id_producto], references: [id])
+  id_producto                 Int      @unique
+  tiempo_entrega              Int
+  desviacion_estandar         Float
+  probabilidad_nivel_servicio Float
+  stock_seguridad             Float
+}
 
-// }
-
-// model stock_seguridad {
-//   id          Int      @id @default(autoincrement())
-//   producto   producto @relation(fields: [id_producto], references: [id])
-//   id_producto Int
-//   dias       Int
-//   desviacion_estandar Float
-
-// }
+model punto_pedido {
+  id                  Int        @id @default(autoincrement())
+  cat_estado          cat_estado @relation(fields: [id_estado], references: [id])
+  id_estado           Int
+  producto            producto   @relation(fields: [id_producto], references: [id])
+  id_producto         Int        @unique
+  desviacion_estandar Float
+  dias                Int
+  costo_producto      Float
+  semanas_trabajadas  Int
+  tasa_anual          Float
+  punto_pedido        Float
+}
 
 model detalle_producto_elaborado {
   producto              producto           @relation(fields: [id_producto], references: [id])

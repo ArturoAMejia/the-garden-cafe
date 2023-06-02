@@ -73,6 +73,7 @@ export const ResumenSolicitud: FC<Props> = ({ editar_solicitud, detalle }) => {
           reset();
         })
         .catch((error) => toast.error(error.data.message));
+        
     } else if (detalle?.id_estado === 14) {
       actualizarSolicitud({
         id: detalle.id,
@@ -145,6 +146,7 @@ export const ResumenSolicitud: FC<Props> = ({ editar_solicitud, detalle }) => {
                     onChange={(e) =>
                       dispatch(seleccionarProveedor(Number(e.target.value)))
                     }
+                    defaultChecked={detalle?.proveedor?.id}
                   >
                     {proveedores?.map((proveedor) => (
                       <option

@@ -7,7 +7,6 @@ import { actualizarCantidadRecepcionada } from "@/store/slices/compra";
 
 interface Props {
   producto: IProductoCart;
-
 }
 
 export const CantidadRecepcionada: FC<Props> = ({ producto }) => {
@@ -28,6 +27,8 @@ export const CantidadRecepcionada: FC<Props> = ({ producto }) => {
       className="block w-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
       onChange={(e) => handleNuevaCantidad(e.target.value)}
       defaultValue={producto.cantidad}
-    />
+      max={producto.cantidad}
+      min={0}
+      />
   );
 };

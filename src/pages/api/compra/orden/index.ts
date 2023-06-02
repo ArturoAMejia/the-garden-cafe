@@ -167,7 +167,7 @@ const crearOrdenCompra = async (
 
   await prisma.solicitud_compra.update({
     data: {
-      id_estado: 9,
+      id_estado: 7,
     },
     where: {
       id: id_solicitud_compra,

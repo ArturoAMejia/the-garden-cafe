@@ -8,7 +8,10 @@ import {
 } from "@tanstack/react-table";
 import { useMemo } from "react";
 import { IProducto } from "../../../interfaces";
-import { useObtenerMovimientoInventarioQuery } from "@/store/slices/inventario";
+import {
+  useObtenerInventarioQuery,
+  useObtenerStockSeguridadQuery,
+} from "@/store/slices/inventario";
 import {
   Table,
   TableBody,
@@ -17,45 +20,47 @@ import {
   TableHeaderCell,
   TableRow,
 } from "@tremor/react";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
 
 const columnHelper = createColumnHelper<any>();
-export const MovimientoInventarioTable = () => {
+
+export const StockSeguridadTable = () => {
   const columns = useMemo<ColumnDef<any, any>[]>(
     () => [
       columnHelper.accessor<"id", number>("id", {
-        header: "Código",
+        header: "ID",
         cell: (info) => info.getValue(),
       }),
       columnHelper.accessor<"producto", IProducto>("producto", {
         header: "Nombre",
         cell: (info) => info.getValue().nombre,
       }),
-      columnHelper.accessor<"tipo_movimiento", number>("tipo_movimiento", {
-        header: "Tipo de Movimiento",
+      columnHelper.accessor<"desviacion_estandar", number>(
+        "desviacion_estandar",
+        {
+          header: "Desviación Estándar",
+          cell: (info) => info.getValue(),
+        }
+      ),
+      columnHelper.accessor<"tiempo_entrega", number>("tiempo_entrega", {
+        header: "Tiempo de Entrega",
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor<"fecha_movimiento", Date>("fecha_movimiento", {
-        header: "Fecha Movimiento",
-        cell: (info) =>
-          format(new Date(info.getValue()), "EEEE dd 'de' MMMM 'del' yyyy", {
-            locale: es,
-          }),
+      columnHelper.accessor<"probabilidad", number>("probabilidad", {
+        header: "Probabilidad",
+        cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor<"cantidad", number>("cantidad", {
-        header: "Cantidad",
+      columnHelper.accessor<"stock_seguridad", number>("stock_seguridad", {
+        header: "Stock de Seguridad",
         cell: (info) => info.getValue(),
       }),
     ],
     []
   );
 
-  const { data: movimiento_inventario, isLoading } =
-    useObtenerMovimientoInventarioQuery();
+  const { data: stock_seguridad, isLoading } = useObtenerStockSeguridadQuery();
 
   const table = useReactTable({
-    data: movimiento_inventario!,
+    data: stock_seguridad!,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),

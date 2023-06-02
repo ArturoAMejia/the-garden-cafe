@@ -64,7 +64,7 @@ export const CrearRecepcionOrdenCompra: FC<Props> = ({ orden_compra }) => {
         <button
           type="button"
           onClick={openModal}
-          className="flex flex-row items-center gap-2 rounded-2xl bg-green-600 px-4  py-2 text-sm font-medium text-white hover:bg-green-500"
+          className="mt-4 flex flex-row items-center gap-2 rounded-2xl bg-green-600 px-4  py-2 text-sm font-medium text-white hover:bg-green-500"
         >
           Recepcionar Orden de Compra
           <CheckIcon className="h-4 w-4" />

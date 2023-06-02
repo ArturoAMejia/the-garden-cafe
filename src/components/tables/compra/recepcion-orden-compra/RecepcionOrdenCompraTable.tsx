@@ -9,8 +9,6 @@ import {
   TableBody,
   TableCell,
   Text,
-  Divider,
-  Subtitle,
 } from "@tremor/react";
 
 import { IProductoCart } from "@/interfaces/producto";
@@ -20,8 +18,6 @@ import { actualizarCantidadProducto } from "@/store/slices/pedido/pedidoSlice";
 
 import { useSession } from "next-auth/react";
 
-import { ICatEstado } from "@/interfaces";
-
 import { quitarProductoSolicitud } from "@/store/slices/compra";
 import { AppState } from "@/store/store";
 import { CantidadRecepcionada } from "@/components/admin/compra/recepcion-orden-compra/CantidadRecepcionada";
@@ -30,14 +26,15 @@ interface Props {
   productos: IProductoCart[];
   id_estado_solicitud?: number;
   id_trabajador?: number;
+  detalle_recepcion?: any;
 }
 
 export const RecepcionOrdenCompraProducto: FC<Props> = ({
   productos,
   id_estado_solicitud,
   id_trabajador,
+  detalle_recepcion,
 }) => {
-  console.log(productos);
   const dispatch = useAppDispatch();
 
   const { data: session } = useSession();
@@ -90,45 +87,75 @@ export const RecepcionOrdenCompraProducto: FC<Props> = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {productos.map((item: any) => (
-              <TableRow key={item.nombre} className="text-center">
-                <TableCell className="text-center">{item.id}</TableCell>
-                <TableCell className="text-center">
-                  <Text>{item.nombre}</Text>
-                </TableCell>
-                <TableCell className="text-center">
-                  <Text>{item.descripcion}</Text>
-                </TableCell>
-                <TableCell className="text-center">
-                  <Text>{item?.unidad_medida}</Text>
-                </TableCell>
+            {id_estado_solicitud === 17 ? (
+              <>
+                {/* Recepcionada */}
+                {detalle_recepcion?.map((item: any) => (
+                  <TableRow key={item.producto.nombre} className="text-center">
+                    <TableCell className="text-center">
+                      {item.producto.id}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Text>{item.producto.nombre}</Text>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Text>{item.producto.descripcion}</Text>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Text>{item?.producto.unidad_medida.nombre}</Text>
+                    </TableCell>
 
-                <TableCell className="flex justify-center">
-                  {id_trabajador === session?.user?.id_trabajador ||
-                  (id_trabajador !== session?.user?.id_trabajador &&
-                    session?.user.id_rol === 1) ||
-                  (id_trabajador !== session?.user?.id_trabajador &&
-                    session?.user.id_rol === 2) ||
-                  (id_trabajador !== session?.user?.id_trabajador &&
-                    session?.user.id_rol === 5) ? (
-                    <h1 className="w-8 text-center"> {item.cantidad} </h1>
-                  ) : (
-                    <h1 className="w-8 text-center"> {item.cantidad} </h1>
-                  )}
-                </TableCell>
-                {/* <TableCell className="text-center">{item.precio}</TableCell> */}
-                {/* {id_estado_solicitud === 14 ? (
-                  <TableCell className="text-center">
-                    <Text>${item.cantidad * Number(item.precio)}</Text>
-                  </TableCell>
-                ) : (
-                  ""
-                )} */}
-                <TableCell>
-                  <CantidadRecepcionada producto={item} />
-                </TableCell>
-              </TableRow>
-            ))}
+                    <TableCell className="flex justify-center">
+                      <h1 className="w-8 text-center">
+                        {" "}
+                        {item.cantidad_solicitada}{" "}
+                      </h1>
+                    </TableCell>
+                    <TableCell>
+                      <h1 className="w-8 text-center">
+                        {" "}
+                        {item.cantidad_recibida}{" "}
+                      </h1>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </>
+            ) : (
+              <>
+                {/* No recepcionada */}
+                {productos.map((item: any) => (
+                  <TableRow key={item.nombre} className="text-center">
+                    <TableCell className="text-center">{item.id}</TableCell>
+                    <TableCell className="text-center">
+                      <Text>{item.nombre}</Text>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Text>{item.descripcion}</Text>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Text>{item?.unidad_medida}</Text>
+                    </TableCell>
+
+                    <TableCell className="flex justify-center">
+                      {id_trabajador === session?.user?.id_trabajador ||
+                      (id_trabajador !== session?.user?.id_trabajador &&
+                        session?.user.id_rol === 1) ||
+                      (id_trabajador !== session?.user?.id_trabajador &&
+                        session?.user.id_rol === 2) ||
+                      (id_trabajador !== session?.user?.id_trabajador &&
+                        session?.user.id_rol === 5) ? (
+                        <h1 className="w-8 text-center"> {item.cantidad} </h1>
+                      ) : (
+                        <h1 className="w-8 text-center"> {item.cantidad} </h1>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <CantidadRecepcionada producto={item} />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </>
+            )}
           </TableBody>
         </Table>
       </Card>

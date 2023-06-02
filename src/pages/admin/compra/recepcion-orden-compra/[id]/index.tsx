@@ -15,9 +15,15 @@ import { CrearRecepcionOrdenCompra } from "@/components/admin/compra/recepcion-o
 
 interface Props {
   detalle: IOrdenCompra;
+  recepcion?: any;
+  detalle_recepcion?: any;
 }
-const DetalleSolicitudCompra: FC<Props> = ({ detalle }) => {
-  console.log(detalle.detalle_orden_compra);
+const DetalleSolicitudCompra: FC<Props> = ({
+  detalle,
+  recepcion,
+  detalle_recepcion,
+}) => {
+  console.log(detalle_recepcion);
 
   const { productos } = useAppSelector((state: AppState) => state.compra);
   const dispatch = useAppDispatch();
@@ -92,11 +98,16 @@ const DetalleSolicitudCompra: FC<Props> = ({ detalle }) => {
         <div className="w-full">
           <RecepcionOrdenCompraProducto
             productos={productos}
+            detalle_recepcion={detalle_recepcion}
             id_estado_solicitud={detalle.id_estado}
           />
         </div>
-        <CrearRecepcionOrdenCompra orden_compra={detalle} />
       </div>
+      {detalle.id_estado === 13 ? (
+        <CrearRecepcionOrdenCompra orden_compra={detalle} />
+      ) : (
+        ""
+      )}
     </AdminLayout>
   );
 };
@@ -157,9 +168,41 @@ export const getServerSideProps: GetServerSideProps = async ({
     },
   });
 
+  let recepcion = null;
+  let detalle_recepcion = null;
+  if (detalle.id_estado === 17) {
+    recepcion = await prisma.recepcion_compra.findFirst({
+      where: {
+        id_orden_compra: Number(id),
+      },
+    });
+
+    detalle_recepcion = await prisma.detalle_recepcion_compra.findMany({
+      select: {
+        id_producto: true,
+        producto: {
+          select: {
+            id: true,
+            nombre: true,
+            descripcion: true,
+            unidad_medida: {
+              select: {
+                nombre: true,
+              },
+            },
+          },
+        },
+        cantidad_recibida: true,
+        cantidad_solicitada: true,
+      },
+    });
+  }
+
   return {
     props: {
       detalle: JSON.parse(JSON.stringify(detalle)),
+      recepcion: JSON?.parse(JSON.stringify(recepcion)),
+      detalle_recepcion: JSON?.parse(JSON.stringify(detalle_recepcion)),
     },
   };
 };

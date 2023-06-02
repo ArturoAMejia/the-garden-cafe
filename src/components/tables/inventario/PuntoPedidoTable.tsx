@@ -8,7 +8,7 @@ import {
 } from "@tanstack/react-table";
 import { useMemo } from "react";
 import { IProducto } from "../../../interfaces";
-import { useObtenerMovimientoInventarioQuery } from "@/store/slices/inventario";
+import { useObtenerPuntoPedidoQuery } from "@/store/slices/inventario";
 import {
   Table,
   TableBody,
@@ -17,45 +17,58 @@ import {
   TableHeaderCell,
   TableRow,
 } from "@tremor/react";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
 
 const columnHelper = createColumnHelper<any>();
-export const MovimientoInventarioTable = () => {
+
+export const PuntoPedidoTable = () => {
   const columns = useMemo<ColumnDef<any, any>[]>(
     () => [
       columnHelper.accessor<"id", number>("id", {
-        header: "Código",
+        header: "ID",
         cell: (info) => info.getValue(),
       }),
       columnHelper.accessor<"producto", IProducto>("producto", {
         header: "Nombre",
         cell: (info) => info.getValue().nombre,
       }),
-      columnHelper.accessor<"tipo_movimiento", number>("tipo_movimiento", {
-        header: "Tipo de Movimiento",
+      columnHelper.accessor<"desviacion_estandar", number>(
+        "desviacion_estandar",
+        {
+          header: "Desviación Estándar",
+          cell: (info) => info.getValue(),
+        }
+      ),
+      columnHelper.accessor<"dias", number>("dias", {
+        header: "Días Trabajados",
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor<"fecha_movimiento", Date>("fecha_movimiento", {
-        header: "Fecha Movimiento",
-        cell: (info) =>
-          format(new Date(info.getValue()), "EEEE dd 'de' MMMM 'del' yyyy", {
-            locale: es,
-          }),
+      columnHelper.accessor<"costo_producto", number>("costo_producto", {
+        header: "Costo del Producto",
+        cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor<"cantidad", number>("cantidad", {
-        header: "Cantidad",
+      columnHelper.accessor<"semanas_trabajadas", number>(
+        "semanas_trabajadas",
+        {
+          header: "Semanas trabajadas",
+          cell: (info) => info.getValue(),
+        }
+      ),
+      columnHelper.accessor<"tasa_anual", number>("tasa_anual", {
+        header: "Tasa Anual %",
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor<"punto_pedido", number>("punto_pedido", {
+        header: "Punto de Pedido",
         cell: (info) => info.getValue(),
       }),
     ],
     []
   );
 
-  const { data: movimiento_inventario, isLoading } =
-    useObtenerMovimientoInventarioQuery();
+  const { data: punto_pedido, isLoading } = useObtenerPuntoPedidoQuery();
 
   const table = useReactTable({
-    data: movimiento_inventario!,
+    data: punto_pedido,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),

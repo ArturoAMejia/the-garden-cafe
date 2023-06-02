@@ -1,25 +1,10 @@
-import { useContext, useEffect, useState } from "react";
+import { useState } from "react";
 import { AdminLayout } from "../../../components/Layout/AdminLayout";
 import { InventarioTable } from "../../../components/tables/inventario/InventarioTable";
-import { AdminContext } from "../../../context";
+
 import { AgregarInventario } from "../../../components/admin/inventario/CrearInventario";
+import { Tab, TabList } from "@tremor/react";
 import {
-  BarList,
-  Bold,
-  Card,
-  Flex,
-  Tab,
-  TabList,
-  Title,
-  Text,
-  CategoryBar,
-  Legend,
-  Metric,
-} from "@tremor/react";
-import {
-  BuildingStorefrontIcon,
-  ShoppingBagIcon,
-  HomeIcon,
   ArchiveBoxArrowDownIcon,
   InboxStackIcon,
   ArchiveBoxIcon,
@@ -28,9 +13,12 @@ import {
 } from "@heroicons/react/24/outline";
 import { InventarioABCTable } from "@/components/tables/inventario/InventarioABCTable";
 import PoliticasInventarioStats from "@/components/admin/inventario/PoliticasInventarioStats";
-import { useObtenerPoliticasInventarioQuery } from "@/store/slices/inventario";
 import { ActualizarPoliticasABC } from "@/components/admin/inventario/ActualizarPoliticasABC";
 import { MovimientoInventarioTable } from "@/components/tables/inventario/MovimientoInventarioTable";
+import { CrearStockSeguridad } from "@/components/admin/inventario/CrearStockSeguridad";
+import { PuntoPedidoTable } from "@/components/tables/inventario/PuntoPedidoTable";
+import { CrearPuntoPedido } from "@/components/admin/inventario/CrearPuntoPedido";
+import { StockSeguridadTable } from "@/components/tables/inventario/StockSeguridadTable";
 
 const InventarioIndex = () => {
   const [showCard, setShowCard] = useState(1);
@@ -47,7 +35,17 @@ const InventarioIndex = () => {
         </div>
 
         <div className="my-4 px-1 sm:mt-0 sm:ml-16 sm:flex-none">
-          <AgregarInventario />
+          {showCard === 1 ? (
+            <AgregarInventario />
+          ) : showCard === 2 ? (
+            ""
+          ) : showCard === 3 ? (
+            <CrearStockSeguridad />
+          ) : showCard === 4 ? (
+            <CrearPuntoPedido />
+          ) : (
+            ""
+          )}
         </div>
       </div>
       <TabList
@@ -57,7 +55,7 @@ const InventarioIndex = () => {
       >
         <Tab value="1" text="Inventario de Productos" icon={InboxIcon} />
         <Tab value="2" text="Inventario ABC" icon={ArchiveBoxArrowDownIcon} />
-        <Tab value="3" text="MRP" icon={InboxStackIcon} />
+        <Tab value="3" text="Stock de Seguridad" icon={InboxStackIcon} />
         <Tab value="4" text="Punto de Pedido" icon={ArchiveBoxIcon} />
         <Tab value="5" text="Movimiento de Inventario" icon={FolderMinusIcon} />
       </TabList>
@@ -74,9 +72,12 @@ const InventarioIndex = () => {
         </>
       ) : // TODO
       showCard === 3 ? (
-        <p>MRP</p>
+        <StockSeguridadTable />
       ) : showCard === 4 ? (
-        <p>Punto de Pedido</p>
+        <>
+          <div className="flex justify-end"></div>
+          <PuntoPedidoTable />
+        </>
       ) : (
         // <p>Movimiento de Inventario</p>
         <MovimientoInventarioTable />

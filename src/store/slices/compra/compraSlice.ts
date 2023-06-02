@@ -17,6 +17,7 @@ const initialState: CompraState = {
   impuesto: 0,
   subtotal: 0,
   total: 0,
+  id_proveedor: 1,
 };
 
 export const compraSlice = createSlice({

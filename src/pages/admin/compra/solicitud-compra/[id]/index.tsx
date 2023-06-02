@@ -4,7 +4,7 @@ import { prisma } from "@/database";
 import { AdminLayout } from "@/components/Layout/AdminLayout";
 import { ISolicitudCompra } from "@/interfaces";
 import { format } from "date-fns";
-import { es } from "date-fns/locale";
+import { es, id } from "date-fns/locale";
 import { ResumenSolicitudCompra } from "@/components/admin/compra/solicitud-compra/ResumenSolicitudCompra";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
 import { AppState } from "@/store/store";
@@ -16,15 +16,16 @@ import { ResumenSolicitud } from "@/components/admin/compra/solicitud-compra/Res
 import { AceptarOrden, FilterBar } from "@/components";
 import { useObtenerIngredientesQuery } from "@/store/slices/inventario";
 import { AceptarSolicitudCompra } from "@/components/admin/compra/solicitud-compra/AceptarSolicitudCompra";
+import { useSession } from "next-auth/react";
 
 interface Props {
   detalle: ISolicitudCompra;
 }
 const DetalleSolicitudCompra: FC<Props> = ({ detalle }) => {
-  console.log(detalle.detalle_solicitud_compra);
-
   const { productos } = useAppSelector((state: AppState) => state.compra);
   const dispatch = useAppDispatch();
+
+  const { data: session } = useSession();
 
   const { data: prod, isLoading } = useObtenerIngredientesQuery();
 
@@ -92,18 +93,22 @@ const DetalleSolicitudCompra: FC<Props> = ({ detalle }) => {
         </div>
         {/* // TODO Mostrar unicamente a los roles asignados  */}
         {detalle.id_estado !== 14 ? (
-          <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-            {isLoading ? (
-              <>Cargando...</>
-            ) : (
-              <FilterBar
-                isIngredient={true}
-                isPlate={false}
-                productos={prod!}
-                añadirProductoOrden={añadirProductoSolicitud}
-              />
-            )}
-          </div>
+          detalle.id_estado !== 7 ? (
+            <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+              {isLoading ? (
+                <>Cargando...</>
+              ) : (
+                <FilterBar
+                  isIngredient={true}
+                  isPlate={false}
+                  productos={prod!}
+                  añadirProductoOrden={añadirProductoSolicitud}
+                />
+              )}
+            </div>
+          ) : (
+            ""
+          )
         ) : (
           ""
         )}
@@ -115,11 +120,25 @@ const DetalleSolicitudCompra: FC<Props> = ({ detalle }) => {
             productos={productos}
             id_estado_solicitud={detalle.id_estado}
           />
-          <AceptarOrden solicitud_compra={detalle} />
+          {session?.user.id_rol === 1 ||
+          session?.user.id_rol === 2 ||
+          session?.user.id_rol === 8 ? (
+            detalle.id_estado === 14 ? (
+              <AceptarOrden solicitud_compra={detalle} />
+            ) : (
+              ""
+            )
+          ) : (
+            ""
+          )}
         </div>
-        <div className="w-96">
-          <ResumenSolicitud editar_solicitud={true} detalle={detalle} />
-        </div>
+        {detalle.id_estado !== 7 ? (
+          <div className="w-96">
+            <ResumenSolicitud editar_solicitud={true} detalle={detalle} />
+          </div>
+        ) : (
+          ""
+        )}
       </div>
     </AdminLayout>
   );
