@@ -73,7 +73,6 @@ export const ResumenSolicitud: FC<Props> = ({ editar_solicitud, detalle }) => {
           reset();
         })
         .catch((error) => toast.error(error.data.message));
-        
     } else if (detalle?.id_estado === 14) {
       actualizarSolicitud({
         id: detalle.id,
@@ -253,7 +252,7 @@ export const ResumenSolicitud: FC<Props> = ({ editar_solicitud, detalle }) => {
                 ? editar_solicitud
                   ? "Actualizar Solicitud"
                   : "Realizar Solicitud"
-                : "Establcer precios de compra"}
+                : "Establecer precios de compra"}
             </button>
           </div>
         </div>

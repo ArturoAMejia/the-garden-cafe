@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 
 import { useAppDispatch } from "@/hooks/hooks";
 
@@ -10,13 +10,18 @@ interface Props {
 }
 
 export const CantidadRecepcionada: FC<Props> = ({ producto }) => {
+  const [value, setValue] = useState(producto.cantidad);
   const dispatch = useAppDispatch();
 
+  console.log(producto.cantidad);
+  console.log(value);
+
   const handleNuevaCantidad = (nuevo_valor) => {
+    setValue(nuevo_valor);
     dispatch(
       actualizarCantidadRecepcionada({
         ...producto,
-        cantidad_recepcionada: parseInt(nuevo_valor),
+        cantidad_recepcionada: Number(value),
       })
     );
   };
@@ -26,9 +31,9 @@ export const CantidadRecepcionada: FC<Props> = ({ producto }) => {
       type="number"
       className="block w-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
       onChange={(e) => handleNuevaCantidad(e.target.value)}
-      defaultValue={producto.cantidad}
+      defaultValue={0}
       max={producto.cantidad}
       min={0}
-      />
+    />
   );
 };

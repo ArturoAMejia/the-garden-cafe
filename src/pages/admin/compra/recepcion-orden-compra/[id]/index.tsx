@@ -195,6 +195,9 @@ export const getServerSideProps: GetServerSideProps = async ({
         cantidad_recibida: true,
         cantidad_solicitada: true,
       },
+      where: {
+        id_recepcion_compra: recepcion?.id,
+      },
     });
   }
 
