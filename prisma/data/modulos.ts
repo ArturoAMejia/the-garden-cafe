@@ -195,6 +195,11 @@ export const sub_modulos = [
     nombre: "Grupo",
     url: "/admin/user/grupos",
   },
+  {
+    id_modulo: 5,
+    nombre: "Cajas",
+    url: "/admin/caja",
+  },
 ];
 
 export const roles_modulos = [
@@ -448,6 +453,12 @@ export const rol_sub_modulos = [
   {
     id_rol: 1,
     id_modulo: 5,
+    id_sub_modulo: 31,
+    nombre: "Caja",
+  },
+  {
+    id_rol: 1,
+    id_modulo: 5,
     id_sub_modulo: 24,
     nombre: "Apertura de Caja",
   },
@@ -635,6 +646,12 @@ export const rol_sub_modulos = [
   {
     id_rol: 2,
     id_modulo: 5,
+    id_sub_modulo: 31,
+    nombre: "Caja",
+  },
+  {
+    id_rol: 2,
+    id_modulo: 5,
     id_sub_modulo: 24,
     nombre: "Apertura de Caja",
   },
@@ -706,6 +723,12 @@ export const rol_sub_modulos = [
   },
   // ? Rol de Cajero
   // ! Modulo de caja
+  {
+    id_rol: 5,
+    id_modulo: 5,
+    id_sub_modulo: 31,
+    nombre: "Caja",
+  },
   {
     id_rol: 5,
     id_modulo: 5,

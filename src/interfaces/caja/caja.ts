@@ -9,4 +9,5 @@ export interface ICaja {
   trabajador?: ITrabajador;
   tipo_caja: string;
   fecha_registro: Date;
+  saldo_actual: number;
 }

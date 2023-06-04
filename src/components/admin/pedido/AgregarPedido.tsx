@@ -104,7 +104,7 @@ export const AgregarPedido = () => {
                   </Dialog.Title>
 
                   <form onSubmit={handleSubmit(onCrearPedido)}>
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-2 gap-4">
                       {/* Cliente */}
                       <div className="mt-2">
                         <label

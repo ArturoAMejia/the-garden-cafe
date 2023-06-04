@@ -18,7 +18,7 @@ import {
 } from "@tremor/react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { useObtenerCajasQuery } from "@/store/slices/caja/cajaApi";
+import { useObtenerCajasQuery } from "@/store/slices/caja";
 
 const columnHelper = createColumnHelper<ICaja>();
 
@@ -42,6 +42,10 @@ export const CajasTable = () => {
           format(new Date(info.getValue()), "EEEE dd 'de' MMMM 'del' yyyy", {
             locale: es,
           }),
+      }),
+      columnHelper.accessor<"saldo_actual", number>("saldo_actual", {
+        header: "Saldo Actual",
+        cell: (info) => `$${info.getValue().toFixed(2)}`,
       }),
       columnHelper.accessor<"cat_estado", ICatEstado>("cat_estado", {
         header: "Estado",

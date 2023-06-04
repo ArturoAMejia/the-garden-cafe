@@ -215,6 +215,7 @@ model comprobante {
   orden_compra     orden_compra[]
   compra           compra[]
   venta            venta[]
+  movimiento_caja  movimiento_caja[]
 }
 
 model cat_forma_pago {
@@ -869,6 +870,7 @@ model caja {
   id_estado       Int
   tipo_caja       String
   fecha_registro  DateTime
+  saldo_actual    Float             @default(0)
   apertura_caja   apertura_caja[]
   movimiento_caja movimiento_caja[]
   arqueo_caja     arqueo_caja[]
@@ -899,16 +901,18 @@ model detalle_apertura_caja {
 }
 
 model movimiento_caja {
-  id               Int        @id @default(autoincrement())
-  caja             caja       @relation(fields: [id_caja], references: [id])
+  id               Int         @id @default(autoincrement())
+  caja             caja        @relation(fields: [id_caja], references: [id])
   id_caja          Int
-  trabajador       trabajador @relation(fields: [id_trabajador], references: [id])
+  comprobante      comprobante @relation(fields: [id_comprobante], references: [id])
+  id_comprobante   Int
+  trabajador       trabajador  @relation(fields: [id_trabajador], references: [id])
   id_trabajador    Int
-  moneda           moneda     @relation(fields: [id_moneda], references: [id])
+  moneda           moneda      @relation(fields: [id_moneda], references: [id])
   id_moneda        Int
-  num_movimiento   String     @default(cuid())
+  num_movimiento   String      @default(cuid())
   tipo_movimiento  String
-  fecha_movimiento DateTime
+  fecha_movimiento DateTime    @default(dbgenerated("CURRENT_DATE"))
   concepto         String
   monto            Float
 }

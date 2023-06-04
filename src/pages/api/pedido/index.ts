@@ -191,7 +191,6 @@ const registerPedido = async (
         id_producto: p.id_producto,
         cantidad: p.cantidad * producto.cantidad,
         tipo_movimiento: "Salida",
-        fecha_movimiento: new Date(),
       })),
     });
   });

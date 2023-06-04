@@ -3,11 +3,12 @@ import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import React, { FC, Fragment, useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { AdminContext, AuthContext, CartContext } from "../../../context";
+import { AdminContext, AuthContext } from "../../../context";
 import { ICaja, IMoneda, IPedido } from "../../../interfaces";
 import tgcApi from "../../../api/tgcApi";
 import axios from "axios";
-import { useCrearVentaMutation } from "@/store/slices/venta";
+
+import { useCrearCierreCajaMutation } from "@/store/slices/caja";
 
 type FormData = {
   id_caja: number;
@@ -21,29 +22,17 @@ interface Props {
 }
 
 export const CerrarCaja: FC<Props> = ({ pedido, cajas }) => {
-  const { cargarPedido, subtotal } = useContext(CartContext);
+
   const { monedas, formas_pago } = useContext(AdminContext);
 
-  const [crearVenta] = useCrearVentaMutation();
+  const [cerrarCaja] = useCrearCierreCajaMutation();
 
   const { user } = useContext(AuthContext);
 
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
 
-  const openModal = () => {
-    // cargarPedido(
-    //   pedido.detalle_pedido.map((producto: any) => ({
-    //     id: producto.id_producto,
-    //     precio: producto.precio,
-    //     nombre: producto.producto.nombre,
-    //     descripcion: producto.producto.descripcion,
-    //     imagen: producto.producto.imagen,
-    //     cantidad: producto.cantidad,
-    //   }))
-    // );
-    setIsOpen(!isOpen);
-  };
+  const openModal = () => setIsOpen(!isOpen);
 
   const { register, handleSubmit, reset } = useForm<FormData>();
 
@@ -167,7 +156,6 @@ export const CerrarCaja: FC<Props> = ({ pedido, cajas }) => {
                             {monedas.map((moneda: IMoneda) => (
                               <option key={moneda.id} value={moneda.id}>
                                 {moneda.nombre}
-
                               </option>
                             ))}
                           </select>

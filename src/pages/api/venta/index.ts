@@ -93,8 +93,6 @@ const crearVenta = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     pago_cliente,
   } = req.body;
 
-  console.log(req.body);
-
   if (
     !id_cliente ||
     !tipo_venta ||
@@ -167,6 +165,36 @@ const crearVenta = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
       monto: producto.cantidad * producto.precio,
       precio: producto.precio,
     })),
+  });
+
+  const apertura_caja = await prisma.apertura_caja.findFirst({
+    where: {
+      id_caja: caja.id,
+      id_estado: 1,
+    },
+  });
+
+  await prisma.movimiento_caja.create({
+    data: {
+      id_caja: caja.id,
+      id_trabajador,
+      concepto: "Venta",
+      tipo_movimiento: "Ingreso",
+      monto: venta.total,
+      id_comprobante: comprobante.id,
+      id_moneda: apertura_caja.id_moneda,
+    },
+  });
+
+  await prisma.caja.update({
+    where: {
+      id: caja.id,
+    },
+    data: {
+      saldo_actual: {
+        increment: venta.total,
+      },
+    },
   });
   await prisma.$disconnect();
   return res.status(201).json(venta);

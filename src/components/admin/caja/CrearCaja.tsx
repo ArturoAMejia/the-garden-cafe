@@ -1,4 +1,4 @@
-import React, { FC, Fragment, useState } from "react";
+import React, { Fragment, useState } from "react";
 import { Transition, Dialog } from "@headlessui/react";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { useForm } from "react-hook-form";
@@ -6,7 +6,6 @@ import toast from "react-hot-toast";
 
 import { useSession } from "next-auth/react";
 import { useCrearCajaMutation } from "@/store/slices/caja/cajaApi";
-import { useObtenerMonedasQuery } from "@/store/slices/catalogos";
 
 type FormData = {
   tipo_caja: string;
@@ -25,20 +24,22 @@ export const CrearCaja = () => {
   const { register, handleSubmit, reset } = useForm<FormData>();
 
   const onAceptarSolicitud = async ({ tipo_caja }: FormData) => {
-    await crearCaja({
-      tipo_caja,
-      id_trabajador: session?.user.id_trabajador,
-    })
-      .unwrap()
-      .then(() => {
-        toast.success("Caja creada correctamente.");
-        closeModal();
-        reset();
+    toast.promise(
+      crearCaja({
+        tipo_caja,
+        id_trabajador: session?.user.id_trabajador,
       })
-      .catch((error) => {
-        toast.error(error.response?.data.message);
-        return;
-      });
+        .unwrap()
+        .then(() => {
+          closeModal();
+          reset();
+        }),
+      {
+        loading: "Creando caja...",
+        success: () => "Caja creada correctamente",
+        error: () => "No se pudo crear la caja",
+      }
+    );
   };
 
   return (
@@ -78,7 +79,7 @@ export const CrearCaja = () => {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="h-auto w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="h-auto w-full max-w-sm transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title
                     as="h3"
                     className="text-xl font-bold leading-6 text-gray-900"
@@ -90,7 +91,7 @@ export const CrearCaja = () => {
                     className="h-3/4 w-full"
                     onSubmit={handleSubmit(onAceptarSolicitud)}
                   >
-                    <div className="flex flex-col gap-4 md:grid md:grid-cols-3">
+                    <div className="">
                       {/* Tipo de Caja */}
                       <div className="mt-2">
                         <label
@@ -103,9 +104,7 @@ export const CrearCaja = () => {
                           <input
                             type="text"
                             id="tipo_caja"
-                            {...register("tipo_caja", {
-                              valueAsNumber: true,
-                            })}
+                            {...register("tipo_caja")}
                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                           />
                         </div>

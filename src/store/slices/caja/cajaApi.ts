@@ -1,8 +1,14 @@
-import { IAperturaCaja, ICaja, ICatFormaPago, IMoneda } from "@/interfaces";
+import {
+  IAperturaCaja,
+  IArqueoCaja,
+  ICaja,
+  ICierreCaja,
+  IMovimientoCaja,
+} from "@/interfaces";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-export const catalogosApi = createApi({
-  reducerPath: "catalogosApi",
+export const cajaApi = createApi({
+  reducerPath: "cajaApi",
   baseQuery: fetchBaseQuery({
     baseUrl: "/api",
   }),
@@ -14,7 +20,7 @@ export const catalogosApi = createApi({
     }),
     crearCaja: builder.mutation<ICaja, any>({
       query: (caja) => ({
-        url: "/caja/apertura",
+        url: "/caja",
         method: "POST",
         body: caja,
       }),
@@ -46,36 +52,36 @@ export const catalogosApi = createApi({
         method: "POST",
         body: moneda,
       }),
-      invalidatesTags: ["Apertura"],
+      invalidatesTags: ["Apertura", "Caja"],
     }),
-    // obtenerFormasPago: builder.query<ICatFormaPago[], any>({
-    //   query: () => "/catalogos/forma-pago",
-    //   providesTags: ["Forma Pago"],
-    // }),
-    // crearFormaPago: builder.mutation<ICatFormaPago, any>({
-    //   query: (forma_pago) => ({
-    //     url: "/catalogos/forma-pago",
-    //     method: "POST",
-    //     body: forma_pago,
-    //   }),
-    //   invalidatesTags: ["Forma Pago"],
-    // }),
-    // actualizarFormaPago: builder.mutation<ICatFormaPago, any>({
-    //   query: (forma_pago) => ({
-    //     url: "/catalogos/forma-pago",
-    //     method: "PUT",
-    //     body: forma_pago,
-    //   }),
-    //   invalidatesTags: ["Forma Pago"],
-    // }),
-    // desactivarFormaPago: builder.mutation<number, any>({
-    //   query: (id) => ({
-    //     url: "/catalogos/forma-pago",
-    //     method: "PATCH",
-    //     body: id,
-    //   }),
-    //   invalidatesTags: ["Forma Pago"],
-    // }),
+    obtenerMovimientoCaja: builder.query<IMovimientoCaja[], void>({
+      query: () => "/caja/movimiento",
+      providesTags: ["Movimiento"],
+    }),
+    obtenerCierresCaja: builder.query<ICierreCaja[], void>({
+      query: () => "/caja/cierre",
+      providesTags: ["Cierre"],
+    }),
+    crearCierreCaja: builder.mutation<ICierreCaja, any>({
+      query: (cierre) => ({
+        url: "/caja/cierre",
+        method: "POST",
+        body: cierre,
+      }),
+      invalidatesTags: ["Cierre", "Caja"],
+    }),
+    obtenerArqueoCaja: builder.query<IArqueoCaja[], void>({
+      query: () => "/caja/arqueo",
+      providesTags: ["Arqueo"],
+    }),
+    crearArqueoCaja: builder.mutation<IArqueoCaja, any>({
+      query: (arqueo) => ({
+        url: "/caja/arqueo",
+        method: "POST",
+        body: arqueo,
+      }),
+      invalidatesTags: ["Arqueo", "Caja"],
+    }),
   }),
 });
 
@@ -85,12 +91,16 @@ export const {
   useCrearCajaMutation,
   useActualizarCajaMutation,
   useDesactivarCajaMutation,
-  
+  // Apertura Caja
   useObtenerAperturaCajaQuery,
   useCrearAperturaCajaMutation,
-  // Formas de Pago
-  // useObtenerFormasPagoQuery,
-  // useCrearFormaPagoMutation,
-  // useActualizarFormaPagoMutation,
-  // useDesactivarFormaPagoMutation,
-} = catalogosApi;
+  // Cierre Caja
+  useObtenerCierresCajaQuery,
+  useCrearCierreCajaMutation,
+  // Arqueo Caja
+  useObtenerArqueoCajaQuery,
+  useCrearArqueoCajaMutation,
+
+  // Movimiento de caja
+  useObtenerMovimientoCajaQuery,
+} = cajaApi;

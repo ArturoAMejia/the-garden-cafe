@@ -106,7 +106,6 @@ const crearRecepcionOrdenCompra = async (
   await prisma.trans_inventario.createMany({
     data: productos.map((producto: any) => ({
       id_producto: producto.id,
-      fecha_movimiento: new Date(),
       tipo_movimiento: "Entrada",
       cantidad: producto.cantidad_recepcionada,
     })),

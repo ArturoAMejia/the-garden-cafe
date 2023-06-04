@@ -9,6 +9,8 @@ import { authApi } from "./slices/auth";
 import { pedidoApi } from "./slices/pedido";
 import { negocioApi } from "./slices/negocio";
 import { cartSlice } from "./slices/cart";
+import { cajaApi } from "./slices/caja";
+import { cajaSlice } from "./slices/caja/cajaSlice";
 
 export function makeStore() {
   return configureStore({
@@ -21,10 +23,12 @@ export function makeStore() {
       [authApi.reducerPath]: authApi.reducer,
       [pedidoApi.reducerPath]: pedidoApi.reducer,
       [negocioApi.reducerPath]: negocioApi.reducer,
+      [cajaApi.reducerPath]: cajaApi.reducer,
       // ! Slice Reducers
       pedido: pedidoSlice.reducer,
       compra: compraSlice.reducer,
       cart: cartSlice.reducer,
+      caja: cajaSlice.reducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat([
@@ -35,6 +39,7 @@ export function makeStore() {
         authApi.middleware,
         pedidoApi.middleware,
         negocioApi.middleware,
+        cajaApi.middleware,
       ]),
   });
 }
