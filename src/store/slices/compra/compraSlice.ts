@@ -8,6 +8,7 @@ interface CompraState {
   total: number;
   impuesto: number;
   descuento: number;
+  id_proveedor?: number;
 }
 const initialState: CompraState = {
   productos: [],
@@ -16,6 +17,7 @@ const initialState: CompraState = {
   impuesto: 0,
   subtotal: 0,
   total: 0,
+  id_proveedor: 1,
 };
 
 export const compraSlice = createSlice({
@@ -69,6 +71,63 @@ export const compraSlice = createSlice({
         state.subtotal +
         state.subtotal * Number(process.env.NEXT_PUBLIC_TAX_RATE);
     },
+    actualizarProductoCantidad: (state, action) => {
+      const { id } = action.payload;
+
+      state.productos = state.productos.map((prod) => {
+        if (prod.id !== id) return prod;
+
+        return {
+          ...action.payload,
+        };
+      });
+      state.subtotal = state.productos.reduce(
+        (acc, p) => acc + p.precio! * p.cantidad!,
+        0
+      );
+      state.total =
+        state.subtotal +
+        state.subtotal * Number(process.env.NEXT_PUBLIC_TAX_RATE);
+    },
+    actualizarCantidadRecepcionada: (state, action) => {
+      const { id } = action.payload;
+
+      state.productos = state.productos.map((prod) => {
+        if (prod.id !== id) return prod;
+
+        return {
+          ...action.payload,
+        };
+      });
+      state.subtotal = state.productos.reduce(
+        (acc, p) => acc + p.precio! * p.cantidad!,
+        0
+      );
+      state.total =
+        state.subtotal +
+        state.subtotal * Number(process.env.NEXT_PUBLIC_TAX_RATE);
+    },
+    actualizarProductoPrecio: (state, action) => {
+      const { id } = action.payload;
+
+      state.productos = state.productos.map((prod) => {
+        if (prod.id !== id) return prod;
+
+        return {
+          ...action.payload,
+        };
+      });
+      state.subtotal = state.productos.reduce(
+        (acc, p) => acc + p.precio! * p.cantidad!,
+        0
+      );
+      state.total =
+        state.subtotal +
+        state.subtotal * Number(process.env.NEXT_PUBLIC_TAX_RATE);
+    },
+    seleccionarProveedor: (state, action) => {
+      state.id_proveedor = action.payload;
+    },
     quitarProductoSolicitud: (state, action) => {
       state.productos = state.productos.filter(
         (producto) =>
@@ -94,12 +153,14 @@ export const compraSlice = createSlice({
       state.total = 0;
     },
     cargarSolicitud: (state, action) => {
-      state.productos = action.payload.productos;
-      state.total_productos = action.payload.total_productos;
-      state.descuento = action.payload.descuento;
-      state.impuesto = action.payload.impuesto;
-      state.subtotal = action.payload.subtotal;
-      state.total = action.payload.total;
+      state.productos = action.payload;
+      state.subtotal = state.productos.reduce(
+        (acc, p) => acc + p.precio! * p.cantidad!,
+        0
+      );
+      state.total =
+        state.subtotal +
+        state.subtotal * Number(process.env.NEXT_PUBLIC_TAX_RATE);
     },
   },
 });
@@ -107,6 +168,10 @@ export const compraSlice = createSlice({
 export const {
   actualizarCantidadProductoSolicitud,
   actualizarProductosSolicitud,
+  actualizarProductoCantidad,
+  actualizarProductoPrecio,
+  actualizarCantidadRecepcionada,
+  seleccionarProveedor,
   añadirProductoSolicitud,
   cargarSolicitud,
   quitarProductoSolicitud,

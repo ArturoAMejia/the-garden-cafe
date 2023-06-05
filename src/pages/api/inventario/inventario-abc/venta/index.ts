@@ -26,8 +26,8 @@ const obtenerInventarioAbc = async (
 ) => {
   await prisma.$connect();
 
-  const demanda = await prisma.detalle_venta.groupBy({
-    by: ["id_producto_elaborado"],
+  const demanda = await prisma.detalle_pedido_ingrediente.groupBy({
+    by: ["id_producto"],
     _sum: {
       cantidad: true,
     },
@@ -38,17 +38,17 @@ const obtenerInventarioAbc = async (
     },
   });
 
-  const inventario = await prisma.producto_elaborado.findMany({
+  const inventario = await prisma.producto.findMany({
     where: {
       id: {
-        in: demanda.map((producto) => producto.id_producto_elaborado),
+        in: demanda.map((producto) => producto.id_producto),
       },
     },
   });
 
   const productos = inventario.map((producto) => {
     const demanda_producto = demanda.filter(
-      (d) => d.id_producto_elaborado === producto.id
+      (d) => d.id_producto === producto.id
     );
     return {
       ...producto,

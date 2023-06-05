@@ -24,6 +24,7 @@ import {
 } from "@tremor/react";
 import { format, getHours, getMinutes } from "date-fns";
 import { es } from "date-fns/locale";
+import { useObtenerAperturaCajaQuery } from "@/store/slices/caja/cajaApi";
 
 const columnHelper = createColumnHelper<IAperturaCaja>();
 
@@ -40,7 +41,7 @@ export const AperturaCajaTable = () => {
 
       columnHelper.accessor<"caja", ICaja>("caja", {
         header: "Caja",
-        cell: (info) => info.getValue().id,
+        cell: (info) => info.getValue().tipo_caja,
       }),
 
       columnHelper.accessor<"fecha_apertura", Date>("fecha_apertura", {
@@ -69,16 +70,7 @@ export const AperturaCajaTable = () => {
     []
   );
 
-  const [aperturas, setAperturas] = useState<IAperturaCaja[]>([]);
-
-  const obtenerAperturas = async () => {
-    const { data } = await tgcApi.get("/api/caja/apertura");
-    setAperturas(data);
-  };
-
-  useEffect(() => {
-    obtenerAperturas();
-  }, []);
+  const { data: aperturas, isLoading } = useObtenerAperturaCajaQuery();
 
   const table = useReactTable({
     data: aperturas,
@@ -86,6 +78,8 @@ export const AperturaCajaTable = () => {
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
+
+  if (isLoading) return <div>Cargando...</div>;
   return (
     <div>
       <Table className="mt-5 rounded-md">

@@ -98,6 +98,7 @@ const registerPedido = async (
     ubicacion_entrega = "",
     observacion = "",
     productos,
+    id_mesa,
   } = req.body;
 
   console.log(req.body);
@@ -142,8 +143,6 @@ const registerPedido = async (
       .status(400)
       .json({ message: "No se encontró registro de este cliente." });
 
-  console.log(productos);
-
   const pedido = await prisma.pedido.create({
     data: {
       id_cliente: client!.id,
@@ -153,6 +152,7 @@ const registerPedido = async (
       ubicacion_entrega: ubicacion_entrega,
       id_estado: 3,
       observacion,
+      id_mesa,
       vigencia: hour(new Date(), 35),
     },
   });
@@ -170,27 +170,56 @@ const registerPedido = async (
 
   const detalle = productos.map((producto) => {
     return {
+      cantidad: producto.cantidad,
       detalle: producto.detalle,
     };
   });
 
-  const detalles = detalle[0];
-
-  console.log("----------------------");
-
-  const { detalle: deta } = detalles;
-
-  console.log(deta);
-  console.log("----------------------");
-
-  await prisma.detalle_pedido_ingrediente.createMany({
-    data: deta.map((producto: any) => ({
-      id_pedido: pedido.id,
-      id_producto: producto.id_producto,
-      cantidad: producto.cantidad,
-    })),
+  detalle.map(async (producto: any) => {
+    await prisma.detalle_pedido_ingrediente.createMany({
+      data: producto.detalle.map((p: any) => ({
+        id_pedido: pedido.id,
+        id_producto: p.id_producto,
+        cantidad: p.cantidad * producto.cantidad,
+      })),
+    });
   });
 
+  detalle.map(async (producto: any) => {
+    await prisma.trans_inventario.createMany({
+      data: producto.detalle.map((p: any) => ({
+        id_producto: p.id_producto,
+        cantidad: p.cantidad * producto.cantidad,
+        tipo_movimiento: "Salida",
+      })),
+    });
+  });
+
+  detalle.map(async (producto: any) => {
+    producto.detalle.map(async (p: any) => {
+      await prisma.inventario.update({
+        where: {
+          id_producto: p.id_producto,
+        },
+        data: {
+          stock_actual: {
+            decrement: p.cantidad * producto.cantidad,
+          },
+        },
+      });
+    });
+  });
+
+  await prisma.mesa.update({
+    where: {
+      id: id_mesa,
+    },
+    data: {
+      id_estado: 2,
+    },
+  });
+
+  // await prisma.$transaction();
   await prisma.$disconnect();
 
   return res.status(200).json(pedido);
@@ -208,6 +237,7 @@ const actualizarPedido = async (
     ubicacion_entrega = "",
     observacion = "",
     productos,
+    id_mesa,
   } = req.body;
 
   if (!id)
@@ -226,6 +256,7 @@ const actualizarPedido = async (
       tipo_pedido,
       ubicacion_entrega: ubicacion_entrega,
       observacion,
+      id_mesa,
     },
     where: {
       id,

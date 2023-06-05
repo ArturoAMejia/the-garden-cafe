@@ -84,8 +84,24 @@ const crearAperturaCaja = async (
     },
   });
 
-  if (a)
+  const caja = await prisma.caja.findFirst({
+    where: {
+      id_estado: 1,
+      id: Number(id_caja),
+    },
+  });
+
+  if (caja)
     return res.status(400).json({ message: "La caja ya se encuentra abierta" });
+
+  await prisma.caja.update({
+    data: {
+      id_estado: 1,
+    },
+    where: {
+      id: id_caja,
+    },
+  });
 
   const apertura = await prisma.apertura_caja.create({
     data: {

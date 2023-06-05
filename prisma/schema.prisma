@@ -65,6 +65,8 @@ model cat_estado {
   tipo_categoria             tipo_categoria[]
   detalle_pedido             detalle_pedido[]
   pedido_cocinero            pedido_cocinero[]
+  punto_pedido               punto_pedido[]
+  mesa                       mesa[]
 }
 
 model categoria_impuesto {
@@ -214,6 +216,7 @@ model comprobante {
   orden_compra     orden_compra[]
   compra           compra[]
   venta            venta[]
+  movimiento_caja  movimiento_caja[]
 }
 
 model cat_forma_pago {
@@ -362,6 +365,9 @@ model producto {
   inventario                 inventario?
   detalle_pedido_ingrediente detalle_pedido_ingrediente[]
   producto_proveedor         producto_proveedor[]
+  detalle_recepcion_compra   detalle_recepcion_compra[]
+  stock_seguridad            stock_seguridad[]
+  punto_pedido               punto_pedido[]
 }
 
 model coste_producto {
@@ -396,23 +402,29 @@ model producto_elaborado {
   detalle_venta              detalle_venta[]
 }
 
-// model punto_pedido {
-//   id          Int      @id @default(autoincrement())
-//   cat_estado  cat_estado @relation(fields: [id_estado], references: [id])
-//   id_estado   Int
-//   nombre      String
-//   descripcion String
+model stock_seguridad {
+  id                          Int      @id @default(autoincrement())
+  producto                    producto @relation(fields: [id_producto], references: [id])
+  id_producto                 Int      @unique
+  tiempo_entrega              Int
+  desviacion_estandar         Float
+  probabilidad_nivel_servicio Float
+  stock_seguridad             Float
+}
 
-// }
-
-// model stock_seguridad {
-//   id          Int      @id @default(autoincrement())
-//   producto   producto @relation(fields: [id_producto], references: [id])
-//   id_producto Int
-//   dias       Int
-//   desviacion_estandar Float
-
-// }
+model punto_pedido {
+  id                  Int        @id @default(autoincrement())
+  cat_estado          cat_estado @relation(fields: [id_estado], references: [id])
+  id_estado           Int
+  producto            producto   @relation(fields: [id_producto], references: [id])
+  id_producto         Int        @unique
+  desviacion_estandar Float
+  dias                Int
+  costo_producto      Float
+  semanas_trabajadas  Int
+  tasa_anual          Float
+  punto_pedido        Float
+}
 
 model detalle_producto_elaborado {
   producto              producto           @relation(fields: [id_producto], references: [id])
@@ -444,6 +456,7 @@ model producto_proveedor {
   id_producto  Int
   proveedor    proveedor @relation(fields: [id_proveedor], references: [id])
   id_proveedor Int
+
   @@id([id_producto, id_proveedor])
 }
 
@@ -494,7 +507,10 @@ model solicitud_compra {
   id_trabajador            Int
   comprobante              comprobante                @relation(fields: [id_comprobante], references: [id])
   id_comprobante           Int
+  tipo_orden_compra        tipo_orden_compra          @relation(fields: [id_tipo_orden_compra], references: [id])
+  id_tipo_orden_compra     Int
   motivo                   String
+  observacion              String                     @default("")
   descuento                Float                      @default(0)
   impuesto                 Float                      @default(0)
   subtotal                 Float                      @default(0)
@@ -519,11 +535,12 @@ model detalle_solicitud_compra {
 }
 
 model tipo_orden_compra {
-  id           Int            @id @default(autoincrement())
-  cat_estado   cat_estado     @relation(fields: [id_estado], references: [id])
-  id_estado    Int
-  nombre       String
-  orden_compra orden_compra[]
+  id               Int                @id @default(autoincrement())
+  cat_estado       cat_estado         @relation(fields: [id_estado], references: [id])
+  id_estado        Int
+  nombre           String
+  orden_compra     orden_compra[]
+  solicitud_compra solicitud_compra[]
 }
 
 model orden_compra {
@@ -548,6 +565,7 @@ model orden_compra {
   fecha_orden          DateTime
   detalle_orden_compra detalle_orden_compra[]
   compra               compra[]
+  recepcion_compra     recepcion_compra[]
 }
 
 model detalle_orden_compra {
@@ -581,7 +599,6 @@ model compra {
   impuesto          Float
   total             Float
   detalle_compra    detalle_compra[]
-  recepcion_compra  recepcion_compra[]
   devolucion_compra devolucion_compra[]
 }
 
@@ -598,15 +615,29 @@ model detalle_compra {
 }
 
 model recepcion_compra {
-  id              Int        @id @default(autoincrement())
-  compra          compra     @relation(fields: [id_compra], references: [id])
-  id_compra       Int
-  trabajador      trabajador @relation(fields: [id_trabajador], references: [id])
-  id_trabajador   Int
-  cat_estado      cat_estado @relation(fields: [id_estado], references: [id])
-  id_estado       Int
-  descripcion     String
-  fecha_recepcion DateTime
+  id                       Int                        @id @default(autoincrement())
+  orden_compra             orden_compra               @relation(fields: [id_orden_compra], references: [id])
+  id_orden_compra          Int
+  trabajador               trabajador                 @relation(fields: [id_trabajador], references: [id])
+  id_trabajador            Int
+  cat_estado               cat_estado                 @relation(fields: [id_estado], references: [id])
+  id_estado                Int
+  descripcion              String
+  fecha_recepcion          DateTime
+  detalle_recepcion_compra detalle_recepcion_compra[]
+}
+
+model detalle_recepcion_compra {
+  producto            producto         @relation(fields: [id_producto], references: [id])
+  id_producto         Int
+  recepcion_compra    recepcion_compra @relation(fields: [id_recepcion_compra], references: [id])
+  id_recepcion_compra Int
+  cantidad_solicitada Int
+  cantidad_recibida   Int
+  precio_unitario     Float
+  monto               Float
+
+  @@id([id_producto, id_recepcion_compra])
 }
 
 model devolucion_compra {
@@ -631,6 +662,8 @@ model pedido {
   id_trabajador              Int
   cat_estado                 cat_estado                   @relation(fields: [id_estado], references: [id])
   id_estado                  Int
+  mesa                       mesa                         @relation(fields: [id_mesa], references: [id])
+  id_mesa                    Int                          @default(1)
   tipo_pedido                String
   fecha_pedido               DateTime
   ubicacion_entrega          String
@@ -682,24 +715,41 @@ model pedido_cocinero {
 // *        Reservación        //
 
 model reservacion {
-  id                  Int                   @id @default(autoincrement())
-  cliente             cliente               @relation(fields: [id_cliente], references: [id])
+  id                  Int                  @id @default(autoincrement())
+  cliente             cliente              @relation(fields: [id_cliente], references: [id])
   id_cliente          Int
-  cat_estado          cat_estado            @relation(fields: [id_estado], references: [id])
+  cat_estado          cat_estado           @relation(fields: [id_estado], references: [id])
   id_estado           Int
   tipo_reservacion    String
   fecha_reservacion   DateTime
   horas_reservadas    Int
   fecha_registro      DateTime
-  detalle_reservacion detalle_reservacion[]
+  detalle_reservacion detalle_reservacion?
 }
 
 model detalle_reservacion {
   id             Int         @id @default(autoincrement())
   reservacion    reservacion @relation(fields: [id_reservacion], references: [id])
-  id_reservacion Int
+  id_reservacion Int         @unique
+  mesa           mesa        @relation(fields: [id_mesa], references: [id])
+  id_mesa        Int
+  servicio       String
+  hora_reserva   DateTime    @db.Time()
+  adultos        Int
+  menores        Int
   total_personas Int
   observaciones  String
+}
+
+model mesa {
+  id                  Int                   @id @default(autoincrement())
+  nombre              String
+  ubicacion           String
+  cat_estado          cat_estado            @relation(fields: [id_estado], references: [id])
+  id_estado           Int
+  capacidad           Int
+  detalle_reservacion detalle_reservacion[]
+  pedido              pedido[]
 }
 
 // *        Ventas        //
@@ -751,14 +801,13 @@ model tipo_bodega {
 }
 
 model bodega {
-  id             Int         @id @default(autoincrement())
-  tipo_bodega    tipo_bodega @relation(fields: [id_tipo_bodega], references: [id])
-  id_tipo_bodega Int
-  cat_estado     cat_estado  @relation(fields: [id_estado], references: [id])
-  id_estado      Int
-  ubicacion      String
-  existencia     Int
-
+  id                  Int                   @id @default(autoincrement())
+  tipo_bodega         tipo_bodega           @relation(fields: [id_tipo_bodega], references: [id])
+  id_tipo_bodega      Int
+  cat_estado          cat_estado            @relation(fields: [id_estado], references: [id])
+  id_estado           Int
+  ubicacion           String
+  existencia          Int
   ubicacion_en_bodega ubicacion_en_bodega[]
 }
 
@@ -775,7 +824,7 @@ model trans_inventario {
   id               Int      @id @default(autoincrement())
   producto         producto @relation(fields: [id_producto], references: [id])
   id_producto      Int
-  fecha_movimiento DateTime
+  fecha_movimiento DateTime @default(dbgenerated("CURRENT_DATE"))
   cod_documento    String   @unique @default(uuid())
   cantidad         Int
   tipo_movimiento  String
@@ -841,6 +890,7 @@ model caja {
   id_estado       Int
   tipo_caja       String
   fecha_registro  DateTime
+  saldo_actual    Float             @default(0)
   apertura_caja   apertura_caja[]
   movimiento_caja movimiento_caja[]
   arqueo_caja     arqueo_caja[]
@@ -858,6 +908,7 @@ model apertura_caja {
   moneda                moneda                 @relation(fields: [id_moneda], references: [id])
   id_moneda             Int
   fecha_apertura        DateTime
+  fecha_cierre          DateTime?
   detalle_apertura_caja detalle_apertura_caja?
 }
 
@@ -870,15 +921,18 @@ model detalle_apertura_caja {
 }
 
 model movimiento_caja {
-  id               Int        @id @default(autoincrement())
-  caja             caja       @relation(fields: [id_caja], references: [id])
+  id               Int         @id @default(autoincrement())
+  caja             caja        @relation(fields: [id_caja], references: [id])
   id_caja          Int
-  trabajador       trabajador @relation(fields: [id_trabajador], references: [id])
+  comprobante      comprobante @relation(fields: [id_comprobante], references: [id])
+  id_comprobante   Int
+  trabajador       trabajador  @relation(fields: [id_trabajador], references: [id])
   id_trabajador    Int
-  moneda           moneda     @relation(fields: [id_moneda], references: [id])
+  moneda           moneda      @relation(fields: [id_moneda], references: [id])
   id_moneda        Int
-  num_movimiento   String     @default(cuid())
-  fecha_movimiento DateTime
+  num_movimiento   String      @default(cuid())
+  tipo_movimiento  String
+  fecha_movimiento DateTime    @default(dbgenerated("CURRENT_DATE"))
   concepto         String
   monto            Float
 }
@@ -894,15 +948,16 @@ model arqueo_caja {
 }
 
 model cierre_caja {
-  id            Int        @id @default(autoincrement())
-  caja          caja       @relation(fields: [id_caja], references: [id])
-  id_caja       Int
-  trabajador    trabajador @relation(fields: [id_trabajador], references: [id])
-  id_trabajador Int
-  cat_estado    cat_estado @relation(fields: [id_estado], references: [id])
-  id_estado     Int
-  fecha_cierre  DateTime   @default(now())
-  total         Float
+  id             Int        @id @default(autoincrement())
+  caja           caja       @relation(fields: [id_caja], references: [id])
+  id_caja        Int
+  trabajador     trabajador @relation(fields: [id_trabajador], references: [id])
+  id_trabajador  Int
+  cat_estado     cat_estado @relation(fields: [id_estado], references: [id])
+  id_estado      Int
+  fecha_apertura DateTime?
+  fecha_cierre   DateTime   @default(now())
+  total          Float
 }
 
 //!        Seguridad        //
@@ -977,15 +1032,16 @@ model rol {
 }
 
 model modulo {
-  id             Int          @id @default(autoincrement())
-  cat_estado     cat_estado   @relation(fields: [id_estado], references: [id])
+  id             Int              @id @default(autoincrement())
+  cat_estado     cat_estado       @relation(fields: [id_estado], references: [id])
   id_estado      Int
   nombre         String
   descripcion    String
-  icono          String       @default("")
-  fecha_registro DateTime     @default(now())
+  icono          String           @default("")
+  fecha_registro DateTime         @default(now())
   sub_modulo     sub_modulo[]
   rol_modulo     rol_modulo[]
+  rol_sub_modulo rol_sub_modulo[]
 }
 
 model sub_modulo {
@@ -995,6 +1051,7 @@ model sub_modulo {
   nombre         String
   url            String
   rol_sub_modulo rol_sub_modulo[]
+  rol_permiso    rol_permiso[]
 }
 
 model rol_modulo {
@@ -1010,6 +1067,8 @@ model rol_modulo {
 model rol_sub_modulo {
   rol           rol        @relation(fields: [id_rol], references: [id])
   id_rol        Int
+  modulo        modulo     @relation(fields: [id_modulo], references: [id])
+  id_modulo     Int
   sub_modulo    sub_modulo @relation(fields: [id_sub_modulo], references: [id])
   id_sub_modulo Int
   nombre        String
@@ -1026,13 +1085,15 @@ model permiso {
 }
 
 model rol_permiso {
-  rol        rol     @relation(fields: [id_rol], references: [id])
-  id_rol     Int
-  permiso    permiso @relation(fields: [id_permiso], references: [id])
-  id_permiso Int
-  nombre     String
+  rol           rol        @relation(fields: [id_rol], references: [id])
+  id_rol        Int
+  permiso       permiso    @relation(fields: [id_permiso], references: [id])
+  id_permiso    Int
+  sub_modulo    sub_modulo @relation(fields: [id_sub_modulo], references: [id])
+  id_sub_modulo Int
+  nombre        String
 
-  @@id([id_rol, id_permiso])
+  @@id([id_rol, id_permiso, id_sub_modulo])
 }
 
 model privilegio_usuario {

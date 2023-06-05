@@ -1,20 +1,22 @@
-import React, { FC, Fragment, useContext, useState } from "react";
+import React, { FC, Fragment, useState } from "react";
 import { ISolicitudCompra } from "../../../../interfaces";
 import { Transition, Dialog } from "@headlessui/react";
 import {
   XCircleIcon,
   ExclamationCircleIcon,
+  ArrowUturnDownIcon,
 } from "@heroicons/react/24/outline";
-import { AdminContext } from "../../../../context";
 import { toast } from "react-hot-toast";
-import {
-  useAnularOrdenCompraMutation,
-  useRechazarSolicitudCompraMutation,
-} from "@/store/slices/compra";
+import { useRechazarSolicitudCompraMutation } from "@/store/slices/compra";
+import { useForm } from "react-hook-form";
 
 interface Props {
   solicitud_compra: ISolicitudCompra;
 }
+
+type FormData = {
+  observacion: string;
+};
 
 export const RechazarOrden: FC<Props> = ({ solicitud_compra }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,19 +24,21 @@ export const RechazarOrden: FC<Props> = ({ solicitud_compra }) => {
   const openModal = () => setIsOpen(!isOpen);
 
   const { id } = solicitud_compra;
-  // const { rechazarSolicitudCompra } = useContext(AdminContext);
+
+  const { register, handleSubmit, reset } = useForm<FormData>();
 
   const [rechazarSolicitudCompra] = useRechazarSolicitudCompraMutation();
 
-  const onRechazarSolicitud = async () => {
-    rechazarSolicitudCompra(id)
+  const revertirSolicitudCompra = async ({ observacion }: FormData) => {
+    rechazarSolicitudCompra({ id, id_estado: 16, observacion })
       .unwrap()
       .then((res) => {
-        toast.success("Solicitud de compra rechazada correctamente.");
+        toast.success("Solicitud de compra revertida correctamente.");
         closeModal();
       })
       .catch((error) => toast.error(error.data.message));
   };
+
   return (
     <>
       <div className="">
@@ -43,7 +47,7 @@ export const RechazarOrden: FC<Props> = ({ solicitud_compra }) => {
           onClick={openModal}
           className="rounded-2xl bg-red-600 px-4 py-2 text-sm font-medium text-white  hover:bg-red-500"
         >
-          Rechazar
+          <ArrowUturnDownIcon className='h-4 w-4'/>
         </button>
       </div>
 
@@ -105,30 +109,47 @@ export const RechazarOrden: FC<Props> = ({ solicitud_compra }) => {
                       as="h3"
                       className="text-lg font-medium leading-6 text-gray-900"
                     >
-                      Rechazar la solicitud de compra
+                      Revertir la solicitud de compra
                     </Dialog.Title>
                     <div className="mt-2">
                       <p className="text-sm text-gray-500">
-                        ¿Está seguro que quiere rechazar la solicitud de compra?
+                        ¿Está seguro que quiere revertir la solicitud de compra?
                       </p>
                     </div>
+                    <form onSubmit={handleSubmit(revertirSolicitudCompra)}>
+                      <div className="col-span-2 mt-2">
+                        <label
+                          htmlFor="direccion"
+                          className="block font-medium text-gray-700"
+                        >
+                          Observación
+                        </label>
+                        <div className="mt-1">
+                          <textarea
+                            rows={6}
+                            id="direccion"
+                            className="block w-full resize-none rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            {...register("observacion")}
+                          />
+                        </div>
+                      </div>
+                      <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+                        <button
+                          type="submit"
+                          className="inline-flex w-full justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
+                        >
+                          Revertir
+                        </button>
+                        <button
+                          type="button"
+                          className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
+                          onClick={() => setIsOpen(false)}
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                    </form>
                   </div>
-                </div>
-                <div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-                  <button
-                    type="button"
-                    className="inline-flex w-full justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
-                    onClick={() => onRechazarSolicitud()}
-                  >
-                    Rechazar
-                  </button>
-                  <button
-                    type="button"
-                    className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Cancelar
-                  </button>
                 </div>
               </div>
             </Transition.Child>

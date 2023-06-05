@@ -9,7 +9,12 @@ import {
   zona_preparacion,
 } from "./data/productos";
 import { roles } from "./data/roles";
-import { modulos, roles_modulos, sub_modulos } from "./data/modulos";
+import {
+  modulos,
+  rol_sub_modulos,
+  roles_modulos,
+  sub_modulos,
+} from "./data/modulos";
 import { permisos, rol_permiso } from "./data/permisos";
 import {
   categoria_producto,
@@ -35,10 +40,12 @@ import { tipo_orden_compra } from "./data/tipo-orden-compra";
 import { prisma } from "../database";
 import {
   ingredientes,
+  inventario_productos,
   platillo_ingredientes,
   platillos,
   politicas,
 } from "./data/inventario";
+import { mesas } from "./data/mesas";
 
 const main = async (): Promise<void> => {
   await prisma.$connect();
@@ -94,9 +101,12 @@ const main = async (): Promise<void> => {
     await prisma.rol_modulo.createMany({
       data: roles_modulos,
     });
-    // await prisma.rol_permiso.createMany({
-    //   data: rol_permiso,
-    // });
+    await prisma.rol_sub_modulo.createMany({
+      data: rol_sub_modulos,
+    });
+    await prisma.rol_permiso.createMany({
+      data: rol_permiso,
+    });
     await prisma.usuario.createMany({
       data: usuarios,
     });
@@ -139,6 +149,9 @@ const main = async (): Promise<void> => {
     await prisma.detalle_producto_elaborado.createMany({
       data: platillo_ingredientes,
     });
+    await prisma.inventario.createMany({
+      data: inventario_productos,
+    });
     await prisma.moneda.createMany({
       data: monedas,
     });
@@ -147,6 +160,9 @@ const main = async (): Promise<void> => {
     });
     await prisma.politica_abc.createMany({
       data: politicas,
+    });
+    await prisma.mesa.createMany({
+      data: mesas,
     });
   } catch (error) {
     console.log(error);

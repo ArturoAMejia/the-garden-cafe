@@ -62,12 +62,11 @@ export const EditarSolicitudCompra: FC<Props> = ({ solicitud }) => {
     <>
       <div className="mt-4 px-2">
         <button
-          disabled={productos.length === 0 ? true : false}
           type="button"
           onClick={openModal}
           className="rounded-lg bg-lime-600 px-4 py-2 text-sm font-medium text-white  hover:bg-lime-700"
         >
-          Realizar Solicitud de Compra
+          Editar
         </button>
       </div>
 

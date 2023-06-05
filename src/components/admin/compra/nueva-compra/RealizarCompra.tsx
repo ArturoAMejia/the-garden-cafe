@@ -48,7 +48,7 @@ export const RealizarCompra: FC<Props> = ({ orden }) => {
   }));
 
   const onRealizarCompra = async () => {
-    try {
+    toast.promise(
       crearCompra({
         id_proveedor,
         id_trabajador: autorizado_por,
@@ -56,12 +56,17 @@ export const RealizarCompra: FC<Props> = ({ orden }) => {
         productos: detalles,
         descripcion: comprobante!.descripcion,
         subtotal,
-      }).unwrap();
-      toast.success("Compra guardada correctamente");
-      closeModal();
-    } catch (error: any) {
-      toast.error(error.data.message);
-    }
+      })
+        .unwrap()
+        .then(() => {
+          closeModal();
+        }),
+      {
+        loading: "Guardando compra...",
+        success: "Compra guardada correctamente",
+        error: "Error al guardar la compra",
+      }
+    );
   };
   return (
     <>

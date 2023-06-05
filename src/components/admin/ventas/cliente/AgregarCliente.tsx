@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useState, FC } from "react";
 
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
 
@@ -10,6 +10,7 @@ import * as z from "zod";
 import { useCrearClienteMutation } from "@/store/slices/venta";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Error } from "../../../landing/Error";
+import { useToggle } from "@/hooks";
 
 const schema = z.object({
   cedula_ruc: z
@@ -28,11 +29,16 @@ const schema = z.object({
   tipo_cliente: z.string(),
 });
 
-export const AgregarCliente = () => {
+interface Props {
+  showMin?: boolean;
+}
+
+export const AgregarCliente: FC<Props> = ({ showMin }) => {
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
+  const { value, toggle } = useToggle();
   type FormSchemaType = z.infer<typeof schema>;
 
   const {
@@ -45,14 +51,19 @@ export const AgregarCliente = () => {
   const [crearCliente, { isLoading, isError }] = useCrearClienteMutation();
 
   const onRegistrarCliente: SubmitHandler<FormSchemaType> = async (form) => {
-    try {
-      await crearCliente(form).unwrap();
-      toast.success("Cliente creado satisfactoriamente.");
-      closeModal();
-      reset();
-    } catch (error: any) {
-      toast.error(error.data.message);
-    }
+    toast.promise(
+      crearCliente(form)
+        .unwrap()
+        .then(() => {
+          toggle();
+          reset();
+        }),
+      {
+        loading: "Creando cliente...",
+        success: "Cliente creado satisfactoriamente.",
+        error: "Error al crear cliente.",
+      }
+    );
   };
 
   return (
@@ -60,15 +71,19 @@ export const AgregarCliente = () => {
       <div className="mx-2">
         <button
           type="button"
-          onClick={openModal}
+          onClick={toggle}
           className="inline-flex items-center justify-center rounded-md border border-transparent bg-[#388C04] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#8CA862] sm:w-auto"
         >
-          Agregar Nuevo Cliente
+          {showMin ? (
+            <PlusCircleIcon className="h-6 w-6" />
+          ) : (
+            <>Agregar Nuevo Cliente</>
+          )}
         </button>
       </div>
 
-      <Transition appear show={isOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+      <Transition appear show={value} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={toggle}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"

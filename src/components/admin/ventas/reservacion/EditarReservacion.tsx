@@ -152,7 +152,7 @@ export const EditarReservacion: FC<Props> = ({ reservacion }) => {
                           />
                         </div>
                       </div>
-                      <div className="mt-2">
+                      {/* <div className="mt-2">
                         <label
                           htmlFor="horas_reservadas"
                           className="block font-medium text-gray-700"
@@ -170,7 +170,7 @@ export const EditarReservacion: FC<Props> = ({ reservacion }) => {
                             }
                           />
                         </div>
-                      </div>
+                      </div> */}
                       {/* Fecha de Nacimiento */}
                       <div className="mt-2">
                         <label

@@ -10,6 +10,7 @@ import {
   IIngrediente,
   IPrecioProducto,
   IInventarioABC,
+  ITransaccion,
 } from "@/interfaces";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/dist/query/react";
 
@@ -29,6 +30,8 @@ export const inventarioApi = createApi({
     "Tipo de Productos",
     "Tipo de Categorias",
     "Inventario",
+    "Punto de Pedido",
+    "Stock de Seguridad",
   ],
   endpoints: (builder) => ({
     obtenerProductos: builder.query<IProducto[], void>({
@@ -279,10 +282,6 @@ export const inventarioApi = createApi({
       }),
       invalidatesTags: ["Inventario"],
     }),
-    obtenerInventarioAbcVenta: builder.query<IInventarioABC[], void>({
-      query: () => "/inventario/inventario-abc/venta",
-      providesTags: ["Inventario"],
-    }),
     obtenerPoliticasInventario: builder.query<any[], void>({
       query: () => "/inventario/politica-inventario",
       providesTags: ["Inventario"],
@@ -294,6 +293,49 @@ export const inventarioApi = createApi({
         body: politica,
       }),
       invalidatesTags: ["Inventario"],
+    }),
+    obtenerMovimientoInventario: builder.query<ITransaccion[], void>({
+      query: () => `/inventario/transaccion`,
+    }),
+    obtenerPuntoPedido: builder.query<any[], void>({
+      query: () => `/inventario/punto-pedido`,
+      providesTags: ["Punto de Pedido"],
+    }),
+    crearPuntoPedido: builder.mutation<any, any>({
+      query: (puntoPedido) => ({
+        url: `/inventario/punto-pedido`,
+        method: "POST",
+        body: puntoPedido,
+      }),
+      invalidatesTags: ["Punto de Pedido"],
+    }),
+    actualizarPuntoPedido: builder.mutation<any, any>({
+      query: (puntoPedido) => ({
+        url: `/inventario/punto-pedido`,
+        method: "PUT",
+        body: puntoPedido,
+      }),
+      invalidatesTags: ["Punto de Pedido"],
+    }),
+    obtenerStockSeguridad: builder.query<any[], void>({
+      query: () => `/inventario/stock-seguridad`,
+      providesTags: ["Stock de Seguridad"],
+    }),
+    crearStockSeguridad: builder.mutation<any, any>({
+      query: (stockSeguridad) => ({
+        url: `/inventario/stock-seguridad`,
+        method: "POST",
+        body: stockSeguridad,
+      }),
+      invalidatesTags: ["Stock de Seguridad"],
+    }),
+    actualizarStockSeguridad: builder.mutation<any, any>({
+      query: (stockSeguridad) => ({
+        url: `/inventario/stock-seguridad`,
+        method: "PUT",
+        body: stockSeguridad,
+      }),
+      invalidatesTags: ["Stock de Seguridad"],
     }),
   }),
 });
@@ -345,9 +387,17 @@ export const {
   // Precio Producto
   useObtenerPrecioProductoQuery,
   useCrearPrecioProductoMutation,
-  // Inventario ABC
-  useObtenerInventarioAbcVentaQuery,
   // Politicas de Inventario
   useObtenerPoliticasInventarioQuery,
   useActualizarPoliticaInventarioMutation,
+  // movimiento de inventario
+  useObtenerMovimientoInventarioQuery,
+  // Punto de Pedido
+  useObtenerPuntoPedidoQuery,
+  useCrearPuntoPedidoMutation,
+  useActualizarPuntoPedidoMutation,
+  // Stock de Seguridad
+  useObtenerStockSeguridadQuery,
+  useCrearStockSeguridadMutation,
+  useActualizarStockSeguridadMutation,
 } = inventarioApi;

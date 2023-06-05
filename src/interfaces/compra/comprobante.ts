@@ -1,5 +1,3 @@
-
-
 export interface IComprobante {
   id: number;
   descripcion: string;

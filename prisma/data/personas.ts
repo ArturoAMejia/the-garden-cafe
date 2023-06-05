@@ -79,6 +79,26 @@ export const personas = [
     fecha_nacimiento_constitucion: new Date(),
     tipo_persona: "Natural",
   },
+  {
+    nombre: "Pamela",
+    apellido_razon_social: "Calero",
+    cedula_ruc: "001-110305-1235-F",
+    telefono: "88221199",
+    direccion_domicilio: "Villaflor",
+    correo: "pamela@gmail.com",
+    fecha_nacimiento_constitucion: new Date(),
+    tipo_persona: "Natural",
+  },
+  {
+    nombre: "Josue",
+    apellido_razon_social: "Barberena",
+    cedula_ruc: "001-110206-1235-F",
+    telefono: "88221199",
+    direccion_domicilio: "Villaflor",
+    correo: "josue@gmail.com",
+    fecha_nacimiento_constitucion: new Date(),
+    tipo_persona: "Natural",
+  },
 ];
 
 export const proveedor = [
@@ -154,6 +174,20 @@ export const trabajador = [
   },
   {
     id_persona: 8,
+    id_estado_civil: 1,
+    id_estado: 1,
+    codigo_inss: "2022-0205-3120-V",
+    genero: "Masculino",
+  },
+  {
+    id_persona: 9,
+    id_estado_civil: 1,
+    id_estado: 1,
+    codigo_inss: "2022-0205-3120-V",
+    genero: "Masculino",
+  },
+  {
+    id_persona: 10,
     id_estado_civil: 1,
     id_estado: 1,
     codigo_inss: "2022-0205-3120-V",
@@ -243,6 +277,24 @@ export const usuarios = [
     correo: "luis@gmail.com",
     password: "$2y$10$5GV7mc8fYfP33xtcdf7.b../IpuVpElyLb1eAt1O.vch8jM4mylaq",
     id_rol: 7,
+  },
+  {
+    id_perfil: 1,
+    id_estado: 1,
+    usuario: "pamela@gmail.com",
+    id_persona: 9,
+    correo: "pamela@gmail.com",
+    password: "$2y$10$5GV7mc8fYfP33xtcdf7.b../IpuVpElyLb1eAt1O.vch8jM4mylaq",
+    id_rol: 8,
+  },
+  {
+    id_perfil: 1,
+    id_estado: 1,
+    usuario: "josue@gmail.com",
+    id_persona: 10,
+    correo: "josue@gmail.com",
+    password: "$2y$10$5GV7mc8fYfP33xtcdf7.b../IpuVpElyLb1eAt1O.vch8jM4mylaq",
+    id_rol: 9,
   },
 ];
 

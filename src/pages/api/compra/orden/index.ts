@@ -84,9 +84,6 @@ const obtenerOrdenCompra = async (res: NextApiResponse<Data>) => {
         },
       },
     },
-    where: {
-      id_estado: 1,
-    },
   });
   await prisma.$disconnect();
   return res.status(200).json(orden_compra);
@@ -107,6 +104,7 @@ const crearOrdenCompra = async (
     autorizado_por,
   } = req.body;
 
+  console.log(req.body);
   if (
     !id_proveedor ||
     !id_tipo_orden_compra ||
@@ -128,13 +126,27 @@ const crearOrdenCompra = async (
       fecha_ingreso: new Date(),
     },
   });
+
+  const detalle_solicitud = await prisma.detalle_solicitud_compra.findMany({
+    select: {
+      id_producto: true,
+      producto: true,
+      cantidad: true,
+      precio_unitario: true,
+      monto: true,
+    },
+    where: {
+      id_solicitud_compra,
+    },
+  });
+
   const orden_compra = await prisma.orden_compra.create({
     data: {
       descuento,
       id_proveedor,
       id_comprobante: comprobante.id,
       id_tipo_orden_compra,
-      id_estado: 1,
+      id_estado: 13,
       id_solicitud_compra,
       autorizado_por,
       subtotal,
@@ -144,7 +156,7 @@ const crearOrdenCompra = async (
     },
   });
   await prisma.detalle_orden_compra.createMany({
-    data: detalle_orden_compra.map((detalle: any) => ({
+    data: detalle_solicitud.map((detalle: any) => ({
       id_orden_compra: orden_compra.id,
       id_producto: detalle.id_producto,
       cantidad: detalle.cantidad,
@@ -152,14 +164,16 @@ const crearOrdenCompra = async (
       precio_unitario: detalle.precio_unitario,
     })),
   });
+
   await prisma.solicitud_compra.update({
     data: {
-      id_estado: 9,
+      id_estado: 7,
     },
     where: {
       id: id_solicitud_compra,
     },
   });
+
   await prisma.$disconnect();
   return res.status(201).json(orden_compra);
 };

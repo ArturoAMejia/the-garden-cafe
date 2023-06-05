@@ -260,6 +260,8 @@ export const RealizarVenta: FC<Props> = ({ pedido }) => {
                           <input
                             type="number"
                             id="pago_cliente"
+                            maxLength={100}
+                            minLength={0}
                             onChange={(e) =>
                               dispatch(
                                 asignarDescuento({
@@ -303,7 +305,9 @@ export const RealizarVenta: FC<Props> = ({ pedido }) => {
                         <Subtitle className="text-lg font-bold text-black">
                           Descuento: ${descuento.toFixed(2)}
                         </Subtitle>
-                        {}
+                        <Subtitle className="text-lg font-bold text-black">
+                          Entrega Cliente: ${pago_cliente.toFixed(2)}
+                        </Subtitle>
                         <Subtitle className="text-lg font-bold text-black">
                           Cambio: ${cambio.toFixed(2)}
                         </Subtitle>

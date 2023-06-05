@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "caja" ADD COLUMN     "saldo_actual" DOUBLE PRECISION NOT NULL DEFAULT 0;

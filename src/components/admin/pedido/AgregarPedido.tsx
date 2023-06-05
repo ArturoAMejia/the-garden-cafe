@@ -1,11 +1,10 @@
-import React, { FC, Fragment, useContext, useState } from "react";
+import React, { Fragment, useState } from "react";
 
-import { AuthContext } from "../../../context";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
-import { ICatEstado, IPedido } from "../../../interfaces";
+import { IPedido } from "../../../interfaces";
 import { Transition, Dialog } from "@headlessui/react";
 import { useObtenerClientesQuery } from "@/store/slices/venta";
 import { useCrearPedidoMutation } from "@/store/slices/pedido";
@@ -13,14 +12,11 @@ import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
 import { AppState } from "@/store/store";
 import { pedidoCompletado } from "@/store/slices/pedido/pedidoSlice";
 import { useSession } from "next-auth/react";
-
-interface Props {
-  estados: ICatEstado[];
-}
+import { AgregarCliente } from "../ventas";
 
 type FormData = IPedido;
 
-export const AgregarPedido: FC<Props> = ({ estados }) => {
+export const AgregarPedido = () => {
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
@@ -30,7 +26,9 @@ export const AgregarPedido: FC<Props> = ({ estados }) => {
   const [crearPedido, { isLoading: creandoPedido, isSuccess }] =
     useCrearPedidoMutation();
 
-  const productos = useAppSelector((state: AppState) => state.pedido.productos);
+  const { productos, id_mesa } = useAppSelector(
+    (state: AppState) => state.pedido
+  );
 
   const dispatch = useAppDispatch();
   const { data: clientes, isLoading } = useObtenerClientesQuery();
@@ -44,6 +42,7 @@ export const AgregarPedido: FC<Props> = ({ estados }) => {
         id_trabajador: Number(session.user.id),
         id_cliente: Number(data.id_cliente),
         productos,
+        id_mesa,
       })
         .unwrap()
         .then(() => {
@@ -109,7 +108,7 @@ export const AgregarPedido: FC<Props> = ({ estados }) => {
                   </Dialog.Title>
 
                   <form onSubmit={handleSubmit(onCrearPedido)}>
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-2 gap-4">
                       {/* Cliente */}
                       <div className="mt-2">
                         <label
@@ -133,6 +132,7 @@ export const AgregarPedido: FC<Props> = ({ estados }) => {
                               </option>
                             ))}
                           </select>
+                          <AgregarCliente showMin={true} />
                         </div>
                       </div>
                       {/* Tipo pedido */}
@@ -151,29 +151,6 @@ export const AgregarPedido: FC<Props> = ({ estados }) => {
                           >
                             <option value="Local">Local</option>
                             <option value="Para llevar">Para llevar</option>
-                          </select>
-                        </div>
-                      </div>
-
-                      {/* Estado */}
-                      <div className="mt-2">
-                        <label
-                          htmlFor="estado"
-                          className="block font-medium text-gray-700"
-                        >
-                          Estado
-                        </label>
-                        <div className="mt-1 flex flex-row">
-                          <select
-                            id="estado"
-                            {...register("id_estado")}
-                            className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
-                          >
-                            {estados.map((estado) => (
-                              <option key={estado.nombre} value={estado.id}>
-                                {estado.nombre}
-                              </option>
-                            ))}
                           </select>
                         </div>
                       </div>

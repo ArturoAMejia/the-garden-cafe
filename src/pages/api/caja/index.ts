@@ -8,7 +8,8 @@ type Data =
       message: string;
     }
   | ICaja
-  | ICaja[];
+  | ICaja[]
+  | any;
 
 export default function handler(
   req: NextApiRequest,
@@ -30,7 +31,22 @@ export default function handler(
 
 const obtenerCajas = async (res: NextApiResponse<Data>) => {
   await prisma.$connect();
-  const cajas = await prisma.caja.findMany();
+  const cajas = await prisma.caja.findMany({
+    select: {
+      id: true,
+      id_estado: true,
+      cat_estado: true,
+      id_trabajador: true,
+      trabajador: {
+        select: {
+          persona: true,
+        },
+      },
+      tipo_caja: true,
+      fecha_registro: true,
+      saldo_actual: true,
+    },
+  });
   await prisma.$disconnect();
   return res.status(200).json(cajas);
 };
@@ -47,7 +63,7 @@ const crearCaja = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   const caja = await prisma.caja.create({
     data: {
       id_trabajador: Number(id_trabajador),
-      id_estado: 1,
+      id_estado: 2,
       tipo_caja,
       fecha_registro: new Date(),
     },
@@ -64,11 +80,9 @@ const actualizarCaja = async (
   const { id, tipo_caja, id_estado } = req.body;
 
   if (!id)
-    return res
-      .status(400)
-      .json({
-        message: "El id es necesario para hacer la actualización de la caja.",
-      });
+    return res.status(400).json({
+      message: "El id es necesario para hacer la actualización de la caja.",
+    });
 
   if (!tipo_caja || !id_estado)
     return res
@@ -108,11 +122,9 @@ const desactivarCaja = async (
   const { id } = req.body;
 
   if (!id)
-    return res
-      .status(400)
-      .json({
-        message: "El id es necesario para hacer la actualización de la caja.",
-      });
+    return res.status(400).json({
+      message: "El id es necesario para hacer la actualización de la caja.",
+    });
 
   await prisma.$connect();
   const c = await prisma.caja.findFirst({
@@ -128,7 +140,7 @@ const desactivarCaja = async (
 
   const caja = await prisma.caja.update({
     data: {
-      id_estado: 2
+      id_estado: 2,
     },
     where: {
       id,

@@ -8,8 +8,8 @@ export const catalogosApi = createApi({
   }),
   tagTypes: ["Monedas", "Forma Pago"],
   endpoints: (builder) => ({
-    obtenerMonedas: builder.query<IMoneda[], any>({
-      query: () => "/catalogos/monedas",
+    obtenerMonedas: builder.query<IMoneda[], void>({
+      query: () => "/catalogos/moneda",
       providesTags: ["Monedas"],
     }),
     crearMoneda: builder.mutation<IMoneda, any>({
@@ -36,7 +36,7 @@ export const catalogosApi = createApi({
       }),
       invalidatesTags: ["Monedas"],
     }),
-    obtenerFormasPago: builder.query<ICatFormaPago[], any>({
+    obtenerFormasPago: builder.query<ICatFormaPago[], void>({
       query: () => "/catalogos/forma-pago",
       providesTags: ["Forma Pago"],
     }),

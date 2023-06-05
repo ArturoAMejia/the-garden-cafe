@@ -1,31 +1,34 @@
-import React, { FC, useState } from "react";
+import React, { FC } from "react";
 
 import { useAppDispatch } from "@/hooks/hooks";
 
 import { IProductoCart } from "@/interfaces/producto";
-import { actualizarCantidadProductoSolicitud } from "@/store/slices/compra";
+import { actualizarProductoCantidad } from "@/store/slices/compra";
 
 interface Props {
   producto: IProductoCart;
+  id_estado?: number;
 }
 
-export const CantidadProducto: FC<Props> = ({ producto }) => {
-
-  const [value, setValue] = useState<number>(producto.cantidad);
-
+export const CantidadProducto: FC<Props> = ({ producto, id_estado }) => {
   const dispatch = useAppDispatch();
-  const onValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(Number(e.target.value));
+
+  const handleNuevaCantidad = (nuevo_valor) => {
     dispatch(
-      actualizarCantidadProductoSolicitud({ ...producto, cantidad: value })
+      actualizarProductoCantidad({
+        ...producto,
+        cantidad: parseInt(nuevo_valor),
+      })
     );
   };
+
   return (
     <input
-      type="number"
+      type="text"
+      disabled={id_estado === 14 ? true : false}
       className="block w-24 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-      value={value}
-      onChange={onValueChange}
+      onChange={(e) => handleNuevaCantidad(e.target.value)}
+      defaultValue={producto.cantidad}
     />
   );
 };

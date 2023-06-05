@@ -57,9 +57,6 @@ const obtenerProductos = async (res: NextApiResponse<Data>) => {
       imagen: true,
       fecha_ingreso: true,
     },
-    where: {
-      id_tipo_producto: 4,
-    },
   });
   await prisma.$disconnect();
   res.status(200).json(productos);
@@ -97,7 +94,6 @@ const crearProducto = async (
     return res
       .status(400)
       .json({ message: "Todos los campos son obligatorios" });
-
 
   await prisma.$connect();
   const producto = await prisma.producto.create({

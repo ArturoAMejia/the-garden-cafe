@@ -6,14 +6,13 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useContext, useMemo } from "react";
+import { useMemo } from "react";
 import {
   ICatEstado,
-  IComprobante,
   ISolicitudCompra,
   ITrabajador,
 } from "../../../../interfaces";
-import { AdminContext, CartContext } from "../../../../context";
+
 import { AceptarOrden, RechazarOrden } from "../../../admin";
 
 import { format } from "date-fns";
@@ -21,18 +20,27 @@ import { es } from "date-fns/locale";
 import { useObtenerSolicitudesCompraQuery } from "@/store/slices/compra/compraApi";
 import Link from "next/link";
 import { IdentificationIcon } from "@heroicons/react/24/outline";
-import { Table, TableHead, TableRow, TableHeaderCell, TableBody, TableCell } from "@tremor/react";
+import {
+  Table,
+  TableHead,
+  TableRow,
+  TableHeaderCell,
+  TableBody,
+  TableCell,
+} from "@tremor/react";
+import { useAppDispatch } from "@/hooks/hooks";
+import { cargarSolicitud } from "@/store/slices/compra";
 
 const columnHelper = createColumnHelper<ISolicitudCompra>();
 
 export const OrdenCompraTable = () => {
-  const { cargarPedido } = useContext(CartContext);
+  const dispatch = useAppDispatch();
 
   const columns = useMemo<ColumnDef<ISolicitudCompra, any>[]>(
     () => [
-      columnHelper.accessor<"comprobante", IComprobante>("comprobante", {
-        header: "Num Comprobante",
-        cell: (info) => info.getValue().numeracion,
+      columnHelper.accessor<"id", number>("id", {
+        header: "Num Sol.",
+        cell: (info) => info.row.original.id,
       }),
       columnHelper.accessor<"trabajador", ITrabajador>("trabajador", {
         header: "Trabajador",
@@ -43,10 +51,6 @@ export const OrdenCompraTable = () => {
       }),
       columnHelper.accessor<"motivo", string>("motivo", {
         header: "Motivo de la Solicitud",
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor<"total", number>("total", {
-        header: "Total",
         cell: (info) => info.getValue(),
       }),
       columnHelper.accessor<"fecha_solicitud", Date>("fecha_solicitud", {
@@ -91,22 +95,37 @@ export const OrdenCompraTable = () => {
               href={`/admin/compra/solicitud-compra/${props.row.original.id}`}
               passHref
               className="flex flex-row items-center gap-2 pt-1 text-center text-black"
+              onClick={() =>
+                dispatch(
+                  cargarSolicitud(
+                    props.row.original.detalle_solicitud_compra.map(
+                      (producto) => ({
+                        id: producto.id_producto,
+                        nombre: producto.producto.nombre,
+                        descripcion: producto.producto.descripcion,
+                        unidad_medida: producto.producto.unidad_medida.nombre,
+                        precio: producto.precio_unitario,
+                        cantidad: producto.cantidad,
+                      })
+                    )
+                  )
+                )
+              }
             >
               <IdentificationIcon className="h-6 w-6 text-black" />
-              Ver Detalles
             </Link>
           </div>
         ),
       }),
     ],
-    []
+    [dispatch]
   );
   const { data: solicitudes_compra, isLoading } =
     useObtenerSolicitudesCompraQuery();
 
   const table = useReactTable({
     data: solicitudes_compra?.filter((solicitud: ISolicitudCompra) => {
-      return solicitud.id_estado === 8;
+      return solicitud.id_estado === 14;
     })!,
     columns,
     getCoreRowModel: getCoreRowModel(),

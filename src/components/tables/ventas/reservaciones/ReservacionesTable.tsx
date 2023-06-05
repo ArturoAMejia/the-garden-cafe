@@ -48,10 +48,10 @@ export const ReservacionesTable: FC<Props> = () => {
         header: "Horas Reservada",
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor<"total_personas", number>("total_personas", {
-        header: "Total Personas",
-        cell: (info) => info.row.original.detalle_reservacion[0].total_personas,
-      }),
+      // columnHelper.accessor<"total_personas", number>("total_personas", {
+      //   header: "Total Personas",
+      //   cell: (info) => info.row.original.detalle_reservacion[0].total_personas,
+      // }),
       columnHelper.accessor<"cat_estado", ICatEstado>("cat_estado", {
         header: "Estado",
         cell: (props) =>

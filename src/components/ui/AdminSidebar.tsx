@@ -3,7 +3,6 @@ import { XCircleIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import React, { FC, Fragment } from "react";
 import Image from "next/image";
-import { Modulo } from "../../interfaces/seguridad/rol-modulo";
 
 import {
   HomeIcon,
@@ -96,8 +95,8 @@ export const AdminSidebar: FC<Props> = ({ setSidebarOpen, sidebarOpen }) => {
                     aria-label="Sidebar"
                   >
                     {session?.user.modulos.map((modulo: any) =>
-                      !modulo.modulo.sub_modulo ? (
-                        <div key={modulo.modulo.nombre}>
+                      !modulo.sub_modulo ? (
+                        <div key={modulo.modulos.modulo.nombre}>
                           <Link
                             className="group flex w-full items-center rounded-md py-2 pl-2 text-sm font-medium text-black"
                             href={`#`}
@@ -107,13 +106,13 @@ export const AdminSidebar: FC<Props> = ({ setSidebarOpen, sidebarOpen }) => {
                                 className={`mr-3 h-6 w-6 flex-shrink-0 text-black`}
                                 aria-hidden="true"
                               /> */}
-                            {modulo.modulo.nombre}
+                            {modulo.modulos.modulo.nombre}
                           </Link>
                         </div>
                       ) : (
                         <Disclosure
                           as="div"
-                          key={modulo.modulo.nombre}
+                          key={modulo.modulos.modulo.nombre}
                           className="space-y-1"
                         >
                           {({ open }) => (
@@ -124,7 +123,7 @@ export const AdminSidebar: FC<Props> = ({ setSidebarOpen, sidebarOpen }) => {
                                   aria-hidden="true"
                                 /> */}
                                 <span className="flex-1">
-                                  {modulo.modulo.nombre}
+                                  {modulo.modulos.modulo.nombre}
                                 </span>
                                 <svg
                                   className={classNames(
@@ -146,13 +145,13 @@ export const AdminSidebar: FC<Props> = ({ setSidebarOpen, sidebarOpen }) => {
                                 {modulo.modulo.sub_modulo.map(
                                   (subItem: any) => (
                                     <Disclosure.Button
-                                      key={subItem.nombre}
+                                      key={subItem.sub_modulo.nombre}
                                       as={Link}
-                                      href={subItem.url}
+                                      href={subItem.sub_modulo.url}
                                       passHref
                                       className="group flex w-full items-center rounded-md py-2 pl-11 pr-2 text-sm font-medium text-black"
                                     >
-                                      {subItem.nombre}
+                                      {subItem.sub_modulo.nombre}
                                     </Disclosure.Button>
                                   )
                                 )}
@@ -185,8 +184,8 @@ export const AdminSidebar: FC<Props> = ({ setSidebarOpen, sidebarOpen }) => {
           <div className="mt-5 flex flex-grow flex-col">
             <nav className="flex-1 space-y-1 px-2" aria-label="Sidebar">
               {session?.user.modulos.map((modulo: any) =>
-                !modulo.modulo.sub_modulo ? (
-                  <div key={modulo.modulo.nombre}>
+                !modulo.modulos.sub_modulo ? (
+                  <div key={modulo.modulos.modulo.nombre}>
                     <Link
                       className="group flex w-full items-center rounded-md py-2 pl-2 text-sm font-medium text-black"
                       href={`#`}
@@ -196,13 +195,13 @@ export const AdminSidebar: FC<Props> = ({ setSidebarOpen, sidebarOpen }) => {
                           className="mr-3 h-6 w-6 flex-shrink-0 text-black"
                           aria-hidden="true"
                         /> */}
-                      {modulo.modulo.nombre}
+                      {modulo.modulos.modulo.nombre}
                     </Link>
                   </div>
                 ) : (
                   <Disclosure
                     as="div"
-                    key={modulo.modulo.nombre}
+                    key={modulo.modulos.modulo.nombre}
                     className="space-y-1"
                   >
                     {({ open }) => (
@@ -212,7 +211,9 @@ export const AdminSidebar: FC<Props> = ({ setSidebarOpen, sidebarOpen }) => {
                             className="mr-3 h-6 w-6 flex-shrink-0 text-black"
                             aria-hidden="true"
                           /> */}
-                          <span className="flex-1">{modulo.modulo.nombre}</span>
+                          <span className="flex-1">
+                            {modulo.modulos.modulo.nombre}
+                          </span>
                           <svg
                             className={classNames(
                               open ? "rotate-90 text-black" : "text-black",
@@ -225,15 +226,15 @@ export const AdminSidebar: FC<Props> = ({ setSidebarOpen, sidebarOpen }) => {
                           </svg>
                         </Disclosure.Button>
                         <Disclosure.Panel className="space-y-1">
-                          {modulo.modulo.sub_modulo.map((subItem: any) => (
+                          {modulo.modulos.sub_modulo.map((subItem: any) => (
                             <Disclosure.Button
-                              key={subItem.nombre}
+                              key={subItem.sub_modulo.nombre}
                               as={Link}
-                              href={subItem.url}
+                              href={subItem.sub_modulo.url}
                               passHref
                               className="group flex w-full items-center rounded-md py-2 pl-11 pr-2 text-sm font-medium text-black"
                             >
-                              {subItem.nombre}
+                              {subItem.sub_modulo.nombre}
                             </Disclosure.Button>
                           ))}
                         </Disclosure.Panel>

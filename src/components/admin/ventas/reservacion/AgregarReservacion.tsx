@@ -7,7 +7,9 @@ import { toast } from "react-hot-toast";
 import {
   useCrearReservacionMutation,
   useObtenerClientesQuery,
+  useObtenerMesasQuery,
 } from "@/store/slices/venta";
+import { AgregarCliente } from "../cliente";
 
 type FormData = IReservacion;
 
@@ -17,24 +19,35 @@ export const AgregarReservacion = () => {
   const openModal = () => setIsOpen(!isOpen);
   const { register, handleSubmit, reset } = useForm<FormData>();
 
+  const { data: mesas, isLoading: isLoadingMesas } = useObtenerMesasQuery();
+
   const { data: clientes, isLoading } = useObtenerClientesQuery();
 
-  const [crearReservacion, { isError, error }] = useCrearReservacionMutation();
+  const [crearReservacion] = useCrearReservacionMutation();
 
   const onRegistrarNuevaReservacion = async (data: FormData) => {
-    try {
-      await crearReservacion(data).unwrap();
-
-      toast.success("Reservación creada satisfactoriamente.");
-      closeModal();
-      reset();
-    } catch (error: any) {
-      toast.error(error.data.message);
-    }
+    toast.promise(
+      crearReservacion(data)
+        .unwrap()
+        .then(() => {
+          closeModal();
+          reset();
+        }),
+      {
+        loading: "Registrando nueva reservación...",
+        success: () => {
+          return "Reservación creada satisfactoriamente.";
+        },
+        error: (err) => {
+          return `No se pudo registrar la reservación. ${err.data.message}`;
+        },
+      }
+    );
   };
 
   if (isLoading) return <>Cargando...</>;
-  
+  if (isLoadingMesas) return <>Cargando...</>;
+
   return (
     <>
       <div className="mx-2">
@@ -102,6 +115,32 @@ export const AgregarReservacion = () => {
                                 value={cliente.id}
                               >
                                 {`${cliente.persona?.nombre} ${cliente.persona?.apellido_razon_social}`}
+                              </option>
+                            ))}
+                          </select>
+                          <AgregarCliente showMin={true} />
+                        </div>
+                      </div>
+                      {/* mesa */}
+                      <div className="mt-2">
+                        <label
+                          htmlFor="mesa"
+                          className="block font-medium text-gray-700"
+                        >
+                          Mesa
+                        </label>
+                        <div className="mt-1 flex flex-row">
+                          <select
+                            id="mesa"
+                            className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+                            {...register("id_mesa")}
+                          >
+                            {mesas?.map((mesa) => (
+                              <option
+                                key={`${mesa.id} ${mesa.nombre}`}
+                                value={mesa.id}
+                              >
+                                {mesa.nombre}
                               </option>
                             ))}
                           </select>

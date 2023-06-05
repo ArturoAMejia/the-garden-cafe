@@ -1,14 +1,17 @@
 import { Transition, Dialog } from "@headlessui/react";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
-import React, { FC, Fragment, useContext, useState } from "react";
+import React, { Fragment, useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { AdminContext, AuthContext } from "../../../context";
+import { AuthContext } from "../../../context";
 import { ICaja, IMoneda, IPedido } from "../../../interfaces";
-import tgcApi from "../../../api/tgcApi";
-import axios from "axios";
-import { useCrearVentaMutation } from "@/store/slices/venta";
+
 import { useSession } from "next-auth/react";
+import { useObtenerMonedasQuery } from "@/store/slices/catalogos";
+import {
+  useCrearAperturaCajaMutation,
+  useObtenerCajasQuery,
+} from "@/store/slices/caja";
 
 type FormData = {
   id_caja: number;
@@ -16,15 +19,13 @@ type FormData = {
   monto_cordobas: number;
 };
 
-interface Props {
-  pedido?: IPedido;
-  cajas: ICaja[];
-}
+export const AbrirCaja = () => {
+  const { data: monedas, isLoading: isLoadingMonedas } =
+    useObtenerMonedasQuery();
 
-export const AbrirCaja: FC<Props> = ({ pedido, cajas }) => {
-  const { monedas, formas_pago } = useContext(AdminContext);
+  const { data: cajas, isLoading } = useObtenerCajasQuery();
 
-  const [crearVenta] = useCrearVentaMutation();
+  const [aperturarCaja] = useCrearAperturaCajaMutation();
 
   const { data: session } = useSession();
   const { user } = useContext(AuthContext);
@@ -32,19 +33,7 @@ export const AbrirCaja: FC<Props> = ({ pedido, cajas }) => {
   const [isOpen, setIsOpen] = useState(false);
   const closeModal = () => setIsOpen(!isOpen);
 
-  const openModal = () => {
-    // cargarPedido(
-    //   pedido.detalle_pedido.map((producto: any) => ({
-    //     id: producto.id_producto,
-    //     precio: producto.precio,
-    //     nombre: producto.producto.nombre,
-    //     descripcion: producto.producto.descripcion,
-    //     imagen: producto.producto.imagen,
-    //     cantidad: producto.cantidad,
-    //   }))
-    // );
-    setIsOpen(!isOpen);
-  };
+  const openModal = () => setIsOpen(!isOpen);
 
   const { register, handleSubmit, reset } = useForm<FormData>();
 
@@ -53,27 +42,32 @@ export const AbrirCaja: FC<Props> = ({ pedido, cajas }) => {
     id_moneda,
     monto_cordobas,
   }: FormData) => {
-    try {
-      await tgcApi.post("api/caja/apertura", {
+    toast.promise(
+      aperturarCaja({
         id_trabajador: session.user?.id,
         id_caja,
         id_moneda,
         monto_cordobas,
-        monto_dolares: monto_cordobas / 35.85,
-      });
-      toast.success("Caja abierta correctamente.");
-      closeModal();
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        toast.error(error.response?.data.message);
-        return;
+        monto_dolares: monto_cordobas / 35.95,
+      })
+        .unwrap()
+        .then(() => {
+          closeModal();
+          reset();
+        }),
+      {
+        loading: "Abriendo caja...",
+        success: "Caja abierta exitosamente.",
+        error: (res) => `${res.data.message}`,
       }
-
-      toast.error("No se pudo abrir la caja.");
-    }
-
-    reset();
+    );
   };
+
+  if (isLoadingMonedas) return <>Cargando...</>;
+
+  if (isLoading) return <>Cargando...</>;
+
+  const cajas_cerradas = cajas?.filter((caja) => caja.id_estado === 2);
 
   return (
     <>
@@ -141,7 +135,7 @@ export const AbrirCaja: FC<Props> = ({ pedido, cajas }) => {
                             })}
                             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                           >
-                            {cajas.map((caja: ICaja) => (
+                            {cajas_cerradas.map((caja: ICaja) => (
                               <option key={caja.id} value={caja.id}>
                                 {caja.tipo_caja}
                               </option>

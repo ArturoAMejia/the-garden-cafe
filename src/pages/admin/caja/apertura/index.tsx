@@ -3,32 +3,25 @@ import { AdminLayout } from "../../../../components/Layout/AdminLayout";
 import { AperturaCajaTable } from "../../../../components/tables/caja/AperturaCajaTable";
 import { AbrirCaja } from "../../../../components/admin/caja/AbrirCaja";
 
-interface Props {
-  cajas: ICaja[];
-}
-const AperturaCajaIndex: FC<Props> = ({ cajas }) => {
+const AperturaCajaIndex = () => {
   return (
     <AdminLayout title="Aperturas de Caja">
-      <h1>Aperturas de caja</h1>
-      <AbrirCaja cajas={cajas} />
+      <div className="sm:flex sm:items-center">
+        <div className="sm:flex-auto">
+          <h1 className="px-2 text-xl font-semibold text-gray-900">
+            Aperturas de Caja
+          </h1>
+          <p className="mt-2 px-2 text-sm text-gray-700">
+            Da click al botón para aperturar una caja
+          </p>
+        </div>
+      </div>
+      <div className="flex justify-end">
+        <AbrirCaja />
+      </div>
       <AperturaCajaTable />
     </AdminLayout>
   );
 };
 
 export default AperturaCajaIndex;
-
-// You should use getServerSideProps when:
-// - Only if you need to pre-render a page whose data must be fetched at request time
-import { GetServerSideProps } from "next";
-import { prisma } from "../../../../database";
-import { ICaja } from "../../../../interfaces";
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const cajas = await prisma.caja.findMany();
-
-  return {
-    props: {
-      cajas: JSON.parse(JSON.stringify(cajas)),
-    },
-  };
-};

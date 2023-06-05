@@ -93,8 +93,6 @@ const crearVenta = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     pago_cliente,
   } = req.body;
 
-  console.log(req.body);
-
   if (
     !id_cliente ||
     !tipo_venta ||
@@ -108,12 +106,22 @@ const crearVenta = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     return res.status(400).json({ message: "Los campos son obligatorios" });
   }
 
-  if (pago_cliente < (subtotal * 1.15)) {
+  if (pago_cliente < subtotal * 1.15) {
     return res
       .status(400)
       .json({ message: "El pago del cliente es menor al total de la venta" });
   }
   await prisma.$connect();
+
+  const caja = await prisma.caja.findFirst({
+    where: {
+      id_estado: 1,
+    },
+  });
+
+  if (!caja) {
+    return res.status(400).json({ message: "No hay caja abierta" });
+  }
 
   const comprobante = await prisma.comprobante.create({
     data: {
@@ -140,7 +148,7 @@ const crearVenta = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     },
   });
 
-  const pedido = await prisma.pedido.update({
+  await prisma.pedido.update({
     where: {
       id: id_pedido,
     },
@@ -149,7 +157,6 @@ const crearVenta = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     },
   });
 
-  // TODO cambiar el any del producto
   await prisma.detalle_venta.createMany({
     data: productos.map((producto: any) => ({
       id_venta: venta.id,
@@ -159,6 +166,52 @@ const crearVenta = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
       precio: producto.precio,
     })),
   });
+
+  const apertura_caja = await prisma.apertura_caja.findFirst({
+    where: {
+      id_caja: caja.id,
+      id_estado: 1,
+    },
+  });
+
+  await prisma.movimiento_caja.create({
+    data: {
+      id_caja: caja.id,
+      id_trabajador,
+      concepto: "Venta",
+      tipo_movimiento: "Ingreso",
+      monto: venta.total,
+      id_comprobante: comprobante.id,
+      id_moneda: apertura_caja.id_moneda,
+    },
+  });
+
+  await prisma.caja.update({
+    where: {
+      id: caja.id,
+    },
+    data: {
+      saldo_actual: {
+        increment: venta.total,
+      },
+    },
+  });
+
+  const pedido = await prisma.pedido.findFirst({
+    where: {
+      id: id_pedido,
+    },
+  });
+
+  await prisma.mesa.update({
+    where: {
+      id: pedido.id_mesa,
+    },
+    data: {
+      id_estado: 1,
+    },
+  });
+
   await prisma.$disconnect();
   return res.status(201).json(venta);
 };

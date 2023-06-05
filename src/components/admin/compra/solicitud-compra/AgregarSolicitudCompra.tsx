@@ -5,8 +5,11 @@ import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { useForm } from "react-hook-form";
 
 import toast from "react-hot-toast";
-import { AdminContext, AuthContext } from "../../../../context";
 import { useCrearSolicitudCompraMutation } from "@/store/slices/compra/compraApi";
+import { useSession } from "next-auth/react";
+import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
+import { AppState } from "@/store/store";
+import { solicitudCompleta } from "@/store/slices/compra";
 
 type FormData = {
   fecha_vigencia: Date;
@@ -19,15 +22,18 @@ export const AgregarSolicitudCompra = () => {
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  const { user } = useContext(AuthContext);
+  const { data: session } = useSession();
+  const { impuesto, productos, subtotal, total } = useAppSelector(
+    (state: AppState) => state.compra
+  );
+
+  const dispatch = useAppDispatch();
 
   const [crearSolicitudCompra] = useCrearSolicitudCompraMutation();
 
-  const { productos, subtotal, solicitudCompleta, total, tax } =
-    useContext(AdminContext);
   const { register, handleSubmit, reset } = useForm<FormData>();
 
-  const trabajador_id = Number(user?.id);
+  const trabajador_id = Number(session.user?.id_trabajador);
 
   const onCrearNuevaOrdenCompra = async ({
     fecha_vigencia,
@@ -39,8 +45,9 @@ export const AgregarSolicitudCompra = () => {
         fecha_vigencia,
         motivo,
         productos,
+        id_tipo_orden_compra,
         id_trabajador: trabajador_id,
-        impuesto: tax,
+        impuesto,
         subtotal,
         total,
       }).unwrap();
@@ -48,7 +55,7 @@ export const AgregarSolicitudCompra = () => {
       toast.success("Solicitud de Compra realizada correctamente.");
       closeModal();
       reset();
-      solicitudCompleta();
+      dispatch(solicitudCompleta());
     } catch (error: any) {
       toast.error(error.data.message);
     }

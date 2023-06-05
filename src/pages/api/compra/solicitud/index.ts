@@ -22,7 +22,7 @@ export default function handler(
     case "PUT":
       return actualizarSolicitudCompra(req, res);
     case "PATCH":
-      return desactivarSolicitudCompra(req, res);
+      return cambiarEstadoSolicitudCompra(req, res);
 
     default:
       return res.status(400).json({ message: "Método no soportado." });
@@ -53,12 +53,22 @@ const obtenerSolicitudesCompra = async (res: NextApiResponse<Data>) => {
       fecha_vigencia: true,
       cantidad: true,
       id_estado: true,
+      observacion: true,
       cat_estado: true,
       motivo: true,
+      id_tipo_orden_compra: true,
+      tipo_orden_compra: true,
       detalle_solicitud_compra: {
         select: {
           id_producto: true,
-          producto: true,
+          producto: {
+            select: {
+              id: true,
+              nombre: true,
+              descripcion: true,
+              unidad_medida: true,
+            },
+          },
           monto: true,
           cantidad: true,
           precio_unitario: true,
@@ -86,7 +96,9 @@ const crearSolicitudCompra = async (
     impuesto,
     subtotal,
     total,
+    observacion,
     productos,
+    id_tipo_orden_compra,
   } = req.body;
 
   console.log(req.body);
@@ -95,9 +107,9 @@ const crearSolicitudCompra = async (
     !id_trabajador ||
     !motivo ||
     !fecha_vigencia ||
-    !impuesto ||
     !subtotal ||
-    !total
+    !total ||
+    !id_tipo_orden_compra
   )
     return res
       .status(400)
@@ -118,9 +130,11 @@ const crearSolicitudCompra = async (
       cantidad: productos.length,
       fecha_solicitud: new Date(),
       // 7 = En espera
-      id_estado: 8,
+      id_tipo_orden_compra,
+      id_estado: 13,
       motivo,
       descuento,
+      observacion,
       impuesto,
       subtotal,
       total,
@@ -147,26 +161,23 @@ const actualizarSolicitudCompra = async (
 ) => {
   const {
     id,
-    id_trabajador,
-    id_comprobante,
     fecha_vigencia,
-    id_estado,
-    cantidad,
     motivo,
     productos,
+    id_comprobante,
+    id_trabajador,
+    impuesto,
+    id_tipo_orden_compra,
+    subtotal,
+    observacion,
+    total,
   } = req.body;
 
   if (!id)
     return res
       .status(400)
       .json({ message: "El id es necesario para actualizar la solicitud" });
-  if (
-    !id_trabajador ||
-    !id_comprobante ||
-    !fecha_vigencia ||
-    !cantidad ||
-    !motivo
-  )
+  if (!id_trabajador || !id_comprobante || !fecha_vigencia || !motivo)
     return res
       .status(400)
       .json({ message: "Todos los campos son obligatorios" });
@@ -187,11 +198,14 @@ const actualizarSolicitudCompra = async (
     data: {
       id_trabajador,
       id_comprobante,
-      cantidad,
+      cantidad: productos.length,
       fecha_solicitud: new Date(),
-      // 7 = En espera
-      id_estado,
+      observacion,
       motivo,
+      impuesto,
+      subtotal,
+      total,
+      id_tipo_orden_compra,
       fecha_vigencia: new Date(fecha_vigencia),
     },
     where: {
@@ -229,16 +243,21 @@ const actualizarSolicitudCompra = async (
   return res.status(200).json(solicitud_compra);
 };
 
-const desactivarSolicitudCompra = async (
+const cambiarEstadoSolicitudCompra = async (
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) => {
-  const { id, id_estado = 1 } = req.body;
+  const { id, id_estado, observacion } = req.body;
 
   if (!id)
     return res
       .status(400)
       .json({ message: "El id es necesario para actualizar la solicitud" });
+
+  if (!id_estado)
+    return res.status(400).json({
+      message: "El id_estado es necesario para actualizar la solicitud",
+    });
 
   await prisma.$connect();
   const s = await prisma.solicitud_compra.findFirst({
@@ -251,10 +270,12 @@ const desactivarSolicitudCompra = async (
     return res
       .status(400)
       .json({ message: "No se encontró registro para desactivar" });
+
   const solicitud_compra = await prisma.solicitud_compra.update({
     data: {
       //Cambiar a esta aprobado
       id_estado,
+      observacion,
     },
     where: {
       id,

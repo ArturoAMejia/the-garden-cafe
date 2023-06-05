@@ -98,7 +98,7 @@ export const NuevaCompraTable = () => {
 
   const table = useReactTable({
     data: ordenes_compra?.filter((ordenes: IOrdenCompra) => {
-      return ordenes.id_estado === 1;
+      return ordenes.id_estado === 17;
     })!,
     columns,
     getCoreRowModel: getCoreRowModel(),
