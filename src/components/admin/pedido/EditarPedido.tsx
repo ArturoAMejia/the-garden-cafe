@@ -27,6 +27,8 @@ export const EditarPedido: FC<Props> = ({ pedido }) => {
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
+  const { data: session } = useSession();
+
   const [actualizarPedido] = useActualizarPedidoMutation();
 
   const { productos, id_mesa } = useAppSelector(
@@ -43,7 +45,7 @@ export const EditarPedido: FC<Props> = ({ pedido }) => {
       actualizarPedido({
         ...pedido,
         id_cliente: data.id_cliente,
-        id_trabajador: data.id_trabajador,
+        id_trabajador: session?.user.id_trabajador,
         tipo_pedido: data.tipo_pedido,
         ubicacion_entrega: data.ubicacion_entrega,
         observacion: data.observacion,
@@ -66,8 +68,6 @@ export const EditarPedido: FC<Props> = ({ pedido }) => {
       }
     );
   };
-
-  console.log(pedido.id_trabajador);
 
   if (isLoading) return <>Cargando...</>;
 
@@ -158,11 +158,13 @@ export const EditarPedido: FC<Props> = ({ pedido }) => {
                             id="trabajador"
                             className="mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
                             {...register("id_trabajador")}
+                            defaultValue={session?.user.id_trabajador}
                           >
                             {trabajadores?.map((trabajador) => (
                               <option
                                 key={`${trabajador.codigo_inss} ${trabajador.id_persona}`}
                                 value={trabajador.id}
+                                defaultValue={session?.user.id_trabajador}
                               >
                                 {`${trabajador.persona?.nombre} ${trabajador.persona?.apellido_razon_social}`}
                               </option>
@@ -207,22 +209,24 @@ export const EditarPedido: FC<Props> = ({ pedido }) => {
                         </div>
                       </div>
                       {/* Observaciones */}
-                      <div className="mt-2">
-                        <label
-                          htmlFor="ubicacion_entrega"
-                          className="block font-medium text-gray-700"
-                        >
-                          Ubicación de Entrega
-                        </label>
-                        <div className="mt-1">
-                          <input
-                            type="text"
-                            id="ubicacion_entrega"
-                            {...register("ubicacion_entrega")}
-                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                          />
+                      {pedido.tipo_pedido === "Para llevar" && (
+                        <div className="mt-2">
+                          <label
+                            htmlFor="ubicacion_entrega"
+                            className="block font-medium text-gray-700"
+                          >
+                            Ubicación de Entrega
+                          </label>
+                          <div className="mt-1">
+                            <input
+                              type="text"
+                              id="ubicacion_entrega"
+                              {...register("ubicacion_entrega")}
+                              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            />
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                     <button
                       type="submit"

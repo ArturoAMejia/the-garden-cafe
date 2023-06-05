@@ -44,9 +44,7 @@ export const ProductoFiltrado: FC<Props> = ({
       <Card className="w-full p-3">
         <List className="p-0">
           <ListItem className="p-0">
-            <span>
-              {producto.nombre} ${producto.precio_producto.toFixed(2  )}
-            </span>
+            <span>{producto.nombre}</span>
             <Button size="xs" onClick={onAddProduct} icon={ShoppingCartIcon}>
               Añadir
             </Button>
