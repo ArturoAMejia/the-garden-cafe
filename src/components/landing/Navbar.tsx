@@ -43,7 +43,7 @@ export const Navbar = () => {
             className="mt-4 flex items-center gap-2 rounded-lg bg-white px-5 py-1.5 text-center text-sm font-medium text-black transition hover:bg-white/90 focus:outline-none focus:ring active:text-indigo-500 sm:mt-0"
           >
             <InboxIcon className="h-6 w-6" />
-            Ir al Dashboard
+            Ir al panel de administración
           </Link>
         </div>
       ) : (

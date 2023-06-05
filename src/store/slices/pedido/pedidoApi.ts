@@ -6,7 +6,7 @@ export const pedidoApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: "/api",
   }),
-  tagTypes: ["Pedidos"],
+  tagTypes: ["Pedidos", "Mesas"],
   endpoints: (builder) => ({
     obtenerPedidos: builder.query<IPedido[], void>({
       query: () => "pedido",
@@ -18,7 +18,7 @@ export const pedidoApi = createApi({
         method: "POST",
         body: pedido,
       }),
-      invalidatesTags: ["Pedidos"],
+      invalidatesTags: ["Pedidos", "Mesas"],
     }),
     actualizarPedido: builder.mutation<IPedido, any>({
       query: (pedido) => ({
@@ -68,6 +68,10 @@ export const pedidoApi = createApi({
       query: () => "/inventario/inventario-abc/venta",
       providesTags: ["Pedidos"],
     }),
+    obtenerMesas: builder.query<any, void>({
+      query: () => "/venta/mesa",
+      providesTags: ["Mesas"],
+    }),
   }),
 });
 
@@ -83,4 +87,6 @@ export const {
   useActualizarEstadoCocineroPedidoMutation,
   // Inventario ABC
   useObtenerInventarioAbcVentaQuery,
+  // Mesas
+  useObtenerMesasQuery,
 } = pedidoApi;

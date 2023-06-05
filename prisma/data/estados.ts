@@ -96,4 +96,9 @@ export const estados = [
     nombre: "Recepcionado",
     descripcion: "Estado Recepcionado",
   },
+  {
+    id_categoria_estado: 1,
+    nombre: "Reservado",
+    descripcion: "Estado Reservado",
+  },
 ];

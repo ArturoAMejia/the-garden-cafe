@@ -7,13 +7,10 @@ import {
   IPedido,
   IProductoElaborado,
 } from "../../../../../interfaces";
-import { ProductoFiltrado } from "../../../../../components";
 import { AdminLayout } from "../../../../../components/Layout/AdminLayout";
 
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-
-import { Button, TextInput } from "@tremor/react";
 
 import { EditarPedido } from "../../../../../components/admin/pedido/EditarPedido";
 import {
@@ -31,10 +28,11 @@ import {
   cargarPedido,
 } from "@/store/slices/pedido/pedidoSlice";
 import { AppState } from "@/store/store";
-import { getSession, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { getServerSession } from "next-auth";
 import { RealizarVenta } from "@/components/admin/ventas/nueva-venta/RealizarVenta";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { ProductoPorCategoria } from "@/components/admin/pedido/ProductoPorCategoria";
 
 interface Props {
   detalle: IPedido;
@@ -42,10 +40,6 @@ interface Props {
 }
 
 const DetallePedidoRealizadoPage: FC<Props> = ({ detalle, estados }) => {
-  const [query, setQuery] = useState("");
-
-  const { filtro, setFiltro, menuFiltrado } = useMenu();
-
   const { productos, subtotal, total } = useAppSelector(
     ({ pedido }: AppState) => pedido
   );
@@ -55,14 +49,6 @@ const DetallePedidoRealizadoPage: FC<Props> = ({ detalle, estados }) => {
 
   const { data: categorias, isLoading: isLoadingCategorias } =
     useObtenerCategoriasQuery();
-  const { data: platillos, isLoading } = useObtenerPlatillosQuery();
-
-  const platillosFiltrados =
-    query === ""
-      ? platillos
-      : platillos.filter((producto: IProductoElaborado) => {
-          return producto.nombre.toLowerCase().includes(query.toLowerCase());
-        });
 
   const dispatch = useAppDispatch();
 
@@ -79,7 +65,6 @@ const DetallePedidoRealizadoPage: FC<Props> = ({ detalle, estados }) => {
       )
     );
   }, [dispatch, detalle]);
-
 
   return (
     <AdminLayout title={`Detalle del Pedido - ${detalle.id}`}>
@@ -129,6 +114,12 @@ const DetallePedidoRealizadoPage: FC<Props> = ({ detalle, estados }) => {
             Estado:{" "}
             <span className="text-lg font-medium capitalize">
               {detalle.cat_estado.nombre}
+            </span>
+          </p>
+          <p className="text-xl font-bold">
+            Mesa:{" "}
+            <span className="text-lg font-medium capitalize">
+              {detalle.id_mesa}
             </span>
           </p>
         </div>
@@ -201,60 +192,20 @@ const DetallePedidoRealizadoPage: FC<Props> = ({ detalle, estados }) => {
                       : ""
                   }`}
                 >
-                  <TextInput
-                    className="mt-4 md:mt-0"
-                    icon={MagnifyingGlassIcon}
-                    placeholder="Buscar..."
-                    onChange={(e) => setQuery(e.target.value)}
-                  />
-                  <div className="flex justify-end pr-2 pt-2">
-                    <Button variant="light" onClick={() => setFiltro("")}>
-                      Borrar Filtro
-                    </Button>
-                  </div>
                   {isLoadingCategorias ? (
                     <>Cargando...</>
                   ) : (
-                    <CategoriaFilter
-                      categorias={categorias}
-                      setFiltro={setFiltro}
-                    />
-                  )}
-
-                  {isLoading ? (
-                    <>Cargando...</>
-                  ) : (
-                    <div className="mt-4 overflow-y-auto ">
-                      {filtro
-                        ? menuFiltrado?.map((prod) => (
-                            <ProductoFiltrado
-                              key={prod.nombre}
-                              añadirProductoOrden={añadirProductoPedido}
-                              isIngredient={false}
-                              isPlate={true}
-                              producto={prod}
-                            />
-                          ))
-                        : query
-                        ? platillosFiltrados.map((platillo) => (
-                            <ProductoFiltrado
-                              key={platillo.nombre}
-                              añadirProductoOrden={añadirProductoPedido}
-                              isIngredient={false}
-                              isPlate={true}
-                              producto={platillo}
-                            />
-                          ))
-                        : platillos?.map((prod) => (
-                            <ProductoFiltrado
-                              key={prod.nombre}
-                              añadirProductoOrden={añadirProductoPedido}
-                              isIngredient={false}
-                              isPlate={true}
-                              producto={prod}
-                            />
-                          ))}
-                      {}
+                    <div className="grid grid-cols-3 gap-4">
+                      {categorias
+                        .filter(
+                          (categoria) => categoria.id_tipo_categoria === 2
+                        )
+                        .map((categoria) => (
+                          <ProductoPorCategoria
+                            key={categoria.nombre}
+                            categoria={categoria}
+                          />
+                        ))}
                     </div>
                   )}
                 </div>
@@ -279,6 +230,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     select: {
       id: true,
       id_cliente: true,
+      id_mesa: true,
       cliente: {
         select: {
           id: true,

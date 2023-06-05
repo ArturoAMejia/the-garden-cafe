@@ -12,6 +12,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
 import { AppState } from "@/store/store";
 import { pedidoCompletado } from "@/store/slices/pedido/pedidoSlice";
 import { useSession } from "next-auth/react";
+import { AgregarCliente } from "../ventas";
 
 type FormData = IPedido;
 
@@ -25,7 +26,9 @@ export const AgregarPedido = () => {
   const [crearPedido, { isLoading: creandoPedido, isSuccess }] =
     useCrearPedidoMutation();
 
-  const productos = useAppSelector((state: AppState) => state.pedido.productos);
+  const { productos, id_mesa } = useAppSelector(
+    (state: AppState) => state.pedido
+  );
 
   const dispatch = useAppDispatch();
   const { data: clientes, isLoading } = useObtenerClientesQuery();
@@ -39,6 +42,7 @@ export const AgregarPedido = () => {
         id_trabajador: Number(session.user.id),
         id_cliente: Number(data.id_cliente),
         productos,
+        id_mesa,
       })
         .unwrap()
         .then(() => {
@@ -128,6 +132,7 @@ export const AgregarPedido = () => {
                               </option>
                             ))}
                           </select>
+                          <AgregarCliente showMin={true} />
                         </div>
                       </div>
                       {/* Tipo pedido */}

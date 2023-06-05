@@ -1,0 +1,86 @@
+export const mesas = [
+  {
+    nombre: "Mesa 1",
+    ubicacion: "Interior",
+    capacidad: 10,
+    id_estado: 1,
+  },
+  {
+    nombre: "Mesa 2",
+    ubicacion: "Interior",
+    capacidad: 10,
+    id_estado: 1,
+  },
+  {
+    nombre: "Mesa 3",
+    ubicacion: "Interior",
+    capacidad: 10,
+    id_estado: 1,
+  },
+  {
+    nombre: "Mesa 4",
+    ubicacion: "Interior",
+    capacidad: 10,
+    id_estado: 1,
+  },
+  {
+    nombre: "Mesa 5",
+    ubicacion: "Interior",
+    capacidad: 10,
+    id_estado: 1,
+  },
+  {
+    nombre: "Mesa 6",
+    ubicacion: "Interior",
+    capacidad: 10,
+    id_estado: 1,
+  },
+  {
+    nombre: "Mesa 7",
+    ubicacion: "Interior",
+    capacidad: 10,
+    id_estado: 1,
+  },
+  {
+    nombre: "Mesa 8",
+    ubicacion: "Interior",
+    capacidad: 10,
+    id_estado: 1,
+  },
+  {
+    nombre: "Mesa 9",
+    ubicacion: "Interior",
+    capacidad: 10,
+    id_estado: 1,
+  },
+  {
+    nombre: "Mesa 10",
+    ubicacion: "Interior",
+    capacidad: 10,
+    id_estado: 1,
+  },
+  {
+    nombre: "Mesa 11",
+    ubicacion: "Interior",
+    capacidad: 10,
+    id_estado: 1,
+  },
+  {
+    nombre: "Mesa 12",
+    ubicacion: "Interior",
+    capacidad: 10,
+    id_estado: 1,
+  },
+  {
+    nombre: "Mesa 13",
+    ubicacion: "Interior",
+    capacidad: 10,
+    id_estado: 1,
+  },
+  {
+    nombre: "Mesa 14",
+    ubicacion: "Interior",
+    capacidad: 10,
+    id_estado: 1,
+  },
+];

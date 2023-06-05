@@ -66,6 +66,7 @@ model cat_estado {
   detalle_pedido             detalle_pedido[]
   pedido_cocinero            pedido_cocinero[]
   punto_pedido               punto_pedido[]
+  mesa                       mesa[]
 }
 
 model categoria_impuesto {
@@ -661,6 +662,8 @@ model pedido {
   id_trabajador              Int
   cat_estado                 cat_estado                   @relation(fields: [id_estado], references: [id])
   id_estado                  Int
+  mesa                       mesa                         @relation(fields: [id_mesa], references: [id])
+  id_mesa                    Int                          @default(1)
   tipo_pedido                String
   fecha_pedido               DateTime
   ubicacion_entrega          String
@@ -712,24 +715,41 @@ model pedido_cocinero {
 // *        Reservación        //
 
 model reservacion {
-  id                  Int                   @id @default(autoincrement())
-  cliente             cliente               @relation(fields: [id_cliente], references: [id])
+  id                  Int                  @id @default(autoincrement())
+  cliente             cliente              @relation(fields: [id_cliente], references: [id])
   id_cliente          Int
-  cat_estado          cat_estado            @relation(fields: [id_estado], references: [id])
+  cat_estado          cat_estado           @relation(fields: [id_estado], references: [id])
   id_estado           Int
   tipo_reservacion    String
   fecha_reservacion   DateTime
   horas_reservadas    Int
   fecha_registro      DateTime
-  detalle_reservacion detalle_reservacion[]
+  detalle_reservacion detalle_reservacion?
 }
 
 model detalle_reservacion {
   id             Int         @id @default(autoincrement())
   reservacion    reservacion @relation(fields: [id_reservacion], references: [id])
-  id_reservacion Int
+  id_reservacion Int         @unique
+  mesa           mesa        @relation(fields: [id_mesa], references: [id])
+  id_mesa        Int
+  servicio       String
+  hora_reserva   DateTime    @db.Time()
+  adultos        Int
+  menores        Int
   total_personas Int
   observaciones  String
+}
+
+model mesa {
+  id                  Int                   @id @default(autoincrement())
+  nombre              String
+  ubicacion           String
+  cat_estado          cat_estado            @relation(fields: [id_estado], references: [id])
+  id_estado           Int
+  capacidad           Int
+  detalle_reservacion detalle_reservacion[]
+  pedido              pedido[]
 }
 
 // *        Ventas        //

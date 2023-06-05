@@ -2,7 +2,8 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import { prisma } from "./../../../../database";
 import { IReservacion } from "../../../../interfaces";
-import { getHours } from "date-fns";
+import { getHours, getMinutes } from "date-fns";
+import set from "date-fns/set";
 
 type Data =
   | {
@@ -38,15 +39,20 @@ const crearReservacion = async (
     id_cliente,
     tipo_reservacion = "En línea",
     fecha_reservacion,
-    total_personas,
     observaciones = "",
+    id_mesa,
+    hora_reserva,
+    adultos,
+    menores,
   } = req.body;
 
-  console.log(req.body);
+  console.log(hora_reserva);
 
   const horas_rerservas = getHours(new Date(fecha_reservacion));
+  const minuto_reservado = getMinutes(new Date(fecha_reservacion));
+  console.log(horas_rerservas);
 
-  if (!id_cliente || !fecha_reservacion || !total_personas) {
+  if (!id_cliente || !fecha_reservacion) {
     return res.status(400).json({ message: "Los campos son obligatorios" });
   }
   await prisma.$connect();
@@ -61,11 +67,29 @@ const crearReservacion = async (
       fecha_registro: new Date(),
     },
   });
+
   await prisma.detalle_reservacion.create({
     data: {
       id_reservacion: reservacion.id,
-      total_personas: Number(total_personas),
+      total_personas: adultos + menores,
+      adultos,
+      menores,
+      hora_reserva: set(new Date(fecha_reservacion), {
+        hours: horas_rerservas,
+        minutes: minuto_reservado,
+      }),
+      servicio: "Restaurante",
+      id_mesa,
       observaciones,
+    },
+  });
+
+  await prisma.mesa.update({
+    where: {
+      id: id_mesa,
+    },
+    data: {
+      id_estado: 2,
     },
   });
   await prisma.$disconnect();
@@ -111,12 +135,14 @@ const actualizarReservacion = async (
   const {
     id,
     id_cliente,
-    id_estado,
     tipo_reservacion = "En línea",
     fecha_reservacion,
-    horas_reservadas,
     total_personas,
     observaciones = "",
+    id_mesa,
+    hora_reserva,
+    adultos,
+    menores,
   } = req.body;
 
   if (!id)
@@ -124,14 +150,12 @@ const actualizarReservacion = async (
       .status(400)
       .json({ message: "El id es necesario para realizar la actualización" });
 
-  if (
-    !id_cliente ||
-    !fecha_reservacion ||
-    !horas_reservadas ||
-    !total_personas
-  ) {
+  if (!id_cliente || !fecha_reservacion || !total_personas) {
     return res.status(400).json({ message: "Los campos son obligatorios" });
   }
+  const horas_rerservas = getHours(new Date(fecha_reservacion));
+  const minuto_reservado = getMinutes(new Date(fecha_reservacion));
+
   await prisma.$connect();
   const r = await prisma.reservacion.findFirst({
     where: {
@@ -148,7 +172,7 @@ const actualizarReservacion = async (
     data: {
       tipo_reservacion,
       fecha_reservacion: new Date(fecha_reservacion),
-      horas_reservadas: Number(horas_reservadas),
+      horas_reservadas: Number(horas_rerservas),
     },
     where: {
       id: Number(id),
@@ -157,7 +181,15 @@ const actualizarReservacion = async (
   await prisma.detalle_reservacion.create({
     data: {
       id_reservacion: reservacion.id,
-      total_personas: Number(total_personas),
+      total_personas: adultos + menores,
+      adultos,
+      menores,
+      hora_reserva: set(new Date(fecha_reservacion), {
+        hours: horas_rerservas,
+        minutes: minuto_reservado,
+      }),
+      servicio: "Restaurante",
+      id_mesa,
       observaciones,
     },
   });

@@ -36,6 +36,7 @@ interface Props {
   id_trabajador?: number;
   estados?: ICatEstado[];
   nuevo_pedido: boolean;
+  id_mesa?: number;
 }
 
 export const ResumenPedidoLocal: FC<Props> = ({
@@ -47,6 +48,7 @@ export const ResumenPedidoLocal: FC<Props> = ({
   id_trabajador,
   estados,
   nuevo_pedido,
+  id_mesa,
 }) => {
   const dispatch = useAppDispatch();
 
@@ -178,6 +180,9 @@ export const ResumenPedidoLocal: FC<Props> = ({
         </Table>
       </Card>
       <Divider />
+      <Subtitle className="text-lg font-bold text-black">
+        Mesa Seleccionada: {id_mesa}
+      </Subtitle>
       <Subtitle className="text-lg font-bold text-black">
         {" "}
         Subtotal: ${subtotal.toFixed(2)}

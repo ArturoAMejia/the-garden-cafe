@@ -2,18 +2,12 @@ import { Transition, Dialog } from "@headlessui/react";
 import {
   CheckIcon,
   ExclamationCircleIcon,
-  PlusCircleIcon,
   XCircleIcon,
 } from "@heroicons/react/24/outline";
-import React, { FC, Fragment, useContext, useState } from "react";
-import { useForm } from "react-hook-form";
+import React, { FC, Fragment, useState } from "react";
 import toast from "react-hot-toast";
-import { AuthContext } from "../../../../context";
 import { ISolicitudCompra } from "../../../../interfaces";
-import {
-  useCrearOrdenCompraMutation,
-  useObtenerProveedoresQuery,
-} from "@/store/slices/compra/compraApi";
+import { useCrearOrdenCompraMutation } from "@/store/slices/compra/compraApi";
 import { useSession } from "next-auth/react";
 import { useAppSelector } from "@/hooks/hooks";
 import { AppState } from "@/store/store";
@@ -46,8 +40,8 @@ export const AceptarOrden: FC<Props> = ({ solicitud_compra }) => {
       return;
     }
 
-    try {
-      await crearOrdenCompra({
+    toast.promise(
+      crearOrdenCompra({
         id: 1,
         id_comprobante: solicitud_compra.id_comprobante,
         id_estado: 8,
@@ -62,13 +56,17 @@ export const AceptarOrden: FC<Props> = ({ solicitud_compra }) => {
         autorizado_por: Number(session?.user?.id),
         detalle_orden_compra: productos,
         motivo: solicitud_compra.motivo,
-      }).unwrap();
-
-      toast.success("Orden de Compra generada correctamente.");
-      closeModal();
-    } catch (error: any) {
-      toast.error(error.data.message);
-    }
+      })
+        .unwrap()
+        .then(() => {
+          closeModal();
+        }),
+      {
+        loading: "Generando Orden de Compra...",
+        success: "Orden de Compra generada correctamente.",
+        error: "Error al generar la Orden de Compra.",
+      }
+    );
   };
 
   return (

@@ -20,13 +20,18 @@ export const AnularPedido: FC<Props> = ({ id, disable }) => {
   const [anularPedido] = useAnularPedidoMutation();
 
   const onAnularPedido = async () => {
-    try {
-      await anularPedido({ id }).unwrap();
-      toast.success("Pedido anulado correctamente.");
-      closeModal();
-    } catch (error: any) {
-      toast.error(error.data.message);
-    }
+    toast.promise(
+      anularPedido({ id })
+        .unwrap()
+        .then(() => {
+          closeModal();
+        }),
+      {
+        loading: "Anulando pedido...",
+        success: "Pedido anulado correctamente.",
+        error: "No se pudo anular el pedido.",
+      }
+    );
   };
   return (
     <>

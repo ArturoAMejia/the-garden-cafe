@@ -45,6 +45,7 @@ import {
   platillos,
   politicas,
 } from "./data/inventario";
+import { mesas } from "./data/mesas";
 
 const main = async (): Promise<void> => {
   await prisma.$connect();
@@ -159,6 +160,9 @@ const main = async (): Promise<void> => {
     });
     await prisma.politica_abc.createMany({
       data: politicas,
+    });
+    await prisma.mesa.createMany({
+      data: mesas,
     });
   } catch (error) {
     console.log(error);

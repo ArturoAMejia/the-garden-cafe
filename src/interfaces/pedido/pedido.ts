@@ -15,6 +15,7 @@ export interface IPedido {
   id_estado: number;
   cat_estado?: ICatEstado;
   tipo_pedido: string;
+  id_mesa?: number;
   fecha_pedido: Date;
   ubicacion_entrega: string;
   observacion: string;

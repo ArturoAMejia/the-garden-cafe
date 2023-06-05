@@ -196,6 +196,22 @@ const crearVenta = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
       },
     },
   });
+
+  const pedido = await prisma.pedido.findFirst({
+    where: {
+      id: id_pedido,
+    },
+  });
+
+  await prisma.mesa.update({
+    where: {
+      id: pedido.id_mesa,
+    },
+    data: {
+      id_estado: 1,
+    },
+  });
+
   await prisma.$disconnect();
   return res.status(201).json(venta);
 };

@@ -1,15 +1,15 @@
-import { FC, useContext, useMemo } from "react";
+import React, { FC, useMemo } from "react";
 import {
+  ColumnDef,
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { AdminContext } from "../../../../context";
-import { AnularReservacion, EditarReservacion } from "../../../admin";
-import { ICatEstado, ICliente, IReservacion } from "../../../../interfaces";
-import { useObtenerReservacionesQuery } from "@/store/slices/venta";
+
+import { useObtenerPlatillosQuery } from "@/store/slices/inventario";
+
 import {
   Table,
   TableHead,
@@ -19,76 +19,37 @@ import {
   TableCell,
 } from "@tremor/react";
 
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
+const columnHelper = createColumnHelper<any>();
 
-interface Props {}
-const columnHelper = createColumnHelper<IReservacion>();
-export const ReservacionesTable: FC<Props> = () => {
-  const columns = useMemo(
+interface Props {
+  id_categoria: number;
+}
+
+export const ProductoAñadirOrdenTable: FC<Props> = ({ id_categoria }) => {
+  const columns = useMemo<ColumnDef<any, any>[]>(
     () => [
-      columnHelper.accessor<"cliente", ICliente>("cliente", {
-        header: "Cliente",
-        cell: (info) => `${info.getValue().persona?.nombre}
-      ${""} ${info.getValue().persona?.apellido_razon_social}
-      `,
-      }),
-      columnHelper.accessor<"tipo_reservacion", string>("tipo_reservacion", {
-        header: "Tipo de Reservación",
+      columnHelper.accessor<"id", number>("id", {
+        header: "Código",
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor<"fecha_reservacion", Date>("fecha_reservacion", {
-        header: "Fecha Reservada",
-        cell: (info) =>
-          format(new Date(info.getValue()), "EEEE dd 'de' MMMM 'del' yyyy", {
-            locale: es,
-          }),
-      }),
-      columnHelper.accessor<"horas_reservadas", number>("horas_reservadas", {
-        header: "Horas Reservada",
+      columnHelper.accessor<"nombre", string>("nombre", {
+        header: "Nombre",
         cell: (info) => info.getValue(),
       }),
-      // columnHelper.accessor<"total_personas", number>("total_personas", {
-      //   header: "Total Personas",
-      //   cell: (info) => info.row.original.detalle_reservacion[0].total_personas,
-      // }),
-      columnHelper.accessor<"cat_estado", ICatEstado>("cat_estado", {
-        header: "Estado",
-        cell: (props) =>
-          props.getValue().nombre === "Activo" ? (
-            <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-              {props.getValue().nombre}
-            </span>
-          ) : props.getValue().nombre === "Utilizable" ? (
-            <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
-              {props.getValue().nombre}
-            </span>
-          ) : (
-            <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
-              {props.getValue().nombre}
-            </span>
-          ),
-      }),
-      columnHelper.display({
-        id: "actions",
-        header: () => <span>Acciones</span>,
-        cell: (props) => (
-          <div className="flex justify-center">
-            <EditarReservacion reservacion={props.row.original} />
-            <AnularReservacion id={props.row.original.id} />
-          </div>
-        ),
+      columnHelper.accessor<"precio_producto", number>("precio_producto", {
+        header: "Precio",
+        cell: (info) => `$${info.getValue().toFixed(2)}`,
       }),
     ],
     []
   );
 
-  const { data: reservaciones, isLoading } = useObtenerReservacionesQuery();
-
-  console.log(reservaciones);
+  const { data: platillos, isLoading } = useObtenerPlatillosQuery();
 
   const table = useReactTable({
-    data: reservaciones!,
+    data: platillos.filter(
+      (producto) => producto.id_categoria_producto === id_categoria
+    )!,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -122,7 +83,11 @@ export const ReservacionesTable: FC<Props> = () => {
           {table.getRowModel().rows.map((row) => (
             <TableRow key={row.id}>
               {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id} className="text-center">
+                <TableCell
+                  key={cell.id}
+                  className="text-center hover:cursor-pointer"
+                  onClick={() => console.log("tst")}
+                >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </TableCell>
               ))}

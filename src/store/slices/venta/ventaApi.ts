@@ -7,7 +7,7 @@ export const ventaApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: "/api",
   }),
-  tagTypes: ["Clientes", "Venta", "Reservaciones"],
+  tagTypes: ["Clientes", "Venta", "Reservaciones", "Mesas"],
   endpoints: (builder) => ({
     obtenerClientes: builder.query<ICliente[], void>({
       query: () => "/venta/cliente",
@@ -50,7 +50,7 @@ export const ventaApi = createApi({
         method: "POST",
         body: venta,
       }),
-      invalidatesTags: ["Venta"],
+      invalidatesTags: ["Venta", "Mesas"],
     }),
     actualizarVenta: builder.mutation<IVenta, any>({
       query: (venta) => ({
@@ -85,7 +85,7 @@ export const ventaApi = createApi({
         method: "POST",
         body: reservacion,
       }),
-      invalidatesTags: ["Reservaciones"],
+      invalidatesTags: ["Reservaciones", "Mesas"],
     }),
     actualizarReservacion: builder.mutation<IReservacion, any>({
       query: (reservacion) => ({
@@ -102,6 +102,10 @@ export const ventaApi = createApi({
         body: id,
       }),
       invalidatesTags: ["Reservaciones"],
+    }),
+    obtenerMesas: builder.query<any, void>({
+      query: () => "/venta/mesa",
+      providesTags: ["Mesas"],
     }),
   }),
 });
@@ -124,4 +128,6 @@ export const {
   useCrearReservacionMutation,
   useActualizarReservacionMutation,
   useAnularReservacionMutation,
+  // Mesas
+  useObtenerMesasQuery,
 } = ventaApi;

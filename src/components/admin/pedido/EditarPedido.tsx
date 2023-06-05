@@ -29,7 +29,9 @@ export const EditarPedido: FC<Props> = ({ pedido }) => {
 
   const [actualizarPedido] = useActualizarPedidoMutation();
 
-  const { productos } = useAppSelector((state: AppState) => state.pedido);
+  const { productos, id_mesa } = useAppSelector(
+    (state: AppState) => state.pedido
+  );
 
   const { data: clientes, isLoading } = useObtenerClientesQuery();
 
@@ -37,9 +39,8 @@ export const EditarPedido: FC<Props> = ({ pedido }) => {
     useObtenerTrabajadoresQuery();
 
   const onActualizarPedido = async (data: FormData) => {
-    console.log(data);
-    try {
-      await actualizarPedido({
+    toast.promise(
+      actualizarPedido({
         ...pedido,
         id_cliente: data.id_cliente,
         id_trabajador: data.id_trabajador,
@@ -47,13 +48,23 @@ export const EditarPedido: FC<Props> = ({ pedido }) => {
         ubicacion_entrega: data.ubicacion_entrega,
         observacion: data.observacion,
         productos,
-      }).unwrap();
-      toast.success("Pedido actualizado correctamente.");
-      closeModal();
-      reset();
-    } catch (error: any) {
-      toast.error(error.data.message);
-    }
+        id_mesa,
+      })
+        .unwrap()
+        .then(() => {
+          closeModal();
+          reset();
+        }),
+      {
+        loading: "Actualizando pedido...",
+        success: () => {
+          return "Pedido actualizado correctamente.";
+        },
+        error: (err) => {
+          return err.data.message;
+        },
+      }
+    );
   };
 
   console.log(pedido.id_trabajador);

@@ -1,11 +1,9 @@
-import { FC, Fragment, useContext, useState } from "react";
-import { useRouter } from "next/router";
+import { FC, Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { ICatEstado } from "../../../../../interfaces";
-import { AdminContext } from "../../../../../context";
+
 import {
   useCrearCategoriaMutation,
   useObtenerTiposCategoriaQuery,
@@ -48,15 +46,30 @@ export const AgregarCatProducto: FC<Props> = ({
     id,
     id_tipo_categoria,
   }: FormData) => {
-    try {
-      await crearCategoria({
+    toast.promise(
+      crearCategoria({
         nombre,
         descripcion,
         id_estado,
         id,
         id_tipo_categoria,
-      }).unwrap();
-
+      })
+        .unwrap()
+        .then(() => {
+          toggle();
+          reset();
+        }),
+      {
+        loading: "Agregando categoría...",
+        success: (data) => {
+          return "Categoría agregada correctamente.";
+        },
+        error: (err) => {
+          return err.data.messages;
+        },
+      }
+    );
+    try {
       toast.success("Categoría agregada correctamente.");
       toggle();
       reset();

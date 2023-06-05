@@ -12,5 +12,18 @@ export interface IReservacion {
   fecha_reservacion: Date;
   horas_reservadas: number;
   fecha_registro: Date;
+  id_mesa?: number;
   detalle_reservacion?: any;
+  hora_reserva?: any;
+  adultos?: number;
+  menores?: number;
+}
+
+export interface IMesa {
+  id: number;
+  nombre: string;
+  ubicacion: string;
+  cat_estado?: ICatEstado;
+  id_estado: number;
+  capacidad: number;
 }

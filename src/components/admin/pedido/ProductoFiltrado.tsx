@@ -45,7 +45,7 @@ export const ProductoFiltrado: FC<Props> = ({
         <List className="p-0">
           <ListItem className="p-0">
             <span>
-              {producto.nombre} {producto.unidad_medida.siglas}
+              {producto.nombre} ${producto.precio_producto.toFixed(2  )}
             </span>
             <Button size="xs" onClick={onAddProduct} icon={ShoppingCartIcon}>
               Añadir

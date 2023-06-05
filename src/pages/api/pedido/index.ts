@@ -98,6 +98,7 @@ const registerPedido = async (
     ubicacion_entrega = "",
     observacion = "",
     productos,
+    id_mesa,
   } = req.body;
 
   console.log(req.body);
@@ -142,8 +143,6 @@ const registerPedido = async (
       .status(400)
       .json({ message: "No se encontró registro de este cliente." });
 
-  console.log(productos);
-
   const pedido = await prisma.pedido.create({
     data: {
       id_cliente: client!.id,
@@ -153,6 +152,7 @@ const registerPedido = async (
       ubicacion_entrega: ubicacion_entrega,
       id_estado: 3,
       observacion,
+      id_mesa,
       vigencia: hour(new Date(), 35),
     },
   });
@@ -210,6 +210,15 @@ const registerPedido = async (
     });
   });
 
+  await prisma.mesa.update({
+    where: {
+      id: id_mesa,
+    },
+    data: {
+      id_estado: 2,
+    },
+  });
+
   // await prisma.$transaction();
   await prisma.$disconnect();
 
@@ -228,6 +237,7 @@ const actualizarPedido = async (
     ubicacion_entrega = "",
     observacion = "",
     productos,
+    id_mesa,
   } = req.body;
 
   if (!id)
@@ -246,6 +256,7 @@ const actualizarPedido = async (
       tipo_pedido,
       ubicacion_entrega: ubicacion_entrega,
       observacion,
+      id_mesa,
     },
     where: {
       id,

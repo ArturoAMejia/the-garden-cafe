@@ -9,6 +9,7 @@ interface PedidoState {
   descuento: number;
   pago_cliente: number;
   cambio: number;
+  id_mesa?: number;
 }
 
 const initialState: PedidoState = {
@@ -19,6 +20,7 @@ const initialState: PedidoState = {
   total: 0,
   pago_cliente: 0,
   cambio: 0,
+  id_mesa: undefined,
 };
 
 export const pedidoSlice = createSlice({
@@ -94,9 +96,23 @@ export const pedidoSlice = createSlice({
     cobrarPedido: (state, action: PayloadAction<{ pago_cliente: number }>) => {
       state.pago_cliente = action.payload.pago_cliente;
       state.cambio = state.pago_cliente - state.total;
+      state.subtotal = state.productos.reduce(
+        (acc, p) => acc + p.precio! * p.cantidad!,
+        0
+      );
+      state.total =
+        state.subtotal +
+        state.subtotal * Number(process.env.NEXT_PUBLIC_TAX_RATE);
     },
     asignarDescuento: (state, action: PayloadAction<{ descuento: number }>) => {
       state.descuento = state.subtotal * (action.payload.descuento / 100);
+      state.subtotal = state.productos.reduce(
+        (acc, p) => acc + p.precio! * p.cantidad!,
+        0
+      );
+      state.total =
+        state.subtotal +
+        state.subtotal * Number(process.env.NEXT_PUBLIC_TAX_RATE);
       state.total -= state.descuento;
     },
     pedidoCompletado: (state) => {
@@ -107,6 +123,7 @@ export const pedidoSlice = createSlice({
         (state.total = 0);
       state.pago_cliente = 0;
       state.cambio = 0;
+      state.id_mesa = undefined;
     },
     cargarPedido: (state, action: PayloadAction<IProductoCart[]>) => {
       state.productos = action.payload;
@@ -118,6 +135,12 @@ export const pedidoSlice = createSlice({
         state.subtotal +
         state.subtotal * Number(process.env.NEXT_PUBLIC_TAX_RATE);
       state.pago_cliente = state.total;
+    },
+    seleccionarMesa: (state, action: PayloadAction<{ id_mesa: number }>) => {
+      state.id_mesa = action.payload.id_mesa;
+    },
+    borrarMesaSeleccionada: (state) => {
+      state.id_mesa = undefined;
     },
   },
 });
@@ -131,4 +154,6 @@ export const {
   cargarPedido,
   cobrarPedido,
   asignarDescuento,
+  seleccionarMesa,
+  borrarMesaSeleccionada,
 } = pedidoSlice.actions;
