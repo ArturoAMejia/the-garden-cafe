@@ -35,6 +35,7 @@ const obtenerPedidos = async (res: NextApiResponse<Data>) => {
     select: {
       id: true,
       id_cliente: true,
+      id_mesa: true,
       cliente: {
         select: {
           id: true,

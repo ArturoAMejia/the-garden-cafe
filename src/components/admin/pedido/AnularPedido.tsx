@@ -4,6 +4,7 @@ import {
   XCircleIcon,
   ExclamationCircleIcon,
   ArrowDownCircleIcon,
+  ArrowDownIcon,
 } from "@heroicons/react/24/outline";
 import { toast } from "react-hot-toast";
 import { useAnularPedidoMutation } from "@/store/slices/pedido";
@@ -35,16 +36,14 @@ export const AnularPedido: FC<Props> = ({ id, disable }) => {
   };
   return (
     <>
-      <div className="">
-        <button
-          type="button"
-          onClick={openModal}
-          disabled={disable}
-          className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white  hover:bg-red-500"
-        >
-          <ArrowDownCircleIcon className="h-4 w-4" />
-        </button>
-      </div>
+      <button
+        type="button"
+        onClick={openModal}
+        disabled={disable}
+        className="rounded-lg bg-red-600 px-3 py-2 text-sm font-medium text-white  hover:bg-red-500"
+      >
+        <ArrowDownIcon className="h-4 w-4" />
+      </button>
 
       <Transition.Root show={isOpen} as={Fragment}>
         <Dialog

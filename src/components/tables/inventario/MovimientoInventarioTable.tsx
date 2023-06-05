@@ -28,9 +28,9 @@ export const MovimientoInventarioTable = () => {
         header: "Código",
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor<"producto", IProducto>("producto", {
+      columnHelper.accessor<"nombre", string>("nombre", {
         header: "Nombre",
-        cell: (info) => info.getValue().nombre,
+        cell: (info) => info.getValue(),
       }),
       columnHelper.accessor<"tipo_movimiento", number>("tipo_movimiento", {
         header: "Tipo de Movimiento",

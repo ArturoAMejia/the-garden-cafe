@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 
 import { useAppDispatch } from "@/hooks/hooks";
 
@@ -10,21 +10,20 @@ interface Props {
 }
 
 export const CantidadRecepcionada: FC<Props> = ({ producto }) => {
-  const [value, setValue] = useState(producto.cantidad);
   const dispatch = useAppDispatch();
 
-  console.log(producto.cantidad);
-  console.log(value);
-
   const handleNuevaCantidad = (nuevo_valor) => {
-    setValue(nuevo_valor);
     dispatch(
       actualizarCantidadRecepcionada({
         ...producto,
-        cantidad_recepcionada: Number(value),
+        cantidad_recepcionada: Number(nuevo_valor),
       })
     );
   };
+
+  useEffect(() => {
+    dispatch(actualizarCantidadRecepcionada(0));
+  }, [dispatch]);
 
   return (
     <input

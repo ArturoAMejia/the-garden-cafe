@@ -5,14 +5,7 @@ import {
   ArrowUturnDownIcon,
 } from "@heroicons/react/24/outline";
 import { Card, Title, Subtitle, Button } from "@tremor/react";
-import {
-  getHours,
-  getMinutes,
-  getDay,
-  getMonth,
-  getYear,
-  intlFormat,
-} from "date-fns";
+import { getHours, getMinutes, intlFormat } from "date-fns";
 import {
   useActualizarEstadoCocineroPedidoMutation,
   useActualizarEstadoPedidoMutation,
@@ -95,6 +88,7 @@ export const PedidoCard: FC<Props> = ({
         Trabajador:{""} {pedido.trabajador.persona.nombre}{" "}
         {pedido.trabajador.persona.apellido_razon_social}{" "}
       </Subtitle>
+      <Subtitle>Mesa: {pedido.id_mesa}</Subtitle>
       <Subtitle>
         Fecha:{""}
         {intlFormat(
@@ -115,12 +109,12 @@ export const PedidoCard: FC<Props> = ({
         {getMinutes(new Date(pedido.fecha_pedido))}
       </Subtitle>
       <div className="flex gap-2">
-        {(pedido.id_estado !== 7 && session.user.id_rol === 4) ||
+        {(pedido.id_estado === 3 && session.user.id_rol === 4) ||
+        (pedido.id_estado === 4 && session.user.id_rol === 4) ||
+        (pedido.id_estado === 5 && session.user.id_rol === 3) ||
+        (pedido.id_estado === 6 && session.user.id_rol === 3) ||
         (pedido.id_estado !== 7 && session.user.id_rol === 1) ||
-        (session.user.id_rol === 3 && pedido.id_estado === 5) ||
-        (session.user.id_rol === 3 && pedido.id_estado === 6) ||
         (pedido.id_estado !== 7 && session.user.id_rol === 2) ? (
-          
           <Button
             color="emerald"
             className="p-2"
@@ -144,9 +138,8 @@ export const PedidoCard: FC<Props> = ({
             <ArrowUturnDownIcon className="h-4 w-4" />
           </Button>
         )}
-        {pedido.id_estado !== 5 && (
-          <AnularPedido id={pedido.id} disable={pedido.id_estado === 13} />
-        )}
+
+        <AnularPedido id={pedido.id} disable={pedido.id_estado === 13} />
       </div>
     </Card>
   );
