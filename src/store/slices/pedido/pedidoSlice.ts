@@ -105,7 +105,7 @@ export const pedidoSlice = createSlice({
         state.subtotal * Number(process.env.NEXT_PUBLIC_TAX_RATE);
     },
     asignarDescuento: (state, action: PayloadAction<{ descuento: number }>) => {
-      state.descuento = state.subtotal * (action.payload.descuento / 100);
+      state.descuento = state.total * (action.payload.descuento / 100);
       state.subtotal = state.productos.reduce(
         (acc, p) => acc + p.precio! * p.cantidad!,
         0

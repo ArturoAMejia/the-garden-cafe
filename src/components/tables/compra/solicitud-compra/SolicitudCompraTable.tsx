@@ -31,6 +31,7 @@ import { cargarSolicitud } from "@/store/slices/compra";
 import { AceptarSolicitudCompra } from "@/components/admin/compra/solicitud-compra/AceptarSolicitudCompra";
 import { RevertirSolicitud } from "@/components/admin/compra/solicitud-compra/RevertirSolicitud";
 import { RechazarSolicitud } from "@/components/admin/compra/solicitud-compra/RechazarSolicitud";
+import { useSession } from "next-auth/react";
 
 const columnHelper = createColumnHelper<ISolicitudCompra>();
 
@@ -41,6 +42,7 @@ interface Props {
 export const SolicitudCompraTable: FC<Props> = ({ solicitudes }) => {
   const dispatch = useAppDispatch();
 
+  const { data: session } = useSession();
   const columns = useMemo<ColumnDef<ISolicitudCompra, any>[]>(
     () => [
       columnHelper.accessor<"id", number>("id", {
@@ -99,7 +101,11 @@ export const SolicitudCompraTable: FC<Props> = ({ solicitudes }) => {
             {props.row.original.id_estado !== 14 ? (
               props.row.original.id_estado !== 15 ? (
                 props.row.original.id_estado !== 7 ? (
-                  <AceptarSolicitudCompra solicitud={props.row.original} />
+                  session?.user.id_rol === 2 ? (
+                    <AceptarSolicitudCompra solicitud={props.row.original} />
+                  ) : (
+                    ""
+                  )
                 ) : (
                   ""
                 )
@@ -112,7 +118,11 @@ export const SolicitudCompraTable: FC<Props> = ({ solicitudes }) => {
             {props.row.original.id_estado !== 16 ? (
               props.row.original.id_estado !== 14 ? (
                 props.row.original.id_estado !== 7 ? (
-                  <RevertirSolicitud solicitud_compra={props.row.original} />
+                  session?.user.id_rol === 2 ? (
+                    <RevertirSolicitud solicitud_compra={props.row.original} />
+                  ) : (
+                    ""
+                  )
                 ) : (
                   ""
                 )
@@ -124,7 +134,11 @@ export const SolicitudCompraTable: FC<Props> = ({ solicitudes }) => {
             )}
             {props.row.original.id_estado !== 15 ? (
               props.row.original.id_estado !== 7 ? (
-                <RechazarSolicitud solicitud_compra={props.row.original} />
+                session?.user.id_rol === 3 ? (
+                  <RechazarSolicitud solicitud_compra={props.row.original} />
+                ) : (
+                  ""
+                )
               ) : (
                 ""
               )
@@ -158,7 +172,7 @@ export const SolicitudCompraTable: FC<Props> = ({ solicitudes }) => {
         ),
       }),
     ],
-    [dispatch]
+    [dispatch, session?.user.id_rol]
   );
 
   const table = useReactTable({

@@ -237,6 +237,7 @@ model moneda {
   venta           venta[]
   apertura_caja   apertura_caja[]
   movimiento_caja movimiento_caja[]
+  arqueo_caja     arqueo_caja[]
 }
 
 model tipo_cambio {
@@ -938,13 +939,35 @@ model movimiento_caja {
 }
 
 model arqueo_caja {
-  id            Int        @id @default(autoincrement())
-  caja          caja       @relation(fields: [id_caja], references: [id])
-  id_caja       Int
-  trabajador    trabajador @relation(fields: [id_trabajador], references: [id])
-  id_trabajador Int
-  fecha_arqueo  DateTime
-  total         Float
+  id                     Int                      @id @default(autoincrement())
+  caja                   caja                     @relation(fields: [id_caja], references: [id])
+  id_caja                Int
+  trabajador             trabajador               @relation(fields: [id_trabajador], references: [id])
+  id_trabajador          Int
+  moneda                 moneda                   @relation(fields: [id_moneda], references: [id])
+  id_moneda              Int
+  fecha_arqueo           DateTime
+  total                  Float
+  detalle_billete_arqueo detalle_billete_arqueo[]
+  detalle_monedas_arqueo detalle_monedas_arqueo[]
+}
+
+model detalle_monedas_arqueo {
+  id             Int         @id @default(autoincrement())
+  arqueo_caja    arqueo_caja @relation(fields: [id_arqueo_caja], references: [id])
+  id_arqueo_caja Int
+  denominacion   Int         @default(0)
+  cantidad       Int         @default(0)
+  total          Float       @default(0)
+}
+
+model detalle_billete_arqueo {
+  id             Int         @id @default(autoincrement())
+  arqueo_caja    arqueo_caja @relation(fields: [id_arqueo_caja], references: [id])
+  id_arqueo_caja Int
+  denominacion   Int         @default(0)
+  cantidad       Int         @default(0)
+  total          Float       @default(0)
 }
 
 model cierre_caja {

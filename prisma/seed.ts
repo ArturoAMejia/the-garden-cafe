@@ -34,7 +34,7 @@ import {
   usuarios,
 } from "./data/personas";
 import { marca } from "./data/marca";
-import { monedas } from "./data/monedas";
+import { monedas, tipo_cambio } from "./data/monedas";
 import { cajas } from "./data/caja";
 import { tipo_orden_compra } from "./data/tipo-orden-compra";
 import { prisma } from "../database";
@@ -163,6 +163,9 @@ const main = async (): Promise<void> => {
     });
     await prisma.mesa.createMany({
       data: mesas,
+    });
+    await prisma.tipo_cambio.createMany({
+      data: tipo_cambio,
     });
   } catch (error) {
     console.log(error);

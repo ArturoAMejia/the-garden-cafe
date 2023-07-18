@@ -1,34 +1,46 @@
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import { AdminLayout } from "../../../../components/Layout/AdminLayout";
 import { CierreCajaTable } from "../../../../components/tables/caja/CierreCajaTable";
-import { CerrarCaja } from "../../../../components/admin/caja/CerrarCaja";
+import { Tab, TabList } from "@tremor/react";
+import {
+  CurrencyDollarIcon,
+  DocumentChartBarIcon,
+} from "@heroicons/react/24/outline";
 
-interface Props {
-  cajas: ICaja[];
-}
+import { CajasAbiertasTable } from "@/components/tables/caja/CajasAbiertasTable";
 
-const CierreCajaPage: FC<Props> = ({ cajas }) => {
+const CierreCajaPage = () => {
+  const [showCard, setShowCard] = useState(1);
+
   return (
     <AdminLayout title="Cierre de Cajas">
-      <h1>CierreCajaPage</h1>
-      <CerrarCaja cajas={cajas} />
-      <CierreCajaTable />
+      <div className="sm:flex sm:items-center">
+        <div className="sm:flex-auto">
+          <h1 className="px-2 text-xl font-semibold text-gray-900">
+            Cerrar Caja
+          </h1>
+          <p className="mt-2 px-2 text-sm text-gray-700">
+            Da click al botón para cerrar una caja
+          </p>
+        </div>
+      </div>
+
+      <TabList
+        defaultValue="1"
+        onValueChange={(value) => setShowCard(Number(value))}
+        className="my-6"
+      >
+        <Tab value="1" text="Cajas Abiertas" icon={CurrencyDollarIcon} />
+        <Tab value="2" text="Historial Cierre" icon={DocumentChartBarIcon} />
+      </TabList>
+
+      {showCard === 1 ? (
+        <CajasAbiertasTable cerrar_caja={true} />
+      ) : (
+        <CierreCajaTable />
+      )}
     </AdminLayout>
   );
 };
 
 export default CierreCajaPage;
-// You should use getServerSideProps when:
-// - Only if you need to pre-render a page whose data must be fetched at request time
-import { GetServerSideProps } from "next";
-import { prisma } from "../../../../database";
-import { ICaja } from "../../../../interfaces";
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const cajas = await prisma.caja.findMany();
-
-  return {
-    props: {
-      cajas: JSON.parse(JSON.stringify(cajas)),
-    },
-  };
-};

@@ -95,7 +95,7 @@ export const ResumenPedidoLocal: FC<Props> = ({
                   <Text>{item.nombre}</Text>
                 </TableCell>
                 <TableCell className="text-center">
-                  <Text>$ {item.precio.toFixed(2)}</Text>
+                  <Text>C$ {item.precio.toFixed(2)}</Text>
                 </TableCell>
 
                 <TableCell className="flex justify-center">
@@ -129,7 +129,7 @@ export const ResumenPedidoLocal: FC<Props> = ({
                   {/* <Text>{item.cantidad}</Text> */}
                 </TableCell>
                 <TableCell className="text-center">
-                  <Text>${Number(item.precio * item.cantidad).toFixed(2)}</Text>
+                  <Text>C${Number(item.precio * item.cantidad).toFixed(2)}</Text>
                 </TableCell>
 
                 {!nuevo_pedido ? (
@@ -185,14 +185,14 @@ export const ResumenPedidoLocal: FC<Props> = ({
       </Subtitle>
       <Subtitle className="text-lg font-bold text-black">
         {" "}
-        Subtotal: ${subtotal.toFixed(2)}
+        Subtotal: C${subtotal.toFixed(2)}
       </Subtitle>
       <Subtitle className="text-lg font-bold text-black">
-        Impuesto: $
+        Impuesto: C$
         {(subtotal * Number(process.env.NEXT_PUBLIC_TAX_RATE)).toFixed(2)}
       </Subtitle>
       <Subtitle className="text-lg font-bold text-black">
-        Total: ${total.toFixed(2)}
+        Total: C${total.toFixed(2)}
       </Subtitle>
     </div>
   );

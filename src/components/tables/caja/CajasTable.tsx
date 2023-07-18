@@ -5,7 +5,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import React, { useMemo } from "react";
+import React, { FC, useMemo } from "react";
 import { ICaja, ICatEstado, ITrabajador } from "../../../interfaces";
 
 import {
@@ -18,11 +18,18 @@ import {
 } from "@tremor/react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { useObtenerCajasQuery } from "@/store/slices/caja";
+import {
+  useObtenerCajasQuery,
+  useObtenerMovimientoCajaQuery,
+} from "@/store/slices/caja";
+import { ArquearCaja } from "@/components/admin/caja/ArquearCaja";
 
+interface Props {
+  cajas_abiertas?: boolean;
+}
 const columnHelper = createColumnHelper<ICaja>();
 
-export const CajasTable = () => {
+export const CajasTable: FC<Props> = ({ cajas_abiertas }) => {
   const columns = useMemo(
     () => [
       columnHelper.accessor<"trabajador", ITrabajador>("trabajador", {
@@ -45,7 +52,7 @@ export const CajasTable = () => {
       }),
       columnHelper.accessor<"saldo_actual", number>("saldo_actual", {
         header: "Saldo Actual",
-        cell: (info) => `$${info.getValue().toFixed(2)}`,
+        cell: (info) => `C$${info.getValue().toFixed(2)}`,
       }),
       columnHelper.accessor<"cat_estado", ICatEstado>("cat_estado", {
         header: "Estado",
@@ -73,6 +80,7 @@ export const CajasTable = () => {
   const table = useReactTable({
     data: cajas,
     columns,
+
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });

@@ -1,13 +1,13 @@
 import {
-  ColumnDef,
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useMemo } from "react";
-import { ICaja, IComprobante, IMoneda } from "../../../interfaces";
+import React, { FC, useMemo } from "react";
+import { ICaja, ICatEstado, ITrabajador } from "../../../interfaces";
+
 import {
   Table,
   TableBody,
@@ -18,64 +18,88 @@ import {
 } from "@tremor/react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { useObtenerMovimientoCajaQuery } from "@/store/slices/caja";
+import {
+  useObtenerCajasQuery,
+  useObtenerMovimientoCajaQuery,
+} from "@/store/slices/caja";
+import { ArquearCaja } from "@/components/admin/caja/ArquearCaja";
+import { CerrarCaja } from "@/components/admin/caja/CerrarCaja";
 
-const columnHelper = createColumnHelper<any>();
-export const MovimientoCajaTable = () => {
-  const columns = useMemo<ColumnDef<any, any>[]>(
+const columnHelper = createColumnHelper<ICaja>();
+
+interface Props {
+  cerrar_caja?: boolean;
+}
+
+export const CajasAbiertasTable: FC<Props> = ({ cerrar_caja }) => {
+  const columns = useMemo(
     () => [
-      columnHelper.accessor<"id", number>("id", {
-        header: "Código",
+      columnHelper.accessor<"trabajador", ITrabajador>("trabajador", {
+        header: "Cajero",
+        cell: (info) =>
+          `${info.getValue().persona?.nombre} ${
+            info.getValue().persona?.apellido_razon_social
+          }`,
+      }),
+      columnHelper.accessor<"tipo_caja", string>("tipo_caja", {
+        header: "Tipo de Caja",
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor<"comprobante", IComprobante>("comprobante", {
-        header: "Num. Comprobante",
-        cell: (info) => info.getValue().numeracion,
-      }),
-      columnHelper.accessor<"caja", ICaja>("caja", {
-        header: "Nombre",
-        cell: (info) => info.getValue().tipo_caja,
-      }),
-      columnHelper.accessor<"concepto", string>("concepto", {
-        header: "Concepto",
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor<"tipo_movimiento", string>("tipo_movimiento", {
-        header: "Tipo de Movimiento",
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor<"fecha_movimiento", Date>("fecha_movimiento", {
-        header: "Fecha Movimiento",
+      columnHelper.accessor<"fecha_registro", Date>("fecha_registro", {
+        header: "Fecha de Registro",
         cell: (info) =>
           format(new Date(info.getValue()), "EEEE dd 'de' MMMM 'del' yyyy", {
             locale: es,
           }),
       }),
-      columnHelper.accessor<"moneda", IMoneda>("moneda", {
-        header: "Moneda",
-        cell: (info) => info.getValue().nombre,
+      columnHelper.accessor<"saldo_actual", number>("saldo_actual", {
+        header: "Saldo Actual",
+        cell: (info) => `C$${info.getValue().toFixed(2)}`,
       }),
-      columnHelper.accessor<"monto", number>("monto", {
-        header: "Monto",
-        cell: (info) =>
-          info.row.original.id_moneda === 1
-            ? ` C$${info.getValue().toFixed(2)}`
-            : `$${info.getValue().toFixed(2)}`,
+      columnHelper.accessor<"cat_estado", ICatEstado>("cat_estado", {
+        header: "Estado",
+        cell: (props) =>
+          props.getValue().nombre === "Activo" ? (
+            <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+              {props.getValue().nombre}
+            </span>
+          ) : props.getValue().nombre === "Utilizable" ? (
+            <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
+              {props.getValue().nombre}
+            </span>
+          ) : (
+            <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
+              {props.getValue().nombre}
+            </span>
+          ),
+      }),
+      columnHelper.display({
+        header: "",
+        id: "arquear",
+        cell: (props) =>
+          cerrar_caja ? (
+            <CerrarCaja caja={props.row.original} />
+          ) : (
+            <ArquearCaja caja={props.row.original} />
+          ),
       }),
     ],
-    []
+    [cerrar_caja]
   );
 
-  const { data: movimiento_caja, isLoading } = useObtenerMovimientoCajaQuery();
+  console.log(cerrar_caja);
+
+  const { data: cajas, isLoading } = useObtenerCajasQuery();
 
   const table = useReactTable({
-    data: movimiento_caja!,
+    data: cajas?.filter((caja) => caja.id_estado === 1),
     columns,
+
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  if (isLoading) return <>Cargando...</>;
+  if (isLoading) return <div>Cargando...</div>;
   return (
     <div>
       <Table className="mt-5 rounded-md">

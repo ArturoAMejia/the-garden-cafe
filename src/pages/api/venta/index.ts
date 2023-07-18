@@ -105,13 +105,30 @@ const crearVenta = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   ) {
     return res.status(400).json({ message: "Los campos son obligatorios" });
   }
-
-  if (pago_cliente < subtotal * 1.15) {
-    return res
-      .status(400)
-      .json({ message: "El pago del cliente es menor al total de la venta" });
-  }
   await prisma.$connect();
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+  const tipo_cambio = await prisma.tipo_cambio.findFirst({
+    where: {
+      fecha: hoy,
+    },
+  });
+
+  const pago_dolares = pago_cliente * tipo_cambio.valor_cambio;
+
+  if (id_moneda === 2) {
+    if (pago_dolares < subtotal * 1.15) {
+      return res
+        .status(400)
+        .json({ message: "El pago del cliente es menor al total de la venta" });
+    }
+  } else {
+    if (pago_cliente < subtotal * 1.15) {
+      return res
+        .status(400)
+        .json({ message: "El pago del cliente es menor al total de la venta" });
+    }
+  }
 
   const caja = await prisma.caja.findFirst({
     where: {
@@ -328,6 +345,36 @@ const anularVenta = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
       id,
     },
   });
+
+  const caja = await prisma.caja.findFirst({
+    where: {
+      id_estado: 1,
+    },
+  });
+
+  await prisma.caja.update({
+    where: {
+      id: caja.id,
+    },
+    data: {
+      saldo_actual: {
+        decrement: venta.total,
+      },
+    },
+  });
+
+  await prisma.movimiento_caja.create({
+    data: {
+      id_caja: caja.id,
+      id_trabajador: venta.id_trabajador,
+      concepto: "Anulación de venta",
+      tipo_movimiento: "Egreso",
+      monto: venta.total,
+      id_comprobante: venta.id_comprobante,
+      id_moneda: venta.id_moneda,
+    },
+  });
+
   await prisma.$disconnect();
   return res.status(200).json(venta);
 };

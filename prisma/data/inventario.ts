@@ -518,7 +518,7 @@ export const platillos: IProductoElaborado[] = [
     imagen: "/img/productos/dragon_fruit_bowl.jpg",
     cod_producto: "lorem12",
     id_zona_preparacion: 1,
-    precio_producto: 12,
+    precio_producto: 6 * 36.42,
   },
 ];
 
@@ -1016,31 +1016,31 @@ export const inventario_productos = [
     stock_max: 20,
     stock_actual: 15,
   },
-   {
+  {
     id_producto: 24,
     stock_min: 10,
     stock_max: 20,
     stock_actual: 15,
   },
-   {
+  {
     id_producto: 25,
     stock_min: 10,
     stock_max: 20,
     stock_actual: 15,
   },
-   {
+  {
     id_producto: 26,
     stock_min: 10,
     stock_max: 20,
     stock_actual: 15,
   },
-   {
+  {
     id_producto: 27,
     stock_min: 10,
     stock_max: 20,
     stock_actual: 15,
   },
-   {
+  {
     id_producto: 28,
     stock_min: 10,
     stock_max: 20,
@@ -1052,25 +1052,25 @@ export const inventario_productos = [
     stock_max: 20,
     stock_actual: 15,
   },
-   {
+  {
     id_producto: 30,
     stock_min: 10,
     stock_max: 20,
     stock_actual: 15,
   },
-   {
+  {
     id_producto: 31,
     stock_min: 10,
     stock_max: 20,
     stock_actual: 15,
   },
-   {
+  {
     id_producto: 32,
     stock_min: 10,
     stock_max: 20,
     stock_actual: 15,
   },
-   {
+  {
     id_producto: 33,
     stock_min: 10,
     stock_max: 20,
@@ -1100,7 +1100,7 @@ export const inventario_productos = [
     stock_max: 20,
     stock_actual: 15,
   },
-   {
+  {
     id_producto: 38,
     stock_min: 10,
     stock_max: 20,
@@ -1112,7 +1112,7 @@ export const inventario_productos = [
     stock_max: 20,
     stock_actual: 15,
   },
-   {
+  {
     id_producto: 40,
     stock_min: 10,
     stock_max: 20,

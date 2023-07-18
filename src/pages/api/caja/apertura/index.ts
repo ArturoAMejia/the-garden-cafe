@@ -97,6 +97,9 @@ const crearAperturaCaja = async (
   await prisma.caja.update({
     data: {
       id_estado: 1,
+      saldo_actual: {
+        increment: Number(monto_cordobas),
+      },
     },
     where: {
       id: id_caja,

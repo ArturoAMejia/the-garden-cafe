@@ -63,7 +63,7 @@ export const AperturaCajaTable = () => {
         "detalle_apertura_caja",
         {
           header: "Monto de Apertura",
-          cell: (info) => `$ ${info.getValue().monto_cordobas.toFixed()}`,
+          cell: (info) => `C$ ${info.getValue().monto_cordobas.toFixed(2)}`,
         }
       ),
     ],

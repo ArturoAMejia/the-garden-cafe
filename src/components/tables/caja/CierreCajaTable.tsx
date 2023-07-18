@@ -7,13 +7,8 @@ import {
 } from "@tanstack/react-table";
 import { format, getHours, getMinutes } from "date-fns";
 import { es } from "date-fns/locale";
-import React, { useEffect, useMemo, useState } from "react";
-import {
-  ITrabajador,
-  ICaja,
-  IDetalleApertura,
-  ICierreCaja,
-} from "../../../interfaces";
+import React, { useMemo } from "react";
+import { ITrabajador, ICaja, ICierreCaja } from "../../../interfaces";
 
 import {
   Table,
@@ -24,7 +19,7 @@ import {
   TableRow,
 } from "@tremor/react";
 
-import tgcApi from "../../../api/tgcApi";
+import { useObtenerCierresCajaQuery } from "@/store/slices/caja";
 
 const columnHelper = createColumnHelper<ICierreCaja>();
 
@@ -67,15 +62,7 @@ export const CierreCajaTable = () => {
     []
   );
 
-  const [cierres, setCierres] = useState<ICierreCaja[]>([]);
-
-  const obtenerCierres = async () => {
-    const { data } = await tgcApi.get("api/caja/cierre");
-    setCierres(data);
-  };
-  useEffect(() => {
-    obtenerCierres();
-  }, []);
+  const { data: cierres, isLoading } = useObtenerCierresCajaQuery();
 
   const table = useReactTable({
     data: cierres,
@@ -83,6 +70,9 @@ export const CierreCajaTable = () => {
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
+
+  if (isLoading) return <>Cargando...</>;
+
   return (
     <div>
       <Table className="mt-5 rounded-md">
