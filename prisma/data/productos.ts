@@ -120,7 +120,7 @@ export const productos_elaborados = [
       "Pan artesanal con aguacate, chía y especias, huevos revueltos y ensalada verde",
     imagen: "/img/productos/avocado_toast.jpg",
     id_zona_preparacion: 1,
-    precio_producto: 12,
+    precio_producto: 6 * 36.42,
   },
   {
     id_estado: 5,
@@ -132,7 +132,7 @@ export const productos_elaborados = [
       "Smoothie de pitahaya, piña, banano y yogur servido con coco, almendras, arándanos, banano, cacao y chía",
     imagen: "/img/productos/dragon_fruit_bowl.jpg",
     id_zona_preparacion: 1,
-    precio_producto: 12,
+    precio_producto: 5 * 36.42,
   },
   {
     id_estado: 5,
@@ -143,7 +143,7 @@ export const productos_elaborados = [
     descripcion: "Frutas tropicales de temporada, yogur, granola y chía",
     imagen: "/img/productos/fruit_yogurt_granola.avif",
     id_zona_preparacion: 1,
-    precio_producto: 12,
+    precio_producto: 5.5 * 36.42,
   },
   {
     id_estado: 5,
@@ -155,7 +155,7 @@ export const productos_elaborados = [
       "Smoothie de mango, piña, banano y yogur servido con coco, almendras, arándanos, banano, cacao y chía",
     imagen: "/img/productos/mango_bowl.jpeg",
     id_zona_preparacion: 1,
-    precio_producto: 12,
+    precio_producto: 5 * 36.42,
   },
   {
     id_estado: 5,
@@ -167,19 +167,19 @@ export const productos_elaborados = [
       "Quinoa, frijoles, aguacate, huevos pochados, ajo, chile, verduras salteadas, ajonjolí y linaza, servido con fruta",
     imagen: "/img/productos/power_bowl.jpg",
     id_zona_preparacion: 1,
-    precio_producto: 12,
+    precio_producto: 6.5 * 36.42,
   },
   {
     id_estado: 5,
     id_categoria_producto: 1,
     id_sub_categoria_producto: 2,
     id_unidad_medida: 1,
-    nombre: "Tostadas Superbe",
+    nombre: "Tostadas Salmón",
     descripcion:
       "Tostadas de salmón, tostadas de aguacate, huevos revueltos y ensalada verde. Opción entre pan o tortilla de maíz",
     imagen: "/img/productos/superbe_toast.webp",
     id_zona_preparacion: 1,
-    precio_producto: 12,
+    precio_producto: 7 * 36.42,
   },
   {
     id_estado: 5,
@@ -190,7 +190,7 @@ export const productos_elaborados = [
     descripcion: "Yogur hecho en casa y granola casera",
     imagen: "/img/productos/yogurt_granola.avif",
     id_zona_preparacion: 1,
-    precio_producto: 12,
+    precio_producto: 4.5 * 36.42,
   },
   {
     id_estado: 5,
@@ -201,7 +201,7 @@ export const productos_elaborados = [
     descripcion: "",
     imagen: "/img/bebidas/bloody_mary.jpg",
     id_zona_preparacion: 1,
-    precio_producto: 12,
+    precio_producto: 4.5 * 36.42,
   },
   {
     id_estado: 5,
@@ -212,7 +212,7 @@ export const productos_elaborados = [
     descripcion: "",
     imagen: "/img/bebidas/mimosa.jpg",
     id_zona_preparacion: 1,
-    precio_producto: 12,
+    precio_producto: 3.75 * 36.42,
   },
   {
     id_estado: 5,
@@ -223,7 +223,7 @@ export const productos_elaborados = [
     descripcion: "",
     imagen: "/img/bebidas/paloma.jpg",
     id_zona_preparacion: 1,
-    precio_producto: 12,
+    precio_producto: 4.25 * 36.42,
   },
   {
     id_estado: 5,
@@ -234,7 +234,7 @@ export const productos_elaborados = [
     descripcion: "",
     imagen: "/img/bebidas/screwdriver.jpg",
     id_zona_preparacion: 1,
-    precio_producto: 12,
+    precio_producto: 3.95 * 36.42,
   },
   {
     id_estado: 5,
@@ -245,7 +245,7 @@ export const productos_elaborados = [
     descripcion: "1 shot espresso, espuma",
     imagen: "/img/espresso_bar/macchiato.jpg",
     id_zona_preparacion: 1,
-    precio_producto: 12,
+    precio_producto: 2.25 * 36.42,
   },
   {
     id_estado: 5,
@@ -256,7 +256,7 @@ export const productos_elaborados = [
     descripcion: "1 shot espresso, 1 shots de leche, espuma",
     imagen: "/img/espresso_bar/capuchino.jpg",
     id_zona_preparacion: 1,
-    precio_producto: 12,
+    precio_producto: 2.75 * 36.42,
   },
   {
     id_estado: 5,
@@ -267,7 +267,7 @@ export const productos_elaborados = [
     descripcion: "1 shot espresso, 7 shots de leche, espuma",
     imagen: "/img/espresso_bar/latte.jpg",
     id_zona_preparacion: 1,
-    precio_producto: 12,
+    precio_producto: 2.75 * 36.42,
   },
 ];
 export const precio_productos = [

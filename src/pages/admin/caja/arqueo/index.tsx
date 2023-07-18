@@ -1,10 +1,16 @@
-import React, { FC } from "react";
+import React, { useState } from "react";
 import { AdminLayout } from "../../../../components/Layout/AdminLayout";
-import { AperturaCajaTable } from "../../../../components/tables/caja/AperturaCajaTable";
-import { AbrirCaja } from "../../../../components/admin/caja/AbrirCaja";
-import { ArquearCaja } from "@/components/admin/caja/ArquearCaja";
+import { Tab, TabList } from "@tremor/react";
+import {
+  CurrencyDollarIcon,
+  DocumentChartBarIcon,
+} from "@heroicons/react/24/outline";
+import { ArqueoCajaTable } from "@/components/tables/caja/ArqueoCajaTable";
+import { CajasAbiertasTable } from "@/components/tables/caja/CajasAbiertasTable";
 
 const ArqueoCajaIndex = () => {
+  const [showCard, setShowCard] = useState(1);
+
   return (
     <AdminLayout title="Aperturas de Caja">
       <div className="sm:flex sm:items-center">
@@ -19,9 +25,22 @@ const ArqueoCajaIndex = () => {
       </div>
       <div className="flex justify-end">
         {/* <AbrirCaja /> */}
-        <ArquearCaja />
+        {/* <ArquearCaja /> */}
       </div>
-      <AperturaCajaTable />
+      <TabList
+        defaultValue="1"
+        onValueChange={(value) => setShowCard(Number(value))}
+        className="my-6"
+      >
+        <Tab value="1" text="Cajas Abiertas" icon={CurrencyDollarIcon} />
+        <Tab value="2" text="Historial Arqueo" icon={DocumentChartBarIcon} />
+      </TabList>
+
+      {showCard === 1 ? (
+        <CajasAbiertasTable cerrar_caja={false} />
+      ) : (
+        <ArqueoCajaTable />
+      )}
     </AdminLayout>
   );
 };

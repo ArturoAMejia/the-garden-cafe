@@ -1,4 +1,4 @@
-import { ICatFormaPago, IMoneda } from "@/interfaces";
+import { ICatFormaPago, IMoneda, ITipoCambio } from "@/interfaces";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const catalogosApi = createApi({
@@ -6,7 +6,7 @@ export const catalogosApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: "/api",
   }),
-  tagTypes: ["Monedas", "Forma Pago"],
+  tagTypes: ["Monedas", "Forma Pago", "Tipo Cambio"],
   endpoints: (builder) => ({
     obtenerMonedas: builder.query<IMoneda[], void>({
       query: () => "/catalogos/moneda",
@@ -35,6 +35,10 @@ export const catalogosApi = createApi({
         body: id,
       }),
       invalidatesTags: ["Monedas"],
+    }),
+    obtenerTipoCambio: builder.query<ITipoCambio, void>({
+      query: () => "/catalogos/moneda/tipo-cambio",
+      providesTags: ["Tipo Cambio"],
     }),
     obtenerFormasPago: builder.query<ICatFormaPago[], void>({
       query: () => "/catalogos/forma-pago",
@@ -78,4 +82,6 @@ export const {
   useCrearFormaPagoMutation,
   useActualizarFormaPagoMutation,
   useDesactivarFormaPagoMutation,
+  // Tipo de Cambio
+  useObtenerTipoCambioQuery,
 } = catalogosApi;

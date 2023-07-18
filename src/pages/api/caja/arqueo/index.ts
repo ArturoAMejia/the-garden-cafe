@@ -8,7 +8,8 @@ type Data =
       message: string;
     }
   | IArqueoCaja
-  | IArqueoCaja[];
+  | IArqueoCaja[]
+  | any;
 
 export default function handler(
   req: NextApiRequest,
@@ -27,7 +28,25 @@ export default function handler(
 }
 const obtenerArqueosCaja = async (res: NextApiResponse<Data>) => {
   await prisma.$connect();
-  const arqueos = await prisma.arqueo_caja.findMany();
+  const arqueos = await prisma.arqueo_caja.findMany({
+    select: {
+      id: true,
+      caja: true,
+      id_caja: true,
+      trabajador: {
+        select: {
+          persona: true,
+        },
+      },
+      id_trabajador: true,
+      total: true,
+      fecha_arqueo: true,
+      detalle_billete_arqueo: true,
+      detalle_monedas_arqueo: true,
+      moneda: true,
+      id_moneda: true,
+    },
+  });
   await prisma.$disconnect();
   return res.status(200).json(arqueos);
 };
@@ -36,7 +55,11 @@ const crearArqueoCaja = async (
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) => {
-  const { id_caja, id_trabajador, total } = req.body;
+  const { id_caja, id_trabajador, total, id_moneda, billetes, monedas } =
+    req.body;
+
+  console.log(billetes);
+  console.log(monedas);
 
   if (!id_caja || !id_trabajador || !total)
     return res
@@ -50,8 +73,26 @@ const crearArqueoCaja = async (
       id_trabajador: Number(id_trabajador),
       fecha_arqueo: new Date(),
       total: Number(total),
+      id_moneda,
     },
   });
+  await prisma.detalle_billete_arqueo.createMany({
+    data: billetes.map((b: any) => ({
+      id_arqueo_caja: arqueo.id,
+      denominacion: b.denominacion,
+      cantidad: b.cantidad,
+      total: b.cantidad * b.denominacion,
+    })),
+  });
+  await prisma.detalle_monedas_arqueo.createMany({
+    data: monedas.map((m: any) => ({
+      id_arqueo_caja: arqueo.id,
+      denominacion: m.denominacion,
+      cantidad: m.cantidad,
+      total: m.cantidad * m.denominacion,
+    })),
+  });
+
   await prisma.$disconnect();
   return res.status(201).json(arqueo);
 };

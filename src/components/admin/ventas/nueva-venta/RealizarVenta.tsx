@@ -1,9 +1,8 @@
 import { Transition, Dialog } from "@headlessui/react";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
-import React, { FC, Fragment, useContext, useState } from "react";
+import React, { FC, Fragment, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { AdminContext } from "../../../../context";
 import { IMoneda, IPedido } from "../../../../interfaces";
 import { useCrearVentaMutation } from "@/store/slices/venta";
 import {
@@ -15,6 +14,11 @@ import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
 import { AppState } from "@/store/store";
 import { Divider, Subtitle } from "@tremor/react";
 import { useActualizarEstadoPedidoMutation } from "@/store/slices/pedido";
+import {
+  useObtenerFormasPagoQuery,
+  useObtenerMonedasQuery,
+  useObtenerTipoCambioQuery,
+} from "@/store/slices/catalogos";
 
 type FormData = {
   id_moneda: number;
@@ -29,10 +33,14 @@ interface Props {
 }
 
 export const RealizarVenta: FC<Props> = ({ pedido }) => {
-  const { monedas, formas_pago } = useContext(AdminContext);
-
+  const { data: monedas, isLoading: isLoadingMonedas } =
+    useObtenerMonedasQuery();
+  const { data: tipo_cambio, isLoading: isLoadingTipoCambio } =
+    useObtenerTipoCambioQuery();
   const [actualizarEstadoPedido] = useActualizarEstadoPedidoMutation();
 
+  const { data: formas_pago, isLoading: isLoadingFormasPago } =
+    useObtenerFormasPagoQuery();
   const { id, id_trabajador, id_cliente, detalle_pedido } = pedido;
 
   const productosPedido = detalle_pedido.map((producto: any) => ({
@@ -66,47 +74,84 @@ export const RealizarVenta: FC<Props> = ({ pedido }) => {
     setIsOpen(!isOpen);
   };
 
-  const { register, handleSubmit, reset } = useForm<FormData>();
+  const { register, handleSubmit, reset, watch } = useForm<FormData>();
+
+  const moneda = watch("id_moneda");
 
   const onRealizarVenta = async (data: FormData) => {
     const { descripcion, id_forma_pago, id_moneda, tipo_venta } = data;
 
-    if (pago_cliente < total) {
-      toast.error("El pago del cliente no cubre el total de la venta.");
-      return;
-    }
-
-    try {
-      toast.promise(
-        crearVenta({
-          id_pedido: id,
-          id_trabajador,
-          id_cliente,
-          productos: productosPedido,
-          descripcion,
-          id_cat_forma_pago: id_forma_pago,
-          tipo_venta,
-          id_moneda,
-          subtotal,
-          descuento: descuento,
-          pago_cliente: pago_cliente,
-        })
-          .unwrap()
-          .then(() => {
-            closeModal();
-            reset();
-          }),
-        {
-          loading: "Realizando venta...",
-          success: "¡Venta realizada correctamente!",
-          error: "No se pudo realizar la venta.",
-        }
-      );
-      await actualizarEstadoPedido({ ...pedido, id_estado: 8 }).unwrap();
-    } catch (error: any) {
-      toast.error(error.data.message);
+    if (moneda === 2) {
+      try {
+        toast.promise(
+          crearVenta({
+            id_pedido: id,
+            id_trabajador,
+            id_cliente,
+            productos: productosPedido,
+            descripcion,
+            id_cat_forma_pago: id_forma_pago,
+            tipo_venta,
+            id_moneda,
+            subtotal,
+            descuento: descuento,
+            pago_cliente: pago_cliente,
+          })
+            .unwrap()
+            .then(() => {
+              closeModal();
+              reset();
+            }),
+          {
+            loading: "Realizando venta...",
+            success: "¡Venta realizada correctamente!",
+            error: "No se pudo realizar la venta.",
+          }
+        );
+        await actualizarEstadoPedido({ ...pedido, id_estado: 8 }).unwrap();
+      } catch (error: any) {
+        toast.error(error.data.message);
+      }
+    } else {
+      if (pago_cliente < total) {
+        toast.error("El pago del cliente no cubre el total de la venta.");
+        return;
+      }
+      try {
+        toast.promise(
+          crearVenta({
+            id_pedido: id,
+            id_trabajador,
+            id_cliente,
+            productos: productosPedido,
+            descripcion,
+            id_cat_forma_pago: id_forma_pago,
+            tipo_venta,
+            id_moneda,
+            subtotal,
+            descuento: descuento,
+            pago_cliente: pago_cliente,
+          })
+            .unwrap()
+            .then(() => {
+              closeModal();
+              reset();
+            }),
+          {
+            loading: "Realizando venta...",
+            success: "¡Venta realizada correctamente!",
+            error: "No se pudo realizar la venta.",
+          }
+        );
+        await actualizarEstadoPedido({ ...pedido, id_estado: 8 }).unwrap();
+      } catch (error: any) {
+        toast.error(error.data.message);
+      }
     }
   };
+
+  if (isLoadingMonedas || isLoadingTipoCambio || isLoadingFormasPago)
+    return <>Cargando...</>;
 
   return (
     <>
@@ -251,7 +296,7 @@ export const RealizarVenta: FC<Props> = ({ pedido }) => {
                       {/* Descuento */}
                       <div className="mt-2">
                         <label
-                          htmlFor="pago_cliente"
+                          htmlFor="descuento"
                           className="block font-medium text-gray-700"
                         >
                           Descuento (%)
@@ -259,7 +304,9 @@ export const RealizarVenta: FC<Props> = ({ pedido }) => {
                         <div className="mt-1">
                           <input
                             type="number"
-                            id="pago_cliente"
+                            id="descuento"
+                            max={100}
+                            min={0}
                             maxLength={100}
                             minLength={0}
                             onChange={(e) =>
@@ -294,25 +341,34 @@ export const RealizarVenta: FC<Props> = ({ pedido }) => {
                         <Divider className="my-2" />
                         <Subtitle className="text-lg font-bold text-black">
                           {" "}
-                          Subtotal: ${subtotal.toFixed(2)}
+                          Subtotal: C${subtotal.toFixed(2)}
                         </Subtitle>
                         <Subtitle className="text-lg font-bold text-black">
-                          Impuesto: $
+                          Impuesto: C$
                           {(
                             subtotal * Number(process.env.NEXT_PUBLIC_TAX_RATE)
                           ).toFixed(2)}
                         </Subtitle>
                         <Subtitle className="text-lg font-bold text-black">
-                          Descuento: ${descuento.toFixed(2)}
+                          Descuento: C${descuento.toFixed(2)}
                         </Subtitle>
                         <Subtitle className="text-lg font-bold text-black">
-                          Entrega Cliente: ${pago_cliente.toFixed(2)}
+                          Entrega Cliente:
+                          {moneda === 1
+                            ? ` C$${pago_cliente.toFixed(2)}`
+                            : ` $${Number(pago_cliente).toFixed(2)}`}
                         </Subtitle>
                         <Subtitle className="text-lg font-bold text-black">
-                          Cambio: ${cambio.toFixed(2)}
+                          Total: C${total.toFixed(2)} - ${" "}
+                          {Number(total / tipo_cambio.valor_cambio).toFixed(2)}
                         </Subtitle>
                         <Subtitle className="text-lg font-bold text-black">
-                          Total: ${total.toFixed(2)}
+                          Cambio:
+                          {moneda === 1
+                            ? ` C$${cambio.toFixed(2)}`
+                            : ` C$${Number(
+                                pago_cliente * tipo_cambio.valor_cambio - total
+                              ).toFixed(2)}`}
                         </Subtitle>
                       </div>
                     </div>

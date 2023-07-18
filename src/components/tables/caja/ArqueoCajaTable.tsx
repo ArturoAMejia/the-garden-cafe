@@ -1,13 +1,18 @@
 import {
-  ColumnDef,
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useMemo } from "react";
-import { ICaja, IComprobante, IMoneda } from "../../../interfaces";
+import React, { FC, useMemo } from "react";
+import {
+  IArqueoCaja,
+  ICaja,
+  ICatEstado,
+  ITrabajador,
+} from "../../../interfaces";
+
 import {
   Table,
   TableBody,
@@ -18,64 +23,70 @@ import {
 } from "@tremor/react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { useObtenerMovimientoCajaQuery } from "@/store/slices/caja";
+import { useObtenerArqueoCajaQuery } from "@/store/slices/caja";
+import {
+  ArquearCaja,
+  DetalleArqueoCaja,
+} from "@/components/admin/caja/ArquearCaja";
 
-const columnHelper = createColumnHelper<any>();
-export const MovimientoCajaTable = () => {
-  const columns = useMemo<ColumnDef<any, any>[]>(
+const columnHelper = createColumnHelper<IArqueoCaja>();
+
+export const ArqueoCajaTable = () => {
+  const columns = useMemo(
     () => [
       columnHelper.accessor<"id", number>("id", {
-        header: "Código",
+        header: "Id",
         cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor<"comprobante", IComprobante>("comprobante", {
-        header: "Num. Comprobante",
-        cell: (info) => info.getValue().numeracion,
       }),
       columnHelper.accessor<"caja", ICaja>("caja", {
-        header: "Nombre",
+        header: "Cajero",
         cell: (info) => info.getValue().tipo_caja,
       }),
-      columnHelper.accessor<"concepto", string>("concepto", {
-        header: "Concepto",
-        cell: (info) => info.getValue(),
+      columnHelper.accessor<"trabajador", ITrabajador>("trabajador", {
+        header: "Tipo de Caja",
+        cell: (info) =>
+          info.getValue().persona.nombre +
+          " " +
+          info.getValue().persona.apellido_razon_social,
       }),
-      columnHelper.accessor<"tipo_movimiento", string>("tipo_movimiento", {
-        header: "Tipo de Movimiento",
-        cell: (info) => info.getValue(),
-      }),
-      columnHelper.accessor<"fecha_movimiento", Date>("fecha_movimiento", {
-        header: "Fecha Movimiento",
+      columnHelper.accessor<"fecha_arqueo", Date>("fecha_arqueo", {
+        header: "Fecha de Arqueo",
         cell: (info) =>
           format(new Date(info.getValue()), "EEEE dd 'de' MMMM 'del' yyyy", {
             locale: es,
           }),
       }),
-      columnHelper.accessor<"moneda", IMoneda>("moneda", {
-        header: "Moneda",
-        cell: (info) => info.getValue().nombre,
+      columnHelper.accessor<"total", number>("total", {
+        header: "Total Arqueo",
+        cell: (info) => `C$${info.getValue().toFixed(2)}`,
       }),
-      columnHelper.accessor<"monto", number>("monto", {
-        header: "Monto",
-        cell: (info) =>
-          info.row.original.id_moneda === 1
-            ? ` C$${info.getValue().toFixed(2)}`
-            : `$${info.getValue().toFixed(2)}`,
+      columnHelper.display({
+        header: "",
+        id: "detalles",
+        cell: (props) => (
+          <DetalleArqueoCaja
+            arqueo={props.row.original}
+            billetes={props.row.original.detalle_billete_arqueo}
+            monedas={props.row.original.detalle_monedas_arqueo}
+          />
+        ),
       }),
     ],
     []
   );
 
-  const { data: movimiento_caja, isLoading } = useObtenerMovimientoCajaQuery();
+  const { data: arqueos, isLoading } = useObtenerArqueoCajaQuery();
 
   const table = useReactTable({
-    data: movimiento_caja!,
+    data: arqueos,
     columns,
+
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
 
   if (isLoading) return <>Cargando...</>;
+
   return (
     <div>
       <Table className="mt-5 rounded-md">

@@ -1,55 +1,52 @@
 import { Transition, Dialog } from "@headlessui/react";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
-import React, { Fragment, useState } from "react";
+import React, { FC, Fragment, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 
-import { ICaja } from "../../../interfaces";
+import { IArqueoCaja, ICaja } from "../../../interfaces";
 import tgcApi from "../../../api/tgcApi";
 import axios from "axios";
 
-import { useObtenerCajasQuery } from "@/store/slices/caja";
+import {
+  useCrearArqueoCajaMutation,
+  useObtenerCajasQuery,
+} from "@/store/slices/caja";
 import { useSession } from "next-auth/react";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
-import { AppState } from "@/store/store";
+
+
+
 import {
-  actualizarBilleteCien,
-  actualizarBilleteCincuenta,
-  actualizarBilleteVeinte,
-  actualizarBilleteDiez,
-  actualizarBilleteCinco,
-  actualizarBilleteDos,
-  actualizarBilleteUn,
-  actualizarMonedaUnCentavo,
-  actualizarMonedaCincoCentavo,
-  actualizarMonedaDiezCentavo,
-  actualizarMonedaVeinticincoCentavo,
-  actualizarMonedaCincuentaCentavo,
+  Billete,
+  Moneda,
+  actualizarBilleteCordobas,
+  actualizarMonedas,
 } from "@/store/slices/caja/cajaSlice";
+import { AppState } from "@/store/store";
+import { CajasTable } from "@/components/tables/caja/CajasTable";
 
 type FormData = {
   id_caja: number;
-  billete_cien: number;
-  billete_cincuenta: number;
-  billete_veinte: number;
-  billete_diez: number;
-  billete_cinco: number;
-  billete_dos: number;
-  billete_un: number;
-  moneda_un_centavo: number;
-  moneda_cinco_centavo: number;
-  moneda_diez_centavo: number;
-  moneda_veinticinco_centavo: number;
-  moneda_cincuenta_centavo: number;
 };
 
-export const ArquearCaja = () => {
+interface Props {
+  caja: ICaja;
+}
+
+const denominacion_billetes_cordobas = [10, 20, 50, 100, 200, 500, 1000];
+const denominacion_monedas_cordobas = [0.25, 0.5, 1, 5, 10];
+
+export const ArquearCaja: FC<Props> = ({ caja }) => {
   const { data: cajas, isLoading } = useObtenerCajasQuery();
+
+  const [crearArqueoCaja] = useCrearArqueoCajaMutation();
 
   const { data: session } = useSession();
 
   const dispatch = useAppDispatch();
-  const { total, total_billetes, total_monedas } = useAppSelector(
+
+  const { total, billetes, monedas } = useAppSelector(
     (state: AppState) => state.caja
   );
 
@@ -58,18 +55,29 @@ export const ArquearCaja = () => {
 
   const openModal = () => setIsOpen(!isOpen);
 
-  const { register, handleSubmit, reset, watch } = useForm<FormData>();
-
-  const caja_seleccionada = watch("id_caja", 1);
+  const { handleSubmit, reset } = useForm<FormData>();
 
   const onAceptarSolicitud = async ({ id_caja }: FormData) => {
     try {
-      await tgcApi.post("api/caja/cierre", {
-        id_trabajador: Number(session?.user?.id_trabajador),
-        id_caja,
-      });
-      toast.success("Caja cerrada correctamente.");
-      closeModal();
+      toast.promise(
+        crearArqueoCaja({
+          id_caja: caja.id,
+          id_trabajador: Number(session?.user?.id_trabajador),
+          id_moneda: 1,
+          total,
+          billetes,
+          monedas,
+        })
+          .unwrap()
+          .then(() => {
+            closeModal();
+          }),
+        {
+          loading: "Cerrando caja...",
+          success: "Caja arqueada correctamente.",
+          error: "No se pudo arquear la caja.",
+        }
+      );
     } catch (error) {
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data.message);
@@ -121,7 +129,7 @@ export const ArquearCaja = () => {
                 leaveFrom="opacity-100 scale-100"
                 leaveTo="opacity-0 scale-95"
               >
-                <Dialog.Panel className="h-auto w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Panel className="h-auto w-full max-w-4xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
                   <Dialog.Title
                     as="h3"
                     className="text-xl font-bold leading-6 text-gray-900"
@@ -140,353 +148,80 @@ export const ArquearCaja = () => {
                           htmlFor="caja"
                           className="block font-medium text-gray-700"
                         >
-                          Caja
+                          Caja {caja.id} - {caja.tipo_caja}
                         </label>
-                        <div className="mt-1">
-                          <select
-                            id="caja"
-                            {...register("id_caja", {
-                              valueAsNumber: true,
-                            })}
-                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                          >
-                            {cajas.map((caja: ICaja) => (
-                              <option key={caja.id} value={caja.id}>
-                                {caja.tipo_caja}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
                       </div>
 
                       <div>
                         <label className="block font-medium text-gray-700">
-                          Billetes
+                          Billetes - Córdobas
                         </label>
-
-                        <div className=" mt-2 flex items-center gap-4">
-                          <label
-                            htmlFor="billete_cien"
-                            className="mr-4 block font-medium text-gray-700"
+                        {denominacion_billetes_cordobas.map((denominacion) => (
+                          <div
+                            key={denominacion}
+                            className=" mt-2 flex items-center gap-4"
                           >
-                            $100
-                          </label>
-                          <div className="mt-1 w-full">
-                            <input
-                              type="number"
-                              id="billete_cien"
-                              {...register("billete_cien", {
-                                valueAsNumber: true,
-                              })}
-                              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                              onChange={(e) =>
-                                dispatch(
-                                  actualizarBilleteCien(Number(e.target.value))
-                                )
-                              }
-                            />
-                          </div>
-                        </div>
-                        <div className=" mt-2 flex items-center gap-4">
-                          <label
-                            htmlFor="billete_cincuenta"
-                            className="mr-6 block font-medium text-gray-700"
-                          >
-                            $50
-                          </label>
-                          <div className="mt-1 w-full">
-                            <input
-                              type="number"
-                              id="billete_cincuenta"
-                              {...register("billete_cincuenta", {
-                                valueAsNumber: true,
-                              })}
-                              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                              onChange={(e) =>
-                                dispatch(
-                                  actualizarBilleteCincuenta(
-                                    Number(e.target.value)
+                            <label
+                              htmlFor={denominacion.toString()}
+                              className="mr-4 block font-medium text-gray-700"
+                            >
+                              C$ {denominacion}
+                            </label>
+                            <div className="mt-1 w-full">
+                              <input
+                                type="number"
+                                id="billete_cien"
+                                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                min="0"
+                                onChange={(e) =>
+                                  dispatch(
+                                    actualizarBilleteCordobas({
+                                      denominacion,
+                                      cantidad: Number(e.target.value),
+                                    })
                                   )
-                                )
-                              }
-                            />
+                                }
+                              />
+                            </div>
                           </div>
-                        </div>
-                        <div className=" mt-2 flex items-center gap-4">
-                          <label
-                            htmlFor="billete_veinte"
-                            className="mr-6 block font-medium text-gray-700"
-                          >
-                            $20
-                          </label>
-                          <div className="mt-1 w-full">
-                            <input
-                              type="number"
-                              id="billete_veinte"
-                              {...register("billete_veinte", {
-                                valueAsNumber: true,
-                              })}
-                              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                              onChange={(e) =>
-                                dispatch(
-                                  actualizarBilleteVeinte(
-                                    Number(e.target.value)
-                                  )
-                                )
-                              }
-                            />
-                          </div>
-                        </div>
-                        <div className=" mt-2 flex items-center gap-4">
-                          <label
-                            htmlFor="billete_diez"
-                            className="mr-6 block font-medium text-gray-700"
-                          >
-                            $10
-                          </label>
-                          <div className="mt-1 w-full">
-                            <input
-                              type="number"
-                              id="billete_diez"
-                              {...register("billete_diez", {
-                                valueAsNumber: true,
-                              })}
-                              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                              onChange={(e) =>
-                                dispatch(
-                                  actualizarBilleteDiez(Number(e.target.value))
-                                )
-                              }
-                            />
-                          </div>
-                        </div>
-                        <div className=" mt-2 flex items-center gap-4">
-                          <label
-                            htmlFor="billete_cinco"
-                            className="mr-8 block font-medium text-gray-700"
-                          >
-                            $5
-                          </label>
-                          <div className="mt-1 w-full">
-                            <input
-                              type="number"
-                              id="billete_cinco"
-                              {...register("billete_cinco", {
-                                valueAsNumber: true,
-                              })}
-                              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                              onChange={(e) =>
-                                dispatch(
-                                  actualizarBilleteCinco(Number(e.target.value))
-                                )
-                              }
-                            />
-                          </div>
-                        </div>
-                        <div className=" mt-2 flex items-center gap-4">
-                          <label
-                            htmlFor="billete_dos"
-                            className="mr-8 block font-medium text-gray-700"
-                          >
-                            $2
-                          </label>
-                          <div className="mt-1 w-full">
-                            <input
-                              type="number"
-                              id="billete_dos"
-                              {...register("billete_dos", {
-                                valueAsNumber: true,
-                              })}
-                              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                              onChange={(e) =>
-                                dispatch(
-                                  actualizarBilleteDos(Number(e.target.value))
-                                )
-                              }
-                            />
-                          </div>
-                        </div>
-                        <div className=" mt-2 flex items-center gap-4">
-                          <label
-                            htmlFor="billete_uno"
-                            className="mr-8 block font-medium text-gray-700"
-                          >
-                            $1
-                          </label>
-                          <div className="mt-1 w-full">
-                            <input
-                              type="number"
-                              id="billete_uno"
-                              {...register("billete_un", {
-                                valueAsNumber: true,
-                              })}
-                              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                              onChange={(e) =>
-                                dispatch(
-                                  actualizarBilleteUn(Number(e.target.value))
-                                )
-                              }
-                            />
-                          </div>
-                        </div>
+                        ))}
                       </div>
                       <div>
                         <label className="block font-medium text-gray-700">
-                          Monedas
+                          Monedas - Córdobas
                         </label>
-
-                        <div className=" mt-2 flex items-center gap-4">
-                          <label
-                            htmlFor="moneda_un_centavo"
-                            className="mr-4 block font-medium text-gray-700"
+                        {denominacion_monedas_cordobas.map((denominacion) => (
+                          <div
+                            key={denominacion}
+                            className=" mt-2 flex items-center gap-4"
                           >
-                            $0.01
-                          </label>
-                          <div className="mt-1 w-full">
-                            <input
-                              type="number"
-                              id="moneda_un_centavo"
-                              {...register("moneda_un_centavo", {
-                                valueAsNumber: true,
-                              })}
-                              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                              onChange={(e) =>
-                                dispatch(
-                                  actualizarMonedaUnCentavo(
-                                    Number(e.target.value)
+                            <label
+                              htmlFor={denominacion.toString()}
+                              className="mr-4 block font-medium text-gray-700"
+                            >
+                              C$ {denominacion}
+                            </label>
+                            <div className="mt-1 w-full">
+                              <input
+                                type="number"
+                                id="billete_cien"
+                                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                min="0"
+                                onChange={(e) =>
+                                  dispatch(
+                                    actualizarMonedas({
+                                      denominacion,
+                                      cantidad: Number(e.target.value),
+                                    })
                                   )
-                                )
-                              }
-                            />
+                                }
+                              />
+                            </div>
                           </div>
-                        </div>
-                        <div className=" mt-2 flex items-center gap-4">
-                          <label
-                            htmlFor="moneda_cinco_centavo"
-                            className="mr-6 block font-medium text-gray-700"
-                          >
-                            $0.05
-                          </label>
-                          <div className="mt-1 w-full">
-                            <input
-                              type="number"
-                              id="moneda_cinco_centavo"
-                              {...register("moneda_cinco_centavo", {
-                                valueAsNumber: true,
-                              })}
-                              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                              onChange={(e) =>
-                                dispatch(
-                                  actualizarMonedaCincoCentavo(
-                                    Number(e.target.value)
-                                  )
-                                )
-                              }
-                            />
-                          </div>
-                        </div>
-                        <div className=" mt-2 flex items-center gap-4">
-                          <label
-                            htmlFor="moneda_diez_centavo"
-                            className="mr-6 block font-medium text-gray-700"
-                          >
-                            $0.10
-                          </label>
-                          <div className="mt-1 w-full">
-                            <input
-                              type="number"
-                              id="moneda_diez_centavo"
-                              {...register("moneda_diez_centavo", {
-                                valueAsNumber: true,
-                              })}
-                              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                              onChange={(e) =>
-                                dispatch(
-                                  actualizarMonedaDiezCentavo(
-                                    Number(e.target.value)
-                                  )
-                                )
-                              }
-                            />
-                          </div>
-                        </div>
-                        <div className=" mt-2 flex items-center gap-4">
-                          <label
-                            htmlFor="moneda_veinticinco_centavo"
-                            className="mr-6 block font-medium text-gray-700"
-                          >
-                            $0.25
-                          </label>
-                          <div className="mt-1 w-full">
-                            <input
-                              type="number"
-                              id="moneda_veinticinco_centavo"
-                              {...register("moneda_veinticinco_centavo", {
-                                valueAsNumber: true,
-                              })}
-                              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                              onChange={(e) =>
-                                dispatch(
-                                  actualizarMonedaVeinticincoCentavo(
-                                    Number(e.target.value)
-                                  )
-                                )
-                              }
-                            />
-                          </div>
-                        </div>
-                        <div className=" mt-2 flex items-center gap-4">
-                          <label
-                            htmlFor="moneda_cincuenta_centavo"
-                            className="mr-8 block font-medium text-gray-700"
-                          >
-                            $0.50
-                          </label>
-                          <div className="mt-1 w-full">
-                            <input
-                              type="number"
-                              id="moneda_cincuenta_centavo"
-                              {...register("moneda_cincuenta_centavo", {
-                                valueAsNumber: true,
-                              })}
-                              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                              onChange={(e) =>
-                                dispatch(
-                                  actualizarMonedaCincuentaCentavo(
-                                    Number(e.target.value)
-                                  )
-                                )
-                              }
-                            />
-                          </div>
-                        </div>
-                      </div>
-                      <div className="">
-                        <label className="block font-medium text-gray-700">
-                          Total Billetes: ${total_billetes.toFixed(2)}
-                        </label>
-                      </div>
-                      <div className="">
-                        <label className="block font-medium text-gray-700">
-                          Total Monedas: ${total_monedas.toFixed(2)}
-                        </label>
-                      </div>
-                      <div className="col-span-2">
-                        <label className="block font-medium text-gray-700">
-                          Saldo Actual: $
-                          {cajas
-                            .find((caja) => caja.id === caja_seleccionada)
-                            .saldo_actual.toFixed(2)}
-                        </label>
-                        <label className="block font-medium text-gray-700">
-                          Total Efectivo: $ {total.toFixed(2)}
-                          {/* {cajas
-                            .find((caja) => caja.id === caja_seleccionada)
-                            .saldo_actual.toFixed(2)} */}
-                        </label>
+                        ))}
                       </div>
                     </div>
-
+                    <ResumenArqueo caja={caja} />
                     <button
                       type="submit"
                       className="mt-4 inline-flex items-center rounded-md border border-transparent bg-[#388C04] px-4 py-2 font-medium text-white shadow-sm"
@@ -505,6 +240,177 @@ export const ArquearCaja = () => {
                       Cancelar
                     </button>
                   </form>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+    </>
+  );
+};
+
+const ResumenArqueo: FC<Props> = ({ caja }) => {
+  const { total, total_billetes_cordobas, total_monedas } = useAppSelector(
+    (state: AppState) => state.caja
+  );
+  return (
+    <div>
+      <div className="">
+        <label className="block font-medium text-gray-700">
+          Total Billetes: C${total_billetes_cordobas.toFixed(2)}
+        </label>
+      </div>
+      <div className="">
+        <label className="block font-medium text-gray-700">
+          Total Monedas: C${total_monedas.toFixed(2)}
+        </label>
+      </div>
+      <div className="col-span-2">
+        <label className="block font-medium text-gray-700">
+          Saldo Actual: C${caja.saldo_actual.toFixed(2)}
+        </label>
+        <label className="block font-medium text-gray-700">
+          Total Efectivo: C$ {total.toFixed(2)}
+        </label>
+      </div>
+    </div>
+  );
+};
+
+interface PropsDetalle {
+  arqueo: IArqueoCaja;
+  monedas: Moneda[];
+  billetes: Billete[];
+}
+export const DetalleArqueoCaja: FC<PropsDetalle> = ({
+  arqueo,
+  billetes,
+  monedas,
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const closeModal = () => setIsOpen(!isOpen);
+
+  const openModal = () => setIsOpen(!isOpen);
+  return (
+    <>
+      <div className="">
+        <button
+          type="button"
+          onClick={openModal}
+          className="rounded-lg bg-lime-600 px-4 py-2 text-sm font-medium text-white  hover:bg-lime-700"
+        >
+          Ver Detalles
+        </button>
+      </div>
+
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-50" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="h-auto w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-xl font-bold leading-6 text-gray-900"
+                  >
+                    Detalles Arqueo
+                  </Dialog.Title>
+
+                  <div className="flex flex-col gap-4 md:grid md:grid-cols-2">
+                    {/* Caja */}
+                    <div className="col-span-2 mt-2">
+                      <label
+                        htmlFor="caja"
+                        className="block font-medium text-gray-700"
+                      >
+                        Caja {arqueo.caja.id} - {arqueo.caja.tipo_caja}
+                      </label>
+                    </div>
+
+                    <div>
+                      <label className="block font-medium text-gray-700">
+                        Billetes - Córdobas
+                      </label>
+                      {billetes.map((denominacion) => (
+                        <div
+                          key={denominacion.denominacion.toString()}
+                          className=" mt-2 flex items-center gap-4"
+                        >
+                          <label
+                            htmlFor={denominacion.denominacion.toString()}
+                            className="mr-4 block font-medium text-gray-700"
+                          >
+                            Cantidad: {denominacion.cantidad.toString()}
+                          </label>
+                          <label
+                            htmlFor={denominacion.toString()}
+                            className="mr-4 block font-medium text-gray-700"
+                          >
+                            Denominación: C${" "}
+                            {denominacion.denominacion.toString()}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                    <div>
+                      <label className="block font-medium text-gray-700">
+                        Billetes - Córdobas
+                      </label>
+                      {monedas.map((denominacion) => (
+                        <div
+                          key={denominacion.denominacion.toString()}
+                          className=" mt-2 flex items-center gap-4"
+                        >
+                          <label
+                            htmlFor={denominacion.denominacion.toString()}
+                            className="mr-4 block font-medium text-gray-700"
+                          >
+                            Cantidad: {denominacion.cantidad.toString()}
+                          </label>
+                          <label
+                            htmlFor={denominacion.toString()}
+                            className="mr-4 block font-medium text-gray-700"
+                          >
+                            Denominación: C${" "}
+                            {denominacion.denominacion.toString()}
+                          </label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <label className="block font-medium text-gray-700">
+                    Total Efectivo: C$ {arqueo.total.toFixed(2)}
+                  </label>
+
+                  <button
+                    type="button"
+                    className="mt-4  inline-flex items-center rounded-md border border-transparent bg-[#CA1514] px-4 py-2 font-medium text-white shadow-sm"
+                    onClick={closeModal}
+                  >
+                    Salir
+                  </button>
                 </Dialog.Panel>
               </Transition.Child>
             </div>

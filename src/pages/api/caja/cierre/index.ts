@@ -64,14 +64,6 @@ const crearCierreCaja = async (
       .json({ message: "Todos los campos son obligatorios." });
 
   await prisma.$connect();
-  const cierre = await prisma.cierre_caja.create({
-    data: {
-      id_caja: Number(id_caja),
-      id_trabajador,
-      total: Number(total),
-      id_estado: 1,
-    },
-  });
 
   const a = await prisma.apertura_caja.findFirst({
     where: {
@@ -79,6 +71,24 @@ const crearCierreCaja = async (
     },
   });
 
+  const cierre = await prisma.cierre_caja.create({
+    data: {
+      id_caja: Number(id_caja),
+      id_trabajador,
+      total: Number(total),
+      id_estado: 1,
+      fecha_apertura: a.fecha_apertura,
+    },
+  });
+
+  await prisma.caja.update({
+    where: {
+      id: id_caja,
+    },
+    data: {
+      id_estado: 2,
+    },
+  });
   await prisma.apertura_caja.update({
     data: {
       id_estado: 2,
