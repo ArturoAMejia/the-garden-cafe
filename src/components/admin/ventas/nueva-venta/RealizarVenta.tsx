@@ -19,6 +19,7 @@ import {
   useObtenerMonedasQuery,
   useObtenerTipoCambioQuery,
 } from "@/store/slices/catalogos";
+import { Loader } from "@/components/ui/Loader";
 
 type FormData = {
   id_moneda: number;
@@ -151,7 +152,7 @@ export const RealizarVenta: FC<Props> = ({ pedido }) => {
   };
 
   if (isLoadingMonedas || isLoadingTipoCambio || isLoadingFormasPago)
-    return <>Cargando...</>;
+    return <Loader />;
 
   return (
     <>

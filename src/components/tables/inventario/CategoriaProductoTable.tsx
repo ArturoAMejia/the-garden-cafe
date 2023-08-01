@@ -23,6 +23,7 @@ import {
   TableCell,
 } from "@tremor/react";
 import { ReactivarCategoriaProducto } from "../../admin/formularios/catalogos/categoria-producto/ReactivarCategoriaProducto";
+import { Loader } from "@/components/ui/Loader";
 
 const columHelper = createColumnHelper<ICategoriaProducto>();
 
@@ -78,7 +79,7 @@ export const CategoriaProductoTable = () => {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  if (isLoading) return <>Cargando...</>;
+  if (isLoading) return <Loader />
 
   return (
     <div>

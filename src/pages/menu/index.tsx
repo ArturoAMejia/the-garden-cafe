@@ -7,6 +7,7 @@ import {
   useObtenerCategoriasQuery,
   useObtenerPlatillosQuery,
 } from "@/store/slices/inventario";
+import { Loader } from "@/components/ui/Loader";
 
 const Menu = () => {
   const { filtro, setFiltro, menuFiltrado } = useMenu();
@@ -44,7 +45,7 @@ const Menu = () => {
                     </svg>
                   </summary>
                   <form className="border-t border-gray-200 lg:border-t-0">
-                    {isLoadingCategorias && <>Cargando...</>}
+                    {isLoadingCategorias && <Loader />}
                     <fieldset>
                       <legend className="block w-full bg-[#FFF9EA] px-5 py-3 text-xs font-medium">
                         Categorías
@@ -73,7 +74,7 @@ const Menu = () => {
                 </details>
               </div>
               <div className="lg:col-span-3">
-                {isLoading && <>Cargando...</>}
+                {isLoading && <Loader />}
                 <div className="flex items-center justify-between">
                   <p className="text-[#FFF9EA]0 text-sm">
                     <span className="hidden sm:inline"> Mostrando </span>

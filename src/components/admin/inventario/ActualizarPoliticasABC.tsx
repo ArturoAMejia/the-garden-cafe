@@ -11,6 +11,7 @@ import {
   useObtenerPoliticasInventarioQuery,
   useObtenerProductosQuery,
 } from "@/store/slices/inventario";
+import { Loader } from "@/components/ui/Loader";
 
 type FormData = {
   politicas: { id: number; clasificacion: string; porcentaje: number }[];
@@ -44,9 +45,9 @@ export const ActualizarPoliticasABC = () => {
     }
   };
 
-  if (isLoading) return <>Cargando...</>;
+  if (isLoading) return <Loader />;
 
-  if (isLoadingInventario) return <>Cargando...</>;
+  if (isLoadingInventario) return <Loader />;
 
   return (
     <>

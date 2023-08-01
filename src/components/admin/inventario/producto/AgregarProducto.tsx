@@ -1,13 +1,6 @@
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { Dialog, Transition } from "@headlessui/react";
-import React, {
-  ChangeEvent,
-  FC,
-  Fragment,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import React, { ChangeEvent, FC, Fragment, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { IProducto } from "../../../../interfaces";
@@ -26,6 +19,7 @@ import {
 } from "../../formularios";
 import { AgregarSubCategoriaProducto } from "../../formularios/catalogos/sub-categoria-producto/AgregarSubCategoriaProducto";
 import { useToggle } from "@/hooks";
+import { Loader } from "@/components/ui/Loader";
 
 type FormData = IProducto;
 
@@ -103,13 +97,13 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
     }
   };
 
-  if (isLoadingCategorias) return <>Cargando...</>;
+  if (isLoadingCategorias) return <Loader />;
 
-  if (isLoadingMarcas) return <>Cargando...</>;
+  if (isLoadingMarcas) return <Loader />;
 
-  if (isLoadingUnidadesMedidas) return <>Cargando...</>;
+  if (isLoadingUnidadesMedidas) return <Loader />;
 
-  if (isLoadingSubCat) return <>Cargando...</>;
+  if (isLoadingSubCat) return <Loader />;
 
   const categorias_filtradas = categorias.filter((categoria) =>
     isIngredient

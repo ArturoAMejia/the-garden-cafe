@@ -1,3 +1,4 @@
+import { Loader } from "@/components/ui/Loader";
 import { useObtenerPoliticasInventarioQuery } from "@/store/slices/inventario";
 import { Card, Metric, CategoryBar, Legend, Text, Title } from "@tremor/react";
 import React, { FC } from "react";
@@ -5,7 +6,7 @@ import React, { FC } from "react";
 const PoliticasInventarioStats = () => {
   let { data: politicas, isLoading } = useObtenerPoliticasInventarioQuery();
 
-  if (isLoading) return <>Cargando...</>;
+  if (isLoading) return <Loader />;
 
   politicas = politicas.map((politica) => {
     return {

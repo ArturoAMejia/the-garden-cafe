@@ -11,8 +11,12 @@ import {
 } from "@tremor/react";
 
 import { useObtenerPedidosQuery } from "@/store/slices/pedido";
-import { useObtenerVentasPorFechaQuery, useObtenerVentasQuery } from "@/store/slices/venta";
+import {
+  useObtenerVentasPorFechaQuery,
+  useObtenerVentasQuery,
+} from "@/store/slices/venta";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
+import { Loader } from "../ui/Loader";
 
 export const performance = [
   {
@@ -54,7 +58,7 @@ export default function ChartView() {
   const { data: ventas, isLoading } = useObtenerVentasPorFechaQuery();
 
   const [selectedKpi, setSelectedKpi] = useState("Sales");
-  if (isLoading) return <>Cargando...</>;
+  if (isLoading) return <Loader />;
 
   return (
     <Card>

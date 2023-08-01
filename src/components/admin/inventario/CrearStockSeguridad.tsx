@@ -11,6 +11,7 @@ import {
   useObtenerInventarioQuery,
   useObtenerProductosQuery,
 } from "@/store/slices/inventario";
+import { Loader } from "@/components/ui/Loader";
 
 type FormData = {
   tiempo_entrega: number;
@@ -51,7 +52,7 @@ export const CrearStockSeguridad = () => {
     }
   };
 
-  if (isLoading) return <>Cargando...</>;
+  if (isLoading) return <Loader />;
 
   return (
     <>

@@ -19,6 +19,7 @@ import {
   TableRow,
 } from "@tremor/react";
 import { useObtenerInventarioAbcVentaQuery } from "@/store/slices/pedido";
+import { Loader } from "@/components/ui/Loader";
 
 const columnHelper = createColumnHelper<IInventarioABC>();
 
@@ -88,9 +89,9 @@ export const InventarioABCTable = () => {
 
   console.log(inventarios);
 
-  if (isLoading) return <>Cargando...</>;
+  if (isLoading) return <Loader />;
 
-  if (isLoadingPoliticas) return <>Cargando...</>;
+  if (isLoadingPoliticas) return <Loader />;
 
   return (
     <div>

@@ -17,6 +17,7 @@ import toast from "react-hot-toast";
 import { AnularPedido } from "./AnularPedido";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { Loader } from "@/components/ui/Loader";
 
 interface Props {
   pedido: IPedido;
@@ -43,7 +44,7 @@ export const PedidoCard: FC<Props> = ({
   const { data: pedidos_cocineros, isLoading } =
     useObtenerPedidosCocinerosQuery();
 
-  if (isLoading) return <>Cargando...</>;
+  if (isLoading) return <Loader />;
 
   const pedidoAsignado = pedidos_cocineros.includes(
     (pedidos) => pedidos.id_pedido === pedido.id

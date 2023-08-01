@@ -16,6 +16,7 @@ import { ResumenSolicitud } from "@/components/admin/compra/solicitud-compra/Res
 import { AceptarOrden, FilterBar } from "@/components";
 import { useObtenerIngredientesQuery } from "@/store/slices/inventario";
 import { useSession } from "next-auth/react";
+import { Loader } from "@/components/ui/Loader";
 
 interface Props {
   detalle: ISolicitudCompra;
@@ -95,7 +96,7 @@ const DetalleSolicitudCompra: FC<Props> = ({ detalle }) => {
           detalle.id_estado !== 7 ? (
             <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
               {isLoading ? (
-                <>Cargando...</>
+              <Loader/>
               ) : (
                 <FilterBar
                   isIngredient={true}

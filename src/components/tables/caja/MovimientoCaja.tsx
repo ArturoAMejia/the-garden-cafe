@@ -19,6 +19,7 @@ import {
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { useObtenerMovimientoCajaQuery } from "@/store/slices/caja";
+import { Loader } from "@/components/ui/Loader";
 
 const columnHelper = createColumnHelper<any>();
 export const MovimientoCajaTable = () => {
@@ -75,7 +76,7 @@ export const MovimientoCajaTable = () => {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  if (isLoading) return <>Cargando...</>;
+  if (isLoading) return <Loader />;
   return (
     <div>
       <Table className="mt-5 rounded-md">

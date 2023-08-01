@@ -41,7 +41,7 @@ const NuevaOrdenPage: FC<Props> = ({ permisos }) => {
     (solicitud) => solicitud.id_estado === 7
   );
 
-  if (isLoading) return <>Cargando...</>;
+  if (isLoading) return <Loader />;
 
   return (
     <AdminLayout title="Nueva Orden de Compra">

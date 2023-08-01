@@ -1,6 +1,5 @@
 import { AdminLayout } from "@/components/Layout/AdminLayout";
 import { AgregarUnidadMedida } from "@/components";
-import { UnidadMedidaTable } from "@/components/tables";
 import { DataTable } from "@/components/tables/Table";
 import { Loader } from "@/components/ui/Loader";
 import { unidadMedidaColumns } from "@/components/tables/unidad-medida/columns";

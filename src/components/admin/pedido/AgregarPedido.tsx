@@ -13,6 +13,7 @@ import { AppState } from "@/store/store";
 import { pedidoCompletado } from "@/store/slices/pedido/pedidoSlice";
 import { useSession } from "next-auth/react";
 import { AgregarCliente } from "../ventas";
+import { Loader } from "@/components/ui/Loader";
 
 type FormData = IPedido;
 
@@ -60,7 +61,7 @@ export const AgregarPedido = () => {
     );
   };
 
-  if (isLoading) return <>Cargando...</>;
+  if (isLoading) return <Loader />;
 
   return (
     <>

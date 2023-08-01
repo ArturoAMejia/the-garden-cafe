@@ -20,7 +20,15 @@ import {
 
 import { AnularCompra } from "../nueva-compra/AnularCompra";
 import { useObtenerComprasQuery } from "@/store/slices/compra";
-import { Table, TableHead, TableRow, TableHeaderCell, TableBody, TableCell } from "@tremor/react";
+import {
+  Table,
+  TableHead,
+  TableRow,
+  TableHeaderCell,
+  TableBody,
+  TableCell,
+} from "@tremor/react";
+import { Loader } from "@/components/ui/Loader";
 
 const columunHelper = createColumnHelper<ICompra>();
 
@@ -117,7 +125,7 @@ export const ComprasTable = () => {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  if (isLoading) return <>Cargando...</>;
+  if (isLoading) return <Loader />;
 
   return (
     <div>

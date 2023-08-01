@@ -17,6 +17,7 @@ import {
   TableHeaderCell,
   TableRow,
 } from "@tremor/react";
+import { Loader } from "@/components/ui/Loader";
 
 const columnHelper = createColumnHelper<IInventario>();
 export const InventarioTable = () => {
@@ -59,7 +60,7 @@ export const InventarioTable = () => {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  if (isLoading) return <>Cargando...</>;
+  if (isLoading) return <Loader />;
   return (
     <div>
       <Table className="mt-5 rounded-md">

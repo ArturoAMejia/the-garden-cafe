@@ -5,6 +5,7 @@ import { ProductoAñadirOrdenTable } from "@/components/tables/pedidos/ProductoA
 import { useObtenerPlatillosQuery } from "@/store/slices/inventario";
 import { ProductoFiltrado } from "./ProductoFiltrado";
 import { añadirProductoPedido } from "@/store/slices/pedido/pedidoSlice";
+import { Loader } from "@/components/ui/Loader";
 
 interface Props {
   categoria: ICategoriaProducto;
@@ -18,7 +19,7 @@ export const ProductoPorCategoria: FC<Props> = ({ categoria }) => {
 
   const { data: platillos, isLoading } = useObtenerPlatillosQuery();
 
-  if (isLoading) return <>Cargando...</>;
+  if (isLoading) return <Loader />;
 
   return (
     <>

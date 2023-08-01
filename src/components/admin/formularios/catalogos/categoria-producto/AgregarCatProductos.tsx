@@ -9,6 +9,7 @@ import {
   useObtenerTiposCategoriaQuery,
 } from "@/store/slices/inventario";
 import { useToggle } from "@/hooks";
+import { Loader } from "@/components/ui/Loader";
 
 interface Props {
   showMin?: boolean;
@@ -78,7 +79,7 @@ export const AgregarCatProducto: FC<Props> = ({
     }
   };
 
-  if (isLoading) return <>Cargando...</>;
+  if (isLoading) return <Loader />;
   return (
     <>
       <div className="mx-2">

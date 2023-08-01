@@ -33,6 +33,7 @@ import { getServerSession } from "next-auth";
 import { RealizarVenta } from "@/components/admin/ventas/nueva-venta/RealizarVenta";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { ProductoPorCategoria } from "@/components/admin/pedido/ProductoPorCategoria";
+import { Loader } from "@/components/ui/Loader";
 
 interface Props {
   detalle: IPedido;
@@ -193,7 +194,7 @@ const DetallePedidoRealizadoPage: FC<Props> = ({ detalle, estados }) => {
                   }`}
                 >
                   {isLoadingCategorias ? (
-                    <>Cargando...</>
+                    <Loader />
                   ) : (
                     <div className="grid grid-cols-3 gap-4">
                       {categorias
