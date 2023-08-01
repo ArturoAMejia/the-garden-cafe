@@ -2,6 +2,7 @@ import type { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react";
 import { Session } from "next-auth";
 import "@/styles/globals.css";
+import "@/styles/loader.css";
 import { AdminProvider, AuthProvider, CartProvider } from "@/context";
 import { Provider } from "react-redux";
 import { store } from "../store/store";

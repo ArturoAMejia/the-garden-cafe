@@ -1,8 +1,13 @@
-import { SubCategoriaProductoTable } from "@/components/tables/subcategoria/SubcategoriaTable";
 import { AdminLayout } from "../../../../components/Layout/AdminLayout";
 import { AgregarSubCategoriaProducto } from "@/components/admin/formularios/catalogos/sub-categoria-producto/AgregarSubCategoriaProducto";
+import { subcategoriaColumns } from "@/components/tables/subcategoria/columns";
+import { DataTable } from "@/components/tables/Table";
+import { Loader } from "@/components/ui/Loader";
+import { useObtenerSubcategoriasQuery } from "@/store/slices/inventario";
 
 const SubCategoriaInventario = () => {
+  const { data, isLoading } = useObtenerSubcategoriasQuery();
+
   return (
     <AdminLayout title="Subcategorias de Productos">
       <div className="sm:flex sm:items-center">
@@ -19,7 +24,11 @@ const SubCategoriaInventario = () => {
           <AgregarSubCategoriaProducto />
         </div>
       </div>
-      <SubCategoriaProductoTable />
+      {isLoading === true ? (
+        <Loader />
+      ) : (
+        <DataTable columns={subcategoriaColumns} data={data} />
+      )}
     </AdminLayout>
   );
 };

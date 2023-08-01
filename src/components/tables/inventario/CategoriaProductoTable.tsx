@@ -7,12 +7,12 @@ import {
   getPaginationRowModel,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
-import { ICatEstado, ICategoriaProducto } from "../../interfaces";
+import { ICatEstado, ICategoriaProducto } from "../../../interfaces";
 
 import {
   EditarCatProducto,
   DesactivarCategoriaProducto,
-} from "../admin/formularios/catalogos";
+} from "../../admin/formularios/catalogos";
 import { useObtenerCategoriasQuery } from "@/store/slices/inventario";
 import {
   Table,
@@ -22,7 +22,7 @@ import {
   TableBody,
   TableCell,
 } from "@tremor/react";
-import { ReactivarCategoriaProducto } from "../admin/formularios/catalogos/categoria-producto/ReactivarCategoriaProducto";
+import { ReactivarCategoriaProducto } from "../../admin/formularios/catalogos/categoria-producto/ReactivarCategoriaProducto";
 
 const columHelper = createColumnHelper<ICategoriaProducto>();
 

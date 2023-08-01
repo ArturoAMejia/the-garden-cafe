@@ -13,8 +13,6 @@ const NuevaOrdenCompraPage = () => {
 
   const { data: prod, isLoading } = useObtenerIngredientesQuery();
 
-  console.log(prod);
-
   return (
     <AdminLayout title="Nueva Solicitud de Compra">
       <div className="sm:flex sm:items-center">

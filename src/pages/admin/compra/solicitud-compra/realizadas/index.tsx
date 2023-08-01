@@ -13,7 +13,7 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { useObtenerSolicitudesCompraQuery } from "@/store/slices/compra";
-
+import { Loader } from "@/components/ui/Loader";
 interface Props {
   permisos: [];
 }
@@ -66,7 +66,9 @@ const NuevaOrdenPage: FC<Props> = ({ permisos }) => {
         <Tab value="5" text="Terminadas" icon={CheckBadgeIcon} />
       </TabList>
 
-      {showCard === 1 ? (
+      {isLoading === true ? (
+        <Loader />
+      ) : showCard === 1 ? (
         <>
           <SolicitudCompraTable solicitudes={solicitudes_en_espera} />
         </>

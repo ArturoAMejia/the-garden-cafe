@@ -1,37 +1,36 @@
+import { AgregarMarca } from "@/components";
 import { AdminLayout } from "@/components/Layout/AdminLayout";
 import { DataTable } from "@/components/tables/Table";
-import { platillosColumns } from "@/components/tables/inventario/platillosColumns";
+import { marcaColumns } from "@/components/tables/marca/columns";
 import { Loader } from "@/components/ui/Loader";
-import { useObtenerPlatillosQuery } from "@/store/slices/inventario";
-import React from "react";
+import { useObtenerMarcasQuery } from "@/store/slices/inventario";
 
-const PlatillosPage = () => {
-  const { data, isLoading } = useObtenerPlatillosQuery();
+const MarcaInventario = () => {
+  const { data, isLoading } = useObtenerMarcasQuery();
 
   return (
-    <AdminLayout title="Platillos">
+    <AdminLayout title="Marca de Productos">
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
           <h1 className="mb-2 text-xl font-semibold text-gray-900">
-            Platillos
+            Marca de Productos
           </h1>
           <p className="mb-4 text-sm text-gray-700">
-            Añade un nuevo platillo dandole click al botón
+            Añade una nueva marca dandole click al botón
           </p>
         </div>
-
         <div className="mt-4 mb-4 px-1 sm:mt-0 sm:ml-16 sm:flex-none">
-          {/* //TODO Agregar Platillo */}
-          {/* <AgregarProducto isIngredient={true} /> */}
+          <AgregarMarca />
         </div>
       </div>
+
       {isLoading === true ? (
         <Loader />
       ) : (
-        <DataTable columns={platillosColumns} data={data} />
+        <DataTable columns={marcaColumns} data={data} />
       )}
     </AdminLayout>
   );
 };
 
-export default PlatillosPage;
+export default MarcaInventario;

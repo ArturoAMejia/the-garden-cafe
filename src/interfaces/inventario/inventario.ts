@@ -18,7 +18,7 @@ export interface IInventario {
 }
 
 export interface IIngrediente {
-  id: number;
+  id?: number;
   id_estado: number;
   cat_estado?: ICatEstado;
   id_marca: number;

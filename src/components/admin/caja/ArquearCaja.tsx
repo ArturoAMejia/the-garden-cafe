@@ -15,8 +15,6 @@ import {
 import { useSession } from "next-auth/react";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
 
-
-
 import {
   Billete,
   Moneda,
@@ -25,6 +23,7 @@ import {
 } from "@/store/slices/caja/cajaSlice";
 import { AppState } from "@/store/store";
 import { CajasTable } from "@/components/tables/caja/CajasTable";
+import { Loader } from "@/components/ui/Loader";
 
 type FormData = {
   id_caja: number;
@@ -90,7 +89,7 @@ export const ArquearCaja: FC<Props> = ({ caja }) => {
     reset();
   };
 
-  if (isLoading) return <>Cargando...</>;
+  if (isLoading) return <Loader />;
 
   return (
     <>

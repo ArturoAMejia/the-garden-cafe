@@ -1,9 +1,14 @@
 import { AgregarProducto, EditarProducto } from "@/components";
 import { AdminLayout } from "@/components/Layout/AdminLayout";
-import { IngredienteTable } from "@/components/tables/inventario/IngredienteTable";
+import { DataTable } from "@/components/tables/Table";
+import { ingredientesColumns } from "@/components/tables/inventario/ingredienteColumns";
+import { Loader } from "@/components/ui/Loader";
+import { useObtenerIngredientesQuery } from "@/store/slices/inventario";
 import React from "react";
 
 const IngredientesPage = () => {
+  const { data, isLoading } = useObtenerIngredientesQuery();
+
   return (
     <AdminLayout title="Ingredientes">
       <div className="sm:flex sm:items-center">
@@ -21,7 +26,12 @@ const IngredientesPage = () => {
           <AgregarProducto isIngredient={true} />
         </div>
       </div>
-      <IngredienteTable />
+
+      {isLoading === true ? (
+        <Loader />
+      ) : (
+        <DataTable columns={ingredientesColumns} data={data} />
+      )}
     </AdminLayout>
   );
 };

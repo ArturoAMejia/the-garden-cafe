@@ -1,13 +1,12 @@
 import { prisma } from "database";
 import { AdminLayout } from "../../../../components/Layout/AdminLayout";
-import { OrdenCompraTable } from "../../../../components/tables";
 
 interface Props {
   permisos: [];
 }
 
 const NuevaOrdenPage: FC<Props> = ({ permisos }) => {
-  console.log(permisos);
+  const { data, isLoading } = useObtenerSolicitudesCompraQuery();
 
   return (
     <AdminLayout title="Nueva Orden de Compra">
@@ -19,7 +18,12 @@ const NuevaOrdenPage: FC<Props> = ({ permisos }) => {
           Usa el filtro de productos para añadirlos la solicitud
         </p>
       </div>
-      {permisos.length !== 0 && <OrdenCompraTable />}
+
+      {permisos.length !== 0 && isLoading === true ? (
+        <Loader />
+      ) : (
+        <DataTable columns={ordenCompraColumns} data={data} />
+      )}
     </AdminLayout>
   );
 };
@@ -32,6 +36,10 @@ import { GetServerSideProps } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { FC } from "react";
+import { Loader } from "@/components/ui/Loader";
+import { DataTable } from "@/components/tables/Table";
+import { ordenCompraColumns } from "@/components/tables/compra/orden-compra/columns";
+import { useObtenerSolicitudesCompraQuery } from "@/store/slices/compra";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerSession(ctx.req, ctx.res, authOptions);

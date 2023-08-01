@@ -4,7 +4,7 @@ import React, { Fragment, useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { AuthContext } from "../../../context";
-import { ICaja, IMoneda, IPedido } from "../../../interfaces";
+import { ICaja, IMoneda } from "../../../interfaces";
 
 import { useSession } from "next-auth/react";
 import { useObtenerMonedasQuery } from "@/store/slices/catalogos";
@@ -12,6 +12,7 @@ import {
   useCrearAperturaCajaMutation,
   useObtenerCajasQuery,
 } from "@/store/slices/caja";
+import { Loader } from "@/components/ui/Loader";
 
 type FormData = {
   id_caja: number;
@@ -63,9 +64,9 @@ export const AbrirCaja = () => {
     );
   };
 
-  if (isLoadingMonedas) return <>Cargando...</>;
+  if (isLoadingMonedas) return <Loader />;
 
-  if (isLoading) return <>Cargando...</>;
+  if (isLoading) return <Loader />;
 
   const cajas_cerradas = cajas?.filter((caja) => caja.id_estado === 2);
 
