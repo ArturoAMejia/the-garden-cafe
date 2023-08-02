@@ -8,9 +8,9 @@ import {
 } from "@/interfaces";
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
 
-const columnHelper = createColumnHelper<IProducto>();
+const columnHelper = createColumnHelper<any>();
 
-export const productoColumns: ColumnDef<IProducto>[] = [
+export const productoColumns: ColumnDef<any>[] = [
   columnHelper.accessor<"id", number>("id", {
     header: "Código",
     cell: (info) => info.getValue(),

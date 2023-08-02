@@ -8,8 +8,6 @@ import {
   BeakerIcon,
   StarIcon,
 } from "@heroicons/react/24/outline";
-
-import { ingredientesColumns } from "@/components/tables/inventario/ingredienteColumns";
 import {
   useObtenerIngredientesQuery,
   useObtenerPlatillosQuery,
@@ -75,11 +73,11 @@ const ProductosPage = () => {
       isLoadingProductos === true ? (
         <Loader />
       ) : showCard === 1 ? (
-        <DataTable columns={platillosColumns} data={platillos} />
+        <DataTable columns={productoColumns} data={platillos} />
       ) : showCard === 2 ? (
         <DataTable columns={productoColumns} data={productos} />
       ) : (
-        <DataTable columns={ingredientesColumns} data={ingredientes} />
+        <DataTable columns={productoColumns} data={ingredientes} />
       )}
     </AdminLayout>
   );

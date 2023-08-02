@@ -1,7 +1,7 @@
 import { AgregarProducto, EditarProducto } from "@/components";
 import { AdminLayout } from "@/components/Layout/AdminLayout";
 import { DataTable } from "@/components/tables/Table";
-import { ingredientesColumns } from "@/components/tables/inventario/ingredienteColumns";
+import { productoColumns } from "@/components/tables/inventario/productoColumns";
 import { Loader } from "@/components/ui/Loader";
 import { useObtenerIngredientesQuery } from "@/store/slices/inventario";
 import React from "react";
@@ -30,7 +30,7 @@ const IngredientesPage = () => {
       {isLoading === true ? (
         <Loader />
       ) : (
-        <DataTable columns={ingredientesColumns} data={data} />
+        <DataTable columns={productoColumns} data={data} />
       )}
     </AdminLayout>
   );

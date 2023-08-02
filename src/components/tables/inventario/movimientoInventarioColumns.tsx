@@ -3,9 +3,9 @@ import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
-const columnHelper = createColumnHelper<ITransaccion>();
+const columnHelper = createColumnHelper<any>();
 
-export const movimientoInventarioColumns: ColumnDef<ITransaccion>[] = [
+export const movimientoInventarioColumns: ColumnDef<any>[] = [
   columnHelper.accessor<"id", number>("id", {
     header: "Código",
     cell: (info) => info.getValue(),
