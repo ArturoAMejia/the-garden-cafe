@@ -122,8 +122,6 @@ const desactivarSubCategoria = async (
 ) => {
   const { id } = req.body;
 
-  console.log(req.body);
-
   if (!id)
     return res
       .status(400)

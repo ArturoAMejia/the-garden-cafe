@@ -87,8 +87,6 @@ export const InventarioABCTable = () => {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  console.log(inventarios);
-
   if (isLoading) return <Loader />;
 
   if (isLoadingPoliticas) return <Loader />;

@@ -89,8 +89,6 @@ const crearCompra = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     subtotal,
   } = req.body;
 
-  console.log(req.body);
-
   if (
     !id_proveedor ||
     !id_trabajador ||

@@ -72,8 +72,6 @@ const crearPuntoPedido = async (
     },
   });
 
-  console.log(demanda.length);
-
   if (demanda.length === 0) {
     return res
       .status(400)

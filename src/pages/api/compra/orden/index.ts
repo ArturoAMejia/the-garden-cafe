@@ -104,7 +104,6 @@ const crearOrdenCompra = async (
     autorizado_por,
   } = req.body;
 
-  console.log(req.body);
   if (
     !id_proveedor ||
     !id_tipo_orden_compra ||

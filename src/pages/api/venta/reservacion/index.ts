@@ -46,11 +46,8 @@ const crearReservacion = async (
     menores,
   } = req.body;
 
-  console.log(hora_reserva);
-
   const horas_rerservas = getHours(new Date(fecha_reservacion));
   const minuto_reservado = getMinutes(new Date(fecha_reservacion));
-  console.log(horas_rerservas);
 
   if (!id_cliente || !fecha_reservacion) {
     return res.status(400).json({ message: "Los campos son obligatorios" });

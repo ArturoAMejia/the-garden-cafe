@@ -67,8 +67,6 @@ const ResumenPage = () => {
     tipoPedido[0]
   );
 
-  console.log(tipoPedidoSeleccionado);
-
   const prod = cart.map((pro) => {
     return {
       ...pro,
@@ -327,7 +325,6 @@ const ResumenPage = () => {
                             id={paymentMethod.title}
                             type="radio"
                             value={paymentMethod.title}
-                            onClick={() => console.log(paymentMethod)}
                             {...register("metodo_pago")}
                             className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
                           />

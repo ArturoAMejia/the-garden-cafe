@@ -46,7 +46,6 @@ const DetallePedidoRealizadoPage: FC<Props> = ({ detalle, estados }) => {
   );
 
   const { data: session } = useSession();
-  console.log(session?.user.id_trabajador);
 
   const { data: categorias, isLoading: isLoadingCategorias } =
     useObtenerCategoriasQuery();
@@ -224,7 +223,6 @@ export default DetallePedidoRealizadoPage;
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerSession(ctx.req, ctx.res, authOptions);
 
-  console.log(session);
 
   await prisma.$connect();
   const detalle = await prisma.pedido.findFirst({
@@ -278,7 +276,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     where: { id: Number(ctx.query.id) },
   });
 
-  console.log(detalle.id_trabajador);
   const estados = await prisma.cat_estado.findMany();
   await prisma.$disconnect();
   return {

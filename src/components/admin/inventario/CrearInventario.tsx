@@ -57,8 +57,6 @@ export const AgregarInventario = () => {
     inventario.map!((inv) => inv.id_producto).includes(producto.id)
   );
 
-  console.log(prods);
-
   return (
     <>
       <div className="mx-2">

@@ -72,8 +72,6 @@ const crearProveedor = async (
     nacionalidad,
   } = req.body;
 
-  console.log(req.body);
-
   if (
     !cedula_ruc ||
     !nombre ||
@@ -153,8 +151,6 @@ const actualizarProveedor = async (
 
   await prisma.$connect();
 
-  console.log(req.body);
-
   if (!id)
     return res
       .status(400)
@@ -233,7 +229,6 @@ const desactivarProveedor = async (
 ) => {
   const { id } = req.body;
 
-  console.log(req.body);
   if (!id)
     return res
       .status(400)

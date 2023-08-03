@@ -87,8 +87,6 @@ export const CajasAbiertasTable: FC<Props> = ({ cerrar_caja }) => {
     [cerrar_caja]
   );
 
-  console.log(cerrar_caja);
-
   const { data: cajas, isLoading } = useObtenerCajasQuery();
 
   const table = useReactTable({
