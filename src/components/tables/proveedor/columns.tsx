@@ -1,4 +1,3 @@
-import React, { useEffect, useMemo } from "react";
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import { ICatEstado, IPersona, IProveedor } from "../../../interfaces";
 import { DesactivarProveedor, EditarProveedor } from "@/components/admin";
