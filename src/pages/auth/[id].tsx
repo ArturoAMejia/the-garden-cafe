@@ -80,7 +80,6 @@ import { toast } from "react-hot-toast";
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const params = ctx.params;
 
-  console.log(params.id);
   await prisma.$connect();
 
   const user = await prisma.usuario.findFirst({

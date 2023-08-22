@@ -118,8 +118,6 @@ export const authOptions: NextAuthOptions = {
           };
         });
 
-        // console.log(modulos_submodulos[0]);
-
         const roles = await prisma.rol.findMany({
           where: {
             NOT: {

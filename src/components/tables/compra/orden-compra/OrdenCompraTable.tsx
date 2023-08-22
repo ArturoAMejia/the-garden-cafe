@@ -30,6 +30,7 @@ import {
 } from "@tremor/react";
 import { useAppDispatch } from "@/hooks/hooks";
 import { cargarSolicitud } from "@/store/slices/compra";
+import { Loader } from "@/components/ui/Loader";
 
 const columnHelper = createColumnHelper<ISolicitudCompra>();
 
@@ -132,7 +133,7 @@ export const OrdenCompraTable = () => {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  if (isLoading) return <>Cargando...</>;
+  if (isLoading) return <Loader />
   return (
     <div>
       <Table className="mt-5 rounded-md">

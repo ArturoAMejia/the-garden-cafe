@@ -7,14 +7,19 @@ import { ProductoFiltrado } from "./ProductoFiltrado";
 import { IProducto } from "../../../interfaces";
 import { IProductoCart } from "../../../interfaces/producto";
 
-interface Props {
+interface Props<IProducto, IProductoCart> {
   productos: IProducto[];
   añadirProductoOrden: (producto: IProductoCart) => void;
   isIngredient: boolean;
-  isPlate:boolean;
+  isPlate: boolean;
 }
 
-export const FilterBar: FC<Props> = ({ productos, añadirProductoOrden, isIngredient, isPlate }) => {
+export const FilterBar: FC<Props<IProducto, IProductoCart>> = ({
+  productos,
+  añadirProductoOrden,
+  isIngredient,
+  isPlate,
+}) => {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
 

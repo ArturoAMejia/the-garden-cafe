@@ -19,6 +19,7 @@ import {
   TableRow,
 } from "@tremor/react";
 import { useObtenerInventarioAbcVentaQuery } from "@/store/slices/pedido";
+import { Loader } from "@/components/ui/Loader";
 
 const columnHelper = createColumnHelper<IInventarioABC>();
 
@@ -86,11 +87,9 @@ export const InventarioABCTable = () => {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  console.log(inventarios);
+  if (isLoading) return <Loader />;
 
-  if (isLoading) return <>Cargando...</>;
-
-  if (isLoadingPoliticas) return <>Cargando...</>;
+  if (isLoadingPoliticas) return <Loader />;
 
   return (
     <div>

@@ -29,6 +29,7 @@ import {
   TableBody,
   TableCell,
 } from "@tremor/react";
+import { Loader } from "@/components/ui/Loader";
 
 const columunHelper = createColumnHelper<IOrdenCompra>();
 
@@ -105,7 +106,7 @@ export const NuevaCompraTable = () => {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  if (isLoading) return <>Cargando...</>;
+  if (isLoading) return <Loader />
 
   return (
     <div>

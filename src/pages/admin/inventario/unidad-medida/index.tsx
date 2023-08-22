@@ -1,8 +1,13 @@
-import { AdminLayout } from "../../../components/Layout/AdminLayout";
-import { AgregarUnidadMedida } from "../../../components";
-import { UnidadMedidaTable } from "../../../components/tables";
+import { AdminLayout } from "@/components/Layout/AdminLayout";
+import { AgregarUnidadMedida } from "@/components";
+import { DataTable } from "@/components/tables/Table";
+import { Loader } from "@/components/ui/Loader";
+import { unidadMedidaColumns } from "@/components/tables/unidad-medida/columns";
+import { useObtenerUnidadesMedidaQuery } from "@/store/slices/inventario";
 
 const UnidadMedidaPage = () => {
+  const { data, isLoading } = useObtenerUnidadesMedidaQuery();
+
   return (
     <AdminLayout title="Unidad de Medida">
       <div className="sm:flex sm:items-center">
@@ -16,10 +21,14 @@ const UnidadMedidaPage = () => {
         </div>
 
         <div className="mt-4 mb-4 px-1 sm:mt-0 sm:ml-16 sm:flex-none">
-          <AgregarUnidadMedida/>
+          <AgregarUnidadMedida />
         </div>
       </div>
-      <UnidadMedidaTable />
+      {isLoading === true ? (
+        <Loader />
+      ) : (
+        <DataTable columns={unidadMedidaColumns} data={data} />
+      )}
     </AdminLayout>
   );
 };

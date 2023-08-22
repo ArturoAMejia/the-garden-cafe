@@ -1,9 +1,13 @@
 import { AdminLayout } from "@/components/Layout/AdminLayout";
-import { IngredienteTable } from "@/components/tables/inventario/IngredienteTable";
-import { PlatilloTable } from "@/components/tables/inventario/PlatillosTable";
+import { DataTable } from "@/components/tables/Table";
+import { platillosColumns } from "@/components/tables/inventario/platillosColumns";
+import { Loader } from "@/components/ui/Loader";
+import { useObtenerPlatillosQuery } from "@/store/slices/inventario";
 import React from "react";
 
 const PlatillosPage = () => {
+  const { data, isLoading } = useObtenerPlatillosQuery();
+
   return (
     <AdminLayout title="Platillos">
       <div className="sm:flex sm:items-center">
@@ -21,7 +25,11 @@ const PlatillosPage = () => {
           {/* <AgregarProducto isIngredient={true} /> */}
         </div>
       </div>
-      <PlatilloTable />
+      {isLoading === true ? (
+        <Loader />
+      ) : (
+        <DataTable columns={platillosColumns} data={data} />
+      )}
     </AdminLayout>
   );
 };

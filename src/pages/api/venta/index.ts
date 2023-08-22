@@ -322,7 +322,6 @@ const actualizarVenta = async (
 const anularVenta = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   const { id } = req.body;
 
-  console.log(req.body);
   if (!id)
     return res
       .status(400)

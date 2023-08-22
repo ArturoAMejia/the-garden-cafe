@@ -28,6 +28,7 @@ import {
   ArquearCaja,
   DetalleArqueoCaja,
 } from "@/components/admin/caja/ArquearCaja";
+import { Loader } from "@/components/ui/Loader";
 
 const columnHelper = createColumnHelper<IArqueoCaja>();
 
@@ -85,7 +86,7 @@ export const ArqueoCajaTable = () => {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  if (isLoading) return <>Cargando...</>;
+  if (isLoading) return <Loader />
 
   return (
     <div>

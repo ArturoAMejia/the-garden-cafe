@@ -7,13 +7,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import {
-  ICategoriaProducto,
-  IMarca,
-  IMenu,
-  IProducto,
-  IUnidadMedida,
-} from "../../../interfaces";
+import { ICategoriaProducto, IMarca, IUnidadMedida } from "../../../interfaces";
 
 import { EditarProducto } from "@/components/admin";
 import { useObtenerProductosQuery } from "@/store/slices/inventario";

@@ -10,6 +10,7 @@ import {
   useCrearSubcategoriaMutation,
   useObtenerCategoriasQuery,
 } from "@/store/slices/inventario";
+import { Loader } from "@/components/ui/Loader";
 
 interface Props {
   showMin?: boolean;
@@ -53,7 +54,7 @@ export const AgregarSubCategoriaProducto: FC<Props> = ({ showMin }) => {
     }
   };
 
-  if (isLoading) return <>Cargando...</>;
+  if (isLoading) return <Loader />;
 
   const categorias = data.filter((categorias) => categorias.id_estado === 1);
 

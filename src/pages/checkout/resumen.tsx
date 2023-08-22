@@ -13,7 +13,6 @@ import { RadioGroup } from "@headlessui/react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
-import { Elements, CardElement } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { useSession } from "next-auth/react";
 import { useCrearPedidoMutation } from "@/store/slices/pedido";
@@ -67,8 +66,6 @@ const ResumenPage = () => {
   const [tipoPedidoSeleccionado, settipoPedidoSeleccionado] = useState(
     tipoPedido[0]
   );
-
-  console.log(tipoPedidoSeleccionado);
 
   const prod = cart.map((pro) => {
     return {
@@ -328,7 +325,6 @@ const ResumenPage = () => {
                             id={paymentMethod.title}
                             type="radio"
                             value={paymentMethod.title}
-                            onClick={() => console.log(paymentMethod)}
                             {...register("metodo_pago")}
                             className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
                           />
@@ -345,13 +341,6 @@ const ResumenPage = () => {
                   </div>
                 </fieldset>
                 {/* TODO: Agregar botones de pago de PayPal */}
-                {getValues("metodo_pago") === "Tarjeta de Crédito" ? (
-                  <Elements stripe={stripeLoad}>
-                    <div className="mt-4 bg-gray-50 p-4">
-                      <CardElement className="p-2" />
-                    </div>
-                  </Elements>
-                ) : null}
               </div>
             </div>
 

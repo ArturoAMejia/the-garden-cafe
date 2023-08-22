@@ -1,5 +1,9 @@
 import React from "react";
 
 export const Loader = () => {
-  return <span className="loader"></span>;
+  return (
+    <div className="flex justify-center">
+      <span className="loader"></span>
+    </div>
+  );
 };

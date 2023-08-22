@@ -10,6 +10,7 @@ import {
   useObtenerInventarioQuery,
   useObtenerProductosQuery,
 } from "@/store/slices/inventario";
+import { Loader } from "@/components/ui/Loader";
 
 type FormData = IInventario;
 
@@ -48,15 +49,13 @@ export const AgregarInventario = () => {
     }
   };
 
-  if (isLoading) return <>Cargando...</>;
+  if (isLoading) return <Loader />;
 
-  if (isLoadingInventario) return <>Cargando...</>;
+  if (isLoadingInventario) return <Loader />;
 
   const prods = productos.filter((producto) =>
     inventario.map!((inv) => inv.id_producto).includes(producto.id)
   );
-
-  console.log(prods);
 
   return (
     <>

@@ -37,7 +37,6 @@ export const ResumenSolicitudCompra: FC<Props> = ({
   id_estado_solicitud,
   id_trabajador,
 }) => {
-  console.log(productos);
   const dispatch = useAppDispatch();
 
   const { data: session } = useSession();

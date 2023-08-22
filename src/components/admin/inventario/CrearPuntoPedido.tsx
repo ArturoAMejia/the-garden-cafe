@@ -8,6 +8,7 @@ import {
   useCrearPuntoPedidoMutation,
   useObtenerProductosQuery,
 } from "@/store/slices/inventario";
+import { Loader } from "@/components/ui/Loader";
 
 type FormData = {
   id_producto: number;
@@ -57,7 +58,7 @@ export const CrearPuntoPedido = () => {
     }
   };
 
-  if (isLoading) return <>Cargando...</>;
+  if (isLoading) return <Loader />;
 
   return (
     <>

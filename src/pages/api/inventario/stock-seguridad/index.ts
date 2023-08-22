@@ -1,8 +1,5 @@
 import { prisma } from "database";
-
 import type { NextApiRequest, NextApiResponse } from "next";
-import NormalDistribution from "normal-distribution";
-import { zScore } from "simple-statistics";
 import * as jstat from "jstat";
 
 type Data =

@@ -4,7 +4,7 @@ import { prisma } from "@/database";
 import { AdminLayout } from "@/components/Layout/AdminLayout";
 import { ISolicitudCompra } from "@/interfaces";
 import { format } from "date-fns";
-import { es, id } from "date-fns/locale";
+import { es } from "date-fns/locale";
 import { ResumenSolicitudCompra } from "@/components/admin/compra/solicitud-compra/ResumenSolicitudCompra";
 import { useAppDispatch, useAppSelector } from "@/hooks/hooks";
 import { AppState } from "@/store/store";
@@ -15,8 +15,8 @@ import {
 import { ResumenSolicitud } from "@/components/admin/compra/solicitud-compra/ResumenSolicitud";
 import { AceptarOrden, FilterBar } from "@/components";
 import { useObtenerIngredientesQuery } from "@/store/slices/inventario";
-import { AceptarSolicitudCompra } from "@/components/admin/compra/solicitud-compra/AceptarSolicitudCompra";
 import { useSession } from "next-auth/react";
+import { Loader } from "@/components/ui/Loader";
 
 interface Props {
   detalle: ISolicitudCompra;
@@ -96,7 +96,7 @@ const DetalleSolicitudCompra: FC<Props> = ({ detalle }) => {
           detalle.id_estado !== 7 ? (
             <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
               {isLoading ? (
-                <>Cargando...</>
+              <Loader/>
               ) : (
                 <FilterBar
                   isIngredient={true}

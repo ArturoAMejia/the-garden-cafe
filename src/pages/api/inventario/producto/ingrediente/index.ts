@@ -81,7 +81,6 @@ const crearIngrediente = async (
     imagen,
   } = req.body;
 
-  console.log(req.body);
   if (
     !nombre ||
     !descripcion ||

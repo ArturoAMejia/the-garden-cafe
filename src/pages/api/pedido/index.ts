@@ -102,8 +102,6 @@ const registerPedido = async (
     id_mesa,
   } = req.body;
 
-  console.log(req.body);
-
   if (!tipo_pedido || !productos)
     return res.status(400).json({ message: "Dichos campos son obligatorios" });
 

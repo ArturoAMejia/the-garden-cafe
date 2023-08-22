@@ -14,6 +14,7 @@ import {
   useObtenerSubcategoriasQuery,
   useObtenerUnidadesMedidaQuery,
 } from "@/store/slices/inventario";
+import { Loader } from "@/components/ui/Loader";
 
 type FormData = IProducto;
 
@@ -93,13 +94,13 @@ export const EditarProducto: FC<Props> = ({
     }
   };
 
-  if (isLoadingCategorias) return <>Cargando...</>;
+  if (isLoadingCategorias) return <Loader />;
 
-  if (isLoadingMarcas) return <>Cargando...</>;
+  if (isLoadingMarcas) return <Loader />;
 
-  if (isLoadingUnidadesMedidas) return <>Cargando...</>;
+  if (isLoadingUnidadesMedidas) return <Loader />;
 
-  if (isLoadingSubCat) return <>Cargando...</>;
+  if (isLoadingSubCat) return <Loader />;
 
   return (
     <>

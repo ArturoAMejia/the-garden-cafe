@@ -159,24 +159,6 @@ export const RecepcionOrdenCompraProducto: FC<Props> = ({
           </TableBody>
         </Table>
       </Card>
-      {/* {id_estado_solicitud === 14 ? (
-        <>
-          <Divider />
-          <Subtitle className="text-lg font-bold text-black">
-            {" "}
-            Subtotal: ${subtotal.toFixed(2)}
-          </Subtitle>
-          <Subtitle className="text-lg font-bold text-black">
-            Impuesto: $
-            {(subtotal * Number(process.env.NEXT_PUBLIC_TAX_RATE)).toFixed(2)}
-          </Subtitle>
-          <Subtitle className="text-lg font-bold text-black">
-            Total: ${total.toFixed(2)}
-          </Subtitle>
-        </>
-      ) : (
-        ""
-      )} */}
     </div>
   );
 };

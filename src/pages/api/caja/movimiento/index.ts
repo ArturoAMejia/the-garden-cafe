@@ -36,7 +36,6 @@ const obtenerMovimientosCaja = async (res: NextApiResponse<Data>) => {
       monto: true,
     },
   });
-  console.log(m);
 
   const cajas = await prisma.movimiento_caja.findMany({
     select: {
@@ -72,7 +71,6 @@ const obtenerMovimientosCaja = async (res: NextApiResponse<Data>) => {
     };
   });
 
-  console.log(a);
   const movimientos = await prisma.movimiento_caja.findMany({
     select: {
       id: true,

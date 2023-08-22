@@ -1,4 +1,4 @@
-export * from "./CategoriaProductoTable";
+export * from "./inventario/CategoriaProductoTable";
 export * from "./compra";
 export * from "./IndexTable";
 export * from "./marca";

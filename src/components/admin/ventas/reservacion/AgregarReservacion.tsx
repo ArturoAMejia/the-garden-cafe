@@ -10,6 +10,7 @@ import {
   useObtenerMesasQuery,
 } from "@/store/slices/venta";
 import { AgregarCliente } from "../cliente";
+import { Loader } from "@/components/ui/Loader";
 
 type FormData = IReservacion;
 
@@ -45,8 +46,8 @@ export const AgregarReservacion = () => {
     );
   };
 
-  if (isLoading) return <>Cargando...</>;
-  if (isLoadingMesas) return <>Cargando...</>;
+  if (isLoading) return <Loader />
+  if (isLoadingMesas) return <Loader />
 
   return (
     <>

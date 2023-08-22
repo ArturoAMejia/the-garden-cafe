@@ -24,8 +24,6 @@ const confirmarCuenta = async (
 ) => {
   const { id } = req.body;
 
-  console.log(req.body);
-
   await prisma.$connect();
 
   const usuario = await prisma.usuario.findFirst({

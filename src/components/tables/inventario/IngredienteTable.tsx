@@ -27,6 +27,7 @@ import {
   TableBody,
   TableCell,
 } from "@tremor/react";
+import { Loader } from "@/components/ui/Loader";
 
 const columnHelper = createColumnHelper<any>();
 
@@ -85,7 +86,7 @@ export const IngredienteTable = () => {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  if (isLoading) return <>Cargando...</>;
+  if (isLoading) return <Loader />;
 
   return (
     <div>

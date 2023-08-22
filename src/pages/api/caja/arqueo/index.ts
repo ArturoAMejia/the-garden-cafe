@@ -58,9 +58,6 @@ const crearArqueoCaja = async (
   const { id_caja, id_trabajador, total, id_moneda, billetes, monedas } =
     req.body;
 
-  console.log(billetes);
-  console.log(monedas);
-
   if (!id_caja || !id_trabajador || !total)
     return res
       .status(400)

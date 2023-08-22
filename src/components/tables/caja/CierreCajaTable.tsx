@@ -20,6 +20,7 @@ import {
 } from "@tremor/react";
 
 import { useObtenerCierresCajaQuery } from "@/store/slices/caja";
+import { Loader } from "@/components/ui/Loader";
 
 const columnHelper = createColumnHelper<ICierreCaja>();
 
@@ -71,7 +72,7 @@ export const CierreCajaTable = () => {
     getPaginationRowModel: getPaginationRowModel(),
   });
 
-  if (isLoading) return <>Cargando...</>;
+  if (isLoading) return <Loader />;
 
   return (
     <div>

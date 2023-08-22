@@ -56,7 +56,6 @@ const crearPrecioProducto = async (
   const { id_producto, precio_venta, precio_compra, margen_ganancia, gasto } =
     req.body;
 
-  console.log(req.body);
   if (
     !id_producto ||
     !precio_venta ||

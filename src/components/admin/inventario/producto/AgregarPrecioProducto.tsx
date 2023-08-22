@@ -8,6 +8,7 @@ import {
   useObtenerIngredientesQuery,
   useObtenerPrecioProductoQuery,
 } from "@/store/slices/inventario";
+import { Loader } from "@/components/ui/Loader";
 
 type FormData = {
   id_producto: number;
@@ -42,9 +43,9 @@ export const AgregarPrecioProducto = () => {
     }
   };
 
-  if (isLoading) return <>Cargando...</>;
+  if (isLoading) return <Loader />;
 
-  if (isLoadingPreciosProducto) return <>Cargando...</>;
+  if (isLoadingPreciosProducto) return <Loader />;
 
   return (
     <>

@@ -23,7 +23,6 @@ const DetalleSolicitudCompra: FC<Props> = ({
   recepcion,
   detalle_recepcion,
 }) => {
-  console.log(detalle_recepcion);
 
   const { productos } = useAppSelector((state: AppState) => state.compra);
   const dispatch = useAppDispatch();

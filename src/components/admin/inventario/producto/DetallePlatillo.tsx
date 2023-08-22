@@ -20,7 +20,6 @@ interface Props {
 }
 
 export const DetallePlatillo: FC<Props> = ({ detalle_platillo }) => {
-  console.log(detalle_platillo);
   const [isOpen, setIsOpen] = useState(false);
 
   const closeModal = () => setIsOpen(false);

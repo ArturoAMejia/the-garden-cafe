@@ -1,13 +1,11 @@
-import React, { FC } from "react";
-
 import { AdminLayout } from "../../../../components/Layout/AdminLayout";
-import { OrdenesAprobadasTable } from "../../../../components/tables";
 import { useObtenerOrdenesCompraQuery } from "@/store/slices/compra";
+import { Loader } from "@/components/ui/Loader";
+import { DataTable } from "@/components/tables/Table";
+import { ordenCompraAprobadasColumns } from "@/components/tables/compra/orden-compra/columns";
 
 const OrdenesCompraPage = () => {
-  const { data: ordenes_compra, isLoading } = useObtenerOrdenesCompraQuery();
-
-  if (isLoading) return <p>Cargando...</p>;
+  const { data, isLoading } = useObtenerOrdenesCompraQuery();
 
   return (
     <AdminLayout title="Ordenes de Compra">
@@ -19,7 +17,12 @@ const OrdenesCompraPage = () => {
           Usa el filtro para buscar una orden de compra específica
         </p>
       </div>
-      <OrdenesAprobadasTable ordenes_compra={ordenes_compra} />
+
+      {isLoading === true ? (
+        <Loader />
+      ) : (
+        <DataTable columns={ordenCompraAprobadasColumns} data={data} />
+      )}
     </AdminLayout>
   );
 };

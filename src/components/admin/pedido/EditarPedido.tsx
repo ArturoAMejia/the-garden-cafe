@@ -14,6 +14,7 @@ import { useAppSelector } from "@/hooks/hooks";
 import { AppState } from "@/store/store";
 import { useSession } from "next-auth/react";
 import { useObtenerTrabajadoresQuery } from "@/store/slices/negocio";
+import { Loader } from "@/components/ui/Loader";
 
 type FormData = IPedido;
 interface Props {
@@ -69,9 +70,9 @@ export const EditarPedido: FC<Props> = ({ pedido }) => {
     );
   };
 
-  if (isLoading) return <>Cargando...</>;
+  if (isLoading) return <Loader />;
 
-  if (isLoadingTrabajadores) return <>Cargando...</>;
+  if (isLoadingTrabajadores) return <Loader />;
 
   return (
     <>

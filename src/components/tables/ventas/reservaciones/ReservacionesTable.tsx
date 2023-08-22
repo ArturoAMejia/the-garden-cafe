@@ -85,8 +85,6 @@ export const ReservacionesTable: FC<Props> = () => {
 
   const { data: reservaciones, isLoading } = useObtenerReservacionesQuery();
 
-  console.log(reservaciones);
-
   const table = useReactTable({
     data: reservaciones!,
     columns,

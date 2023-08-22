@@ -28,6 +28,7 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { MesaPedido } from "@/components/admin/pedido/MesaPedido";
 import { useObtenerMesasQuery } from "@/store/slices/pedido";
 import { ProductoPorCategoria } from "@/components/admin/pedido/ProductoPorCategoria";
+import { Loader } from "@/components/ui/Loader";
 
 type propFilter = IProducto | IIngrediente | IProductoElaborado;
 interface Props {
@@ -113,7 +114,7 @@ const NuevoPedidoPage: FC<Props> = ({ cajas }) => {
                 </Button>
               </div> */}
               {isLoadingCategorias ? (
-                <>Cargando...</>
+                <Loader/>
               ) : (
                 // <CategoriaFilter
                 //   categorias={categorias}

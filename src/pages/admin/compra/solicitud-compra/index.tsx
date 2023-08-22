@@ -7,13 +7,12 @@ import { añadirProductoSolicitud } from "@/store/slices/compra";
 import { useAppSelector } from "@/hooks/hooks";
 import { AppState } from "@/store/store";
 import { ResumenSolicitudCompra } from "@/components/admin/compra/solicitud-compra/ResumenSolicitudCompra";
+import { Loader } from "@/components/ui/Loader";
 
 const NuevaOrdenCompraPage = () => {
   const { productos } = useAppSelector((state: AppState) => state.compra);
 
   const { data: prod, isLoading } = useObtenerIngredientesQuery();
-
-  console.log(prod);
 
   return (
     <AdminLayout title="Nueva Solicitud de Compra">
@@ -28,7 +27,7 @@ const NuevaOrdenCompraPage = () => {
         </div>
         <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
           {isLoading ? (
-            <>Cargando...</>
+            <Loader />
           ) : (
             <FilterBar
               isIngredient={true}

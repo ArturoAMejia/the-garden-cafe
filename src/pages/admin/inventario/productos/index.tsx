@@ -1,18 +1,30 @@
 import { Tab, TabList } from "@tremor/react";
-import { AdminLayout } from "../../../components/Layout/AdminLayout";
-import { AgregarProducto } from "../../../components/admin/inventario/producto/AgregarProducto";
-import { ProductoTable } from "../../../components/tables/inventario/ProductoTable";
+import { AdminLayout } from "@/components/Layout/AdminLayout";
+import { AgregarProducto } from "@/components/admin/inventario/producto/AgregarProducto";
+
 import { useState } from "react";
 import {
   BanknotesIcon,
   BeakerIcon,
   StarIcon,
 } from "@heroicons/react/24/outline";
-import { PlatilloTable } from "@/components/tables/inventario/PlatillosTable";
-import { IngredienteTable } from "@/components/tables/inventario/IngredienteTable";
+import {
+  useObtenerIngredientesQuery,
+  useObtenerPlatillosQuery,
+  useObtenerProductosQuery,
+} from "@/store/slices/inventario";
+import { Loader } from "@/components/ui/Loader";
+import { productoColumns } from "@/components/tables/inventario/productoColumns";
+import { DataTable } from "@/components/tables/Table";
+import { platillosColumns } from "@/components/tables/inventario/platillosColumns";
 
 const ProductosPage = () => {
   const [showCard, setShowCard] = useState(1);
+  const { data: ingredientes, isLoading } = useObtenerIngredientesQuery();
+  const { data: productos, isLoading: isLoadingProductos } =
+    useObtenerProductosQuery();
+  const { data: platillos, isLoading: isLoadingPlatillos } =
+    useObtenerPlatillosQuery();
 
   return (
     <AdminLayout title="Productos">
@@ -26,7 +38,7 @@ const ProductosPage = () => {
               : "Ingredientes"}
           </h1>
           <p className="mb-4 text-sm text-gray-700">
-            Añade un nuevo 
+            Añade un nuevo
             {showCard === 1
               ? // TODO Crear platillo
                 " platillo "
@@ -56,13 +68,16 @@ const ProductosPage = () => {
         <Tab value="2" text="Productos para vender" icon={BanknotesIcon} />
         <Tab value="3" text="Ingredientes" icon={BeakerIcon} />
       </TabList>
-
-      {showCard === 1 ? (
-        <PlatilloTable />
+      {isLoading === true ||
+      isLoadingPlatillos === true ||
+      isLoadingProductos === true ? (
+        <Loader />
+      ) : showCard === 1 ? (
+        <DataTable columns={productoColumns} data={platillos} />
       ) : showCard === 2 ? (
-        <ProductoTable />
+        <DataTable columns={productoColumns} data={productos} />
       ) : (
-        <IngredienteTable />
+        <DataTable columns={productoColumns} data={ingredientes} />
       )}
     </AdminLayout>
   );

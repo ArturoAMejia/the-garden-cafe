@@ -86,7 +86,6 @@ export const ProductoAñadirOrdenTable: FC<Props> = ({ id_categoria }) => {
                 <TableCell
                   key={cell.id}
                   className="text-center hover:cursor-pointer"
-                  onClick={() => console.log("tst")}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </TableCell>

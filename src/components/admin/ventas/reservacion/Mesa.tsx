@@ -14,6 +14,7 @@ import toast from "react-hot-toast";
 import { GiTable } from "react-icons/gi";
 
 import { AgregarCliente } from "../cliente/AgregarCliente";
+import { Loader } from "@/components/ui/Loader";
 
 interface Props {
   mesa: IMesa;
@@ -65,8 +66,8 @@ const Mesa: FC<Props> = ({ mesa }) => {
     );
   };
 
-  if (isLoading) return <>Cargando...</>;
-  if (isLoadingMesas) return <>Cargando...</>;
+  if (isLoading) return <Loader />;
+  if (isLoadingMesas) return <Loader />;
   return (
     <>
       <div className="">

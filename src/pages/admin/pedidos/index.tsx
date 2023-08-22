@@ -10,13 +10,14 @@ import {
   ShoppingBagIcon,
 } from "@heroicons/react/24/outline";
 import { useState } from "react";
+import { Loader } from "@/components/ui/Loader";
 
 const PedidosPage = () => {
   const { data, isLoading } = useObtenerPedidosQuery();
   const [showCard, setShowCard] = useState(1);
 
   const { data: session } = useSession();
-  if (isLoading) return <>Cargando...</>;
+  if (isLoading) return <Loader />;
 
   const pedidoEnCola = data.filter(
     (pedido) =>

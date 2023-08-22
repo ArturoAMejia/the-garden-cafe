@@ -13,6 +13,7 @@ import {
   useActualizarSubcategoriaMutation,
   useObtenerCategoriasQuery,
 } from "@/store/slices/inventario";
+import { Loader } from "@/components/ui/Loader";
 
 interface Props {
   sub_categoria_producto: ISubCategoriaProducto;
@@ -56,7 +57,7 @@ export const EditarSubCategoriaProducto: FC<Props> = ({
       toast.error(error.data.message);
     }
   };
-  if (isLoading) return <>Cargando...</>;
+  if (isLoading) return <Loader />;
   return (
     <>
       <div className="mx-2">

@@ -1,6 +1,9 @@
 import { AdminLayout } from "@/components/Layout/AdminLayout";
 import { OrdenesAprobadasTable } from "@/components/tables";
+import { DataTable } from "@/components/tables/Table";
+import { ordenCompraAprobadasColumns } from "@/components/tables/compra/orden-compra/columns";
 import { SolicitudCompraTable } from "@/components/tables/compra/solicitud-compra/SolicitudCompraTable";
+import { Loader } from "@/components/ui/Loader";
 import { useObtenerOrdenesCompraQuery } from "@/store/slices/compra";
 
 import { ClockIcon, CheckBadgeIcon } from "@heroicons/react/24/outline";
@@ -19,8 +22,6 @@ const RecepcionOrdenCompra = () => {
   const ordenes_recepcionadas = ordenes_compra?.filter(
     (orden) => orden.id_estado === 17
   );
-
-  if (isLoading) return <p>Cargando...</p>;
 
   return (
     <AdminLayout title="Recepción de Orden de Compra">
@@ -43,20 +44,22 @@ const RecepcionOrdenCompra = () => {
         <Tab value="2" text="Recepcionadas" icon={CheckBadgeIcon} />
       </TabList>
 
-      {showCard === 1 ? (
+      {isLoading === true ? (
+        <Loader />
+      ) : showCard === 1 ? (
         <>
-          {isLoading && <p>Cargando...</p>}
-          <OrdenesAprobadasTable
-            ordenes_compra={ordenes_en_espera}
-            repecion_orden_compra={true}
+          {isLoading && <Loader />}
+          <DataTable
+            columns={ordenCompraAprobadasColumns}
+            data={ordenes_en_espera}
           />
         </>
       ) : (
         <>
-          {isLoading && <p>Cargando...</p>}
-          <OrdenesAprobadasTable
-            ordenes_compra={ordenes_recepcionadas}
-            repecion_orden_compra={true}
+          {isLoading && <Loader />}
+          <DataTable
+            columns={ordenCompraAprobadasColumns}
+            data={ordenes_recepcionadas}
           />
         </>
       )}
