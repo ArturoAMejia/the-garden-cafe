@@ -32,7 +32,7 @@ export const productoColumns: ColumnDef<any>[] = [
   }),
   columnHelper.accessor<"marca", IMarca>("marca", {
     header: "Marca",
-    cell: (info) => info.getValue().nombre,
+    cell: (info) => (info.getValue()?.nombre ? info.getValue().nombre : "N/A"),
   }),
   columnHelper.display({
     id: "actions",

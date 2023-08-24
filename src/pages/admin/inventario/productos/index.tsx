@@ -26,6 +26,10 @@ const ProductosPage = () => {
   const { data: platillos, isLoading: isLoadingPlatillos } =
     useObtenerPlatillosQuery();
 
+  console.table(ingredientes);
+  console.table(productos);
+  console.table(platillos);
+  
   return (
     <AdminLayout title="Productos">
       <div className="sm:flex sm:items-center">

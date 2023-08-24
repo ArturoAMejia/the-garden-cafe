@@ -20,6 +20,9 @@ import {
 import { AgregarSubCategoriaProducto } from "../../formularios/catalogos/sub-categoria-producto/AgregarSubCategoriaProducto";
 import { useToggle } from "@/hooks";
 import { Loader } from "@/components/ui/Loader";
+import { UploadButton } from "@/utils/uploadthing";
+
+import "@uploadthing/react/styles.css";
 
 type FormData = IProducto;
 
@@ -52,33 +55,16 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
   const closeModal = () => setIsOpen(!isOpen);
   const openModal = () => setIsOpen(!isOpen);
 
-  const onFileSelected = async ({ target }: ChangeEvent<HTMLInputElement>) => {
-    if (!target.files || target.files.length === 0) return;
-
-    // console.log(file)
-    // try {
-    //   for (const file of target.files) {
-    //     console.log(file);
-    //     const formData = new FormData();
-    //     formData.append("file", file);
-    //     const { data } = await tgcApi.post<{ message: string }>(
-    //       "api/upload",
-    //       formData
-    //     );
-    //     console.log(data.message);
-    //     setValue("imagen", data.message, {
-    //       shouldValidate: true,
-    //     });
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    // }
-  };
+  const [imageUrl, setImageUrl] = useState("");
 
   const onCrearProducto = async (data: FormData) => {
     if (isIngredient) {
       try {
-        await crearIngrediente({ ...data, id_tipo_producto: 1 }).unwrap();
+        await crearIngrediente({
+          ...data,
+          id_tipo_producto: 1,
+          imagen: imageUrl,
+        }).unwrap();
         toast.success("Ingrediente agregado correctamente");
         toggle();
         reset();
@@ -87,7 +73,11 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
       }
     } else if (isProduct) {
       try {
-        await crearProducto({ ...data, id_tipo_producto: 4 }).unwrap();
+        await crearProducto({
+          ...data,
+          id_tipo_producto: 4,
+          imagen: imageUrl,
+        }).unwrap();
         toast.success("Producto agregado correctamente");
         toggle();
         reset();
@@ -327,7 +317,7 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
                         </div>
                       </div>
                       {/* Imagen */}
-                      <div className="mt-2 ">
+                      {/* <div className="mt-2 ">
                         <label
                           htmlFor="cover-photo"
                           className="mb-2 block font-medium text-gray-700"
@@ -374,7 +364,20 @@ export const AgregarProducto: FC<Props> = ({ isIngredient, isProduct }) => {
                             </div>
                           </div>
                         </div>
-                      </div>
+                      </div> */}
+                      <UploadButton
+                        endpoint="imageUploader"
+                        onClientUploadComplete={(res) => {
+                          // Do something with the response
+                          console.log("Files: ", res);
+                          alert("Upload Completed");
+                          setImageUrl(res[0].fileUrl);
+                        }}
+                        onUploadError={(error: Error) => {
+                          // Do something with the error.
+                          alert(`ERROR! ${error.message}`);
+                        }}
+                      />
                       {/* Fecha de fabricacion */}
                       <div className="mt-2">
                         <label

@@ -1,0 +1,1504 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table categoria_estado {
+  id Int [pk, increment]
+  nombre String [not null]
+  cat_estado cat_estado [not null]
+}
+
+Table cat_estado {
+  id Int [pk, increment]
+  categoria_estado categoria_estado [not null]
+  id_categoria_estado Int [not null]
+  nombre String [not null]
+  descripcion String [not null]
+  cliente cliente [not null]
+  proveedor proveedor [not null]
+  trabajador trabajador [not null]
+  cat_cargo cat_cargo [not null]
+  historial_cargo_trabajador historial_cargo_trabajador [not null]
+  comprobante comprobante [not null]
+  cat_forma_pago cat_forma_pago [not null]
+  categoria_producto categoria_producto [not null]
+  sub_categoria_producto sub_categoria_producto [not null]
+  marca marca [not null]
+  unidad_medida unidad_medida [not null]
+  producto producto [not null]
+  precio_producto precio_producto [not null]
+  caducidad caducidad [not null]
+  lote_producto lote_producto [not null]
+  solicitud_compra solicitud_compra [not null]
+  tipo_orden_compra tipo_orden_compra [not null]
+  orden_compra orden_compra [not null]
+  compra compra [not null]
+  recepcion_compra recepcion_compra [not null]
+  pedido pedido [not null]
+  reservacion reservacion [not null]
+  venta venta [not null]
+  bodega bodega [not null]
+  entrega_pedido entrega_pedido [not null]
+  caja caja [not null]
+  apertura_caja apertura_caja [not null]
+  cierre_caja cierre_caja [not null]
+  grupo_usuario grupo_usuario [not null]
+  sub_grupo_usuario sub_grupo_usuario [not null]
+  usuario usuario [not null]
+  rol rol [not null]
+  modulo modulo [not null]
+  conexion conexion [not null]
+  historial_sesion historial_sesion [not null]
+  cat_impuesto cat_impuesto [not null]
+  tipo_producto tipo_producto [not null]
+  zona_preparacion zona_preparacion [not null]
+  producto_elaborado producto_elaborado [not null]
+  detalle_producto_elaborado detalle_producto_elaborado [not null]
+  tipo_categoria tipo_categoria [not null]
+  detalle_pedido detalle_pedido [not null]
+  pedido_cocinero pedido_cocinero [not null]
+  punto_pedido punto_pedido [not null]
+  mesa mesa [not null]
+}
+
+Table categoria_impuesto {
+  id Int [pk, increment]
+  nombre String [not null]
+  cat_impuesto cat_impuesto [not null]
+}
+
+Table cat_impuesto {
+  id Int [pk, increment]
+  categoria_impuesto categoria_impuesto [not null]
+  id_categoria_impuesto Int [not null]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  porcentaje Float [not null]
+  descripcion String [not null]
+}
+
+Table persona {
+  id Int [pk, increment]
+  nombre String [not null]
+  apellido_razon_social String [not null]
+  cedula_ruc String [unique, not null]
+  telefono String [not null]
+  direccion_domicilio String [not null]
+  correo String [not null]
+  fecha_nacimiento_constitucion DateTime [not null]
+  fecha_registro DateTime [default: `now()`, not null]
+  tipo_persona String [not null, default: 'Natural']
+  cliente cliente [not null]
+  proveedor proveedor [not null]
+  trabajador trabajador
+  usuario usuario
+}
+
+Table cliente {
+  id Int [pk, increment]
+  persona persona [not null]
+  id_persona Int [not null]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  tipo_cliente String [not null]
+  genero String [not null]
+  pedido pedido [not null]
+  reservacion reservacion [not null]
+  venta venta [not null]
+}
+
+Table proveedor {
+  id Int [pk, increment]
+  persona persona [not null]
+  id_persona Int [not null]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  sector_comercial String [not null]
+  nacionalidad String [not null]
+  contacto_proveedor contacto_proveedor [not null]
+  orden_compra orden_compra [not null]
+  compra compra [not null]
+  devolucion_compra devolucion_compra [not null]
+  producto producto [not null]
+  producto_proveedor producto_proveedor [not null]
+}
+
+Table contacto_proveedor {
+  id Int [pk, increment]
+  proveedor proveedor [not null]
+  id_proveedor Int [not null]
+  telefono String [not null]
+  celular String [not null]
+  direccion String [not null]
+}
+
+Table cat_estado_civil {
+  id Int [pk, increment]
+  nombre String [not null]
+  trabajador trabajador [not null]
+}
+
+Table trabajador {
+  id Int [pk, increment]
+  persona persona [not null]
+  id_persona Int [unique, not null]
+  estado_civil cat_estado_civil [not null]
+  id_estado_civil Int [not null]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  codigo_inss String [not null]
+  genero String [not null]
+  fecha_ingreso DateTime [default: `now()`, not null]
+  historial_cargo_trabajador historial_cargo_trabajador [not null]
+  compra compra [not null]
+  recepcion_compra recepcion_compra [not null]
+  devolucion_compra devolucion_compra [not null]
+  pedido pedido [not null]
+  venta venta [not null]
+  entrega_pedido entrega_pedido [not null]
+  caja caja [not null]
+  apertura_caja apertura_caja [not null]
+  movimiento_caja movimiento_caja [not null]
+  arqueo_caja arqueo_caja [not null]
+  privilegio_usuario privilegio_usuario [not null]
+  solicitud_compra solicitud_compra [not null]
+  orden_compra orden_compra [not null]
+  cierre_caja cierre_caja [not null]
+  pedido_cocinero pedido_cocinero [not null]
+}
+
+Table cat_cargo {
+  id Int [pk, increment]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  nombre String [not null]
+  descripcion String [not null]
+  salario Float [not null]
+  vigencia DateTime [not null]
+  historial_cargo_trabajador historial_cargo_trabajador [not null]
+}
+
+Table historial_cargo_trabajador {
+  id Int [pk, increment]
+  trabajador trabajador [not null]
+  id_trabajador Int [not null]
+  cat_cargo cat_cargo [not null]
+  id_cargo Int [not null]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  motivo String [not null]
+  fecha DateTime [not null]
+}
+
+Table comprobante {
+  id Int [pk, increment]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  descripcion String [not null]
+  numeracion String [not null]
+  serie String [not null]
+  fecha_ingreso DateTime [not null]
+  solicitud_compra solicitud_compra [not null]
+  orden_compra orden_compra [not null]
+  compra compra [not null]
+  venta venta [not null]
+  movimiento_caja movimiento_caja [not null]
+}
+
+Table cat_forma_pago {
+  id Int [pk, increment]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  nombre String [not null]
+  descripcion String [not null]
+  venta venta [not null]
+}
+
+Table moneda {
+  id Int [pk, increment]
+  origen String [not null]
+  nombre String [not null]
+  simbolo String [not null]
+  tipo_cambio tipo_cambio [not null]
+  venta venta [not null]
+  apertura_caja apertura_caja [not null]
+  movimiento_caja movimiento_caja [not null]
+  arqueo_caja arqueo_caja [not null]
+}
+
+Table tipo_cambio {
+  id Int [pk, increment]
+  moneda moneda [not null]
+  id_moneda Int [not null]
+  fecha DateTime [not null]
+  valor_cambio Float [not null]
+  fecha_registro DateTime [default: `now()`, not null]
+}
+
+Table tipo_producto {
+  id Int [pk, increment]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  nombre String [not null]
+  producto producto [not null]
+}
+
+Table tipo_categoria {
+  id Int [pk, increment]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  nombre String [not null]
+  categoria_producto categoria_producto [not null]
+}
+
+Table categoria_producto {
+  id Int [pk, increment]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  tipo_categoria tipo_categoria [not null]
+  id_tipo_categoria Int [not null]
+  nombre String [unique, not null]
+  descripcion String [not null]
+  sub_categoria_producto sub_categoria_producto [not null]
+  producto producto [not null]
+  producto_elaborado producto_elaborado [not null]
+}
+
+Table sub_categoria_producto {
+  id Int [pk, increment]
+  categoria_producto categoria_producto [not null]
+  id_categoria_producto Int [not null]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  nombre String [not null]
+  producto_elaborado producto_elaborado [not null]
+  producto producto [not null]
+}
+
+Table marca {
+  id Int [pk, increment]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  nombre String [unique, not null]
+  siglas String [unique, not null]
+  producto producto [not null]
+}
+
+Table unidad_medida {
+  id Int [pk, increment]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  nombre String [unique, not null]
+  siglas String [unique, not null]
+  producto producto [not null]
+  producto_elaborado producto_elaborado [not null]
+  equivalencia equivalencia [not null]
+}
+
+Table zona_preparacion {
+  id Int [pk, increment]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  nombre String [not null]
+  producto_elaborado producto_elaborado [not null]
+}
+
+Table equivalencia {
+  id Int [pk, increment]
+  nombre String [not null]
+  siglas String [not null]
+  unidad_medida unidad_medida [not null]
+  id_unidad_medida Int [not null]
+}
+
+Table producto {
+  id Int [pk, increment]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  marca marca [not null]
+  id_marca Int [not null]
+  categoria_producto categoria_producto [not null]
+  id_categoria_producto Int [not null]
+  sub_categoria_producto sub_categoria_producto [not null]
+  id_sub_categoria_producto Int [not null]
+  tipo_producto tipo_producto [not null]
+  id_tipo_producto Int [not null]
+  unidad_medida unidad_medida [not null]
+  id_unidad_medida Int [not null]
+  proveedor proveedor [not null]
+  id_proveedor Int [not null, default: 1]
+  cod_producto String [not null]
+  nombre String [not null]
+  descripcion String [not null]
+  imagen String [not null, default: '']
+  fecha_ingreso DateTime [default: `now()`, not null]
+  precio_producto precio_producto [not null]
+  caducidad caducidad [not null]
+  lote_producto lote_producto [not null]
+  detalle_orden_compra detalle_orden_compra [not null]
+  detalle_compra detalle_compra [not null]
+  detalle_pedido detalle_pedido [not null]
+  detalle_venta detalle_venta [not null]
+  trans_inventario trans_inventario [not null]
+  detalle_inventario detalle_inventario [not null]
+  detalle_entrega detalle_entrega [not null]
+  detalle_solicitud_compra detalle_solicitud_compra [not null]
+  detalle_producto_elaborado detalle_producto_elaborado [not null]
+  coste_producto coste_producto [not null]
+  inventario inventario
+  detalle_pedido_ingrediente detalle_pedido_ingrediente [not null]
+  producto_proveedor producto_proveedor [not null]
+  detalle_recepcion_compra detalle_recepcion_compra [not null]
+  stock_seguridad stock_seguridad [not null]
+  punto_pedido punto_pedido [not null]
+}
+
+Table coste_producto {
+  id Int [pk, increment]
+  producto producto [not null]
+  id_producto Int [not null]
+  fecha DateTime [not null]
+  costo Float [not null]
+}
+
+Table producto_elaborado {
+  id Int [pk, increment]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  categoria_producto categoria_producto [not null]
+  id_categoria_producto Int [not null]
+  sub_categoria_producto sub_categoria_producto [not null]
+  id_sub_categoria_producto Int [not null]
+  zona_preparacion zona_preparacion [not null]
+  id_zona_preparacion Int [not null]
+  unidad_medida unidad_medida [not null]
+  id_unidad_medida Int [not null]
+  cod_producto String [not null]
+  nombre String [not null]
+  descripcion String [not null]
+  imagen String [not null, default: '']
+  precio_producto Float [not null]
+  fecha_ingreso DateTime [default: `now()`, not null]
+  detalle_producto_elaborado detalle_producto_elaborado [not null]
+  coste_producto_elaborado coste_producto_elaborado [not null]
+  detalle_pedido detalle_pedido [not null]
+  detalle_venta detalle_venta [not null]
+}
+
+Table stock_seguridad {
+  id Int [pk, increment]
+  producto producto [not null]
+  id_producto Int [unique, not null]
+  tiempo_entrega Int [not null]
+  desviacion_estandar Float [not null]
+  probabilidad_nivel_servicio Float [not null]
+  stock_seguridad Float [not null]
+}
+
+Table punto_pedido {
+  id Int [pk, increment]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  producto producto [not null]
+  id_producto Int [unique, not null]
+  desviacion_estandar Float [not null]
+  dias Int [not null]
+  costo_producto Float [not null]
+  semanas_trabajadas Int [not null]
+  tasa_anual Float [not null]
+  punto_pedido Float [not null]
+}
+
+Table detalle_producto_elaborado {
+  producto producto [not null]
+  id_producto Int [not null]
+  producto_elaborado producto_elaborado [not null]
+  id_producto_elaborado Int [not null]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  cantidad Float [not null]
+
+  indexes {
+    (id_producto, id_producto_elaborado) [pk]
+  }
+}
+
+Table precio_producto {
+  id Int [pk, increment]
+  producto producto [not null]
+  id_producto Int [not null]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  fecha_precio DateTime [default: `now()`, not null]
+  gasto Float [not null]
+  precio_compra Float [not null]
+  margen_ganancia Float [not null]
+  precio_venta Float [not null]
+}
+
+Table producto_proveedor {
+  producto producto [not null]
+  id_producto Int [not null]
+  proveedor proveedor [not null]
+  id_proveedor Int [not null]
+
+  indexes {
+    (id_producto, id_proveedor) [pk]
+  }
+}
+
+Table coste_producto_elaborado {
+  id Int [pk, increment]
+  producto_elaborado producto_elaborado [not null]
+  id_producto_elaborado Int [not null]
+  coste Float [not null]
+}
+
+Table caducidad {
+  id Int [pk, increment]
+  producto producto [not null]
+  id_producto Int [not null]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  fecha_entrada DateTime [not null]
+  fecha_caducidad DateTime [not null]
+  lote_producto lote_producto [not null]
+}
+
+Table lote_producto {
+  id Int [pk, increment]
+  producto producto [not null]
+  id_producto Int [not null]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  caducidad caducidad [not null]
+  id_caducidad Int [not null]
+  existencia Int [not null]
+  fecha_entrada DateTime [not null]
+}
+
+Table politica_abc {
+  id Int [pk, increment]
+  clasificacion String [not null]
+  porcentaje Float [not null]
+  fecha_creacion DateTime [default: `now()`, not null]
+}
+
+Table solicitud_compra {
+  id Int [pk, increment]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  trabajador trabajador [not null]
+  id_trabajador Int [not null]
+  comprobante comprobante [not null]
+  id_comprobante Int [not null]
+  tipo_orden_compra tipo_orden_compra [not null]
+  id_tipo_orden_compra Int [not null]
+  motivo String [not null]
+  observacion String [not null, default: '']
+  descuento Float [not null, default: 0]
+  impuesto Float [not null, default: 0]
+  subtotal Float [not null, default: 0]
+  total Float [not null, default: 0]
+  fecha_solicitud DateTime [not null]
+  fecha_vigencia DateTime [not null]
+  cantidad Int [not null]
+  detalle_solicitud_compra detalle_solicitud_compra [not null]
+  orden_compra orden_compra [not null]
+}
+
+Table detalle_solicitud_compra {
+  producto producto [not null]
+  id_producto Int [not null]
+  solicitud_compra solicitud_compra [not null]
+  id_solicitud_compra Int [not null]
+  cantidad Int [not null]
+  precio_unitario Float [not null]
+  monto Float [not null]
+
+  indexes {
+    (id_producto, id_solicitud_compra) [pk]
+  }
+}
+
+Table tipo_orden_compra {
+  id Int [pk, increment]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  nombre String [not null]
+  orden_compra orden_compra [not null]
+  solicitud_compra solicitud_compra [not null]
+}
+
+Table orden_compra {
+  id Int [pk, increment]
+  proveedor proveedor [not null]
+  id_proveedor Int [not null]
+  tipo_orden_compra tipo_orden_compra [not null]
+  id_tipo_orden_compra Int [not null]
+  comprobante comprobante [not null]
+  id_comprobante Int [not null]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  solicitud_compra solicitud_compra [not null]
+  id_solicitud_compra Int [not null]
+  trabajador trabajador [not null]
+  autorizado_por Int [not null]
+  num_orden Int [increment, not null]
+  subtotal Float [not null]
+  descuento Float [not null]
+  impuesto Float [not null]
+  total Float [not null]
+  fecha_orden DateTime [not null]
+  detalle_orden_compra detalle_orden_compra [not null]
+  compra compra [not null]
+  recepcion_compra recepcion_compra [not null]
+}
+
+Table detalle_orden_compra {
+  producto producto [not null]
+  id_producto Int [not null]
+  orden_compra orden_compra [not null]
+  id_orden_compra Int [not null]
+  cantidad Int [not null]
+  precio_unitario Float [not null]
+  monto Float [not null]
+
+  indexes {
+    (id_producto, id_orden_compra) [pk]
+  }
+}
+
+Table compra {
+  id Int [pk, increment]
+  proveedor proveedor [not null]
+  id_proveedor Int [not null]
+  trabajador trabajador [not null]
+  id_trabajador Int [not null]
+  orden_compra orden_compra [not null]
+  id_orden_compra Int [not null]
+  comprobante comprobante [not null]
+  id_comprobante Int [not null]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  fecha_compra DateTime [not null]
+  descripcion String [not null]
+  descuento Float [not null]
+  subtotal Float [not null]
+  impuesto Float [not null]
+  total Float [not null]
+  detalle_compra detalle_compra [not null]
+  devolucion_compra devolucion_compra [not null]
+}
+
+Table detalle_compra {
+  compra compra [not null]
+  id_compra Int [not null]
+  producto producto [not null]
+  id_producto Int [not null]
+  cantidad Int [not null]
+  precio Float [not null]
+  monto Float [not null]
+
+  indexes {
+    (id_compra, id_producto) [pk]
+  }
+}
+
+Table recepcion_compra {
+  id Int [pk, increment]
+  orden_compra orden_compra [not null]
+  id_orden_compra Int [not null]
+  trabajador trabajador [not null]
+  id_trabajador Int [not null]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  descripcion String [not null]
+  fecha_recepcion DateTime [not null]
+  detalle_recepcion_compra detalle_recepcion_compra [not null]
+}
+
+Table detalle_recepcion_compra {
+  producto producto [not null]
+  id_producto Int [not null]
+  recepcion_compra recepcion_compra [not null]
+  id_recepcion_compra Int [not null]
+  cantidad_solicitada Int [not null]
+  cantidad_recibida Int [not null]
+  precio_unitario Float [not null]
+  monto Float [not null]
+
+  indexes {
+    (id_producto, id_recepcion_compra) [pk]
+  }
+}
+
+Table devolucion_compra {
+  id Int [pk, increment]
+  compra compra [not null]
+  id_compra Int [not null]
+  proveedor proveedor [not null]
+  id_proveedor Int [not null]
+  trabajador trabajador [not null]
+  id_trabajador Int [not null]
+  motivo String [not null]
+  fecha_devolucion DateTime [not null]
+}
+
+Table pedido {
+  id Int [pk, increment]
+  cliente cliente [not null]
+  id_cliente Int [not null]
+  trabajador trabajador [not null]
+  id_trabajador Int [not null]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  mesa mesa [not null]
+  id_mesa Int [not null, default: 1]
+  tipo_pedido String [not null]
+  fecha_pedido DateTime [not null]
+  ubicacion_entrega String [not null]
+  observacion String [not null]
+  vigencia DateTime [not null]
+  detalle_pedido detalle_pedido [not null]
+  venta venta [not null]
+  detalle_pedido_ingrediente detalle_pedido_ingrediente [not null]
+  pedido_cocinero pedido_cocinero [not null]
+}
+
+Table detalle_pedido {
+  pedido pedido [not null]
+  id_pedido Int [not null]
+  producto producto
+  id_producto Int
+  producto_elaborado producto_elaborado [not null]
+  id_producto_elaborado Int [not null]
+  estado cat_estado [not null]
+  id_estado Int [not null, default: 4]
+  cantidad Int [not null]
+  precio Float [not null]
+  monto Float [not null]
+
+  indexes {
+    (id_pedido, id_producto_elaborado) [pk]
+  }
+}
+
+Table detalle_pedido_ingrediente {
+  pedido pedido [not null]
+  id_pedido Int [not null]
+  ingrediente producto [not null]
+  id_producto Int [not null]
+  cantidad Int [not null]
+
+  indexes {
+    (id_pedido, id_producto) [pk]
+  }
+}
+
+Table pedido_cocinero {
+  id Int [pk, increment]
+  trabajador trabajador [not null]
+  id_trabajador Int [not null]
+  pedido pedido [not null]
+  id_pedido Int [unique, not null]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  fecha_pedido DateTime [default: `now()`, not null]
+}
+
+Table reservacion {
+  id Int [pk, increment]
+  cliente cliente [not null]
+  id_cliente Int [not null]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  tipo_reservacion String [not null]
+  fecha_reservacion DateTime [not null]
+  horas_reservadas Int [not null]
+  fecha_registro DateTime [not null]
+  detalle_reservacion detalle_reservacion
+}
+
+Table detalle_reservacion {
+  id Int [pk, increment]
+  reservacion reservacion [not null]
+  id_reservacion Int [unique, not null]
+  mesa mesa [not null]
+  id_mesa Int [not null]
+  servicio String [not null]
+  hora_reserva DateTime [not null]
+  adultos Int [not null]
+  menores Int [not null]
+  total_personas Int [not null]
+  observaciones String [not null]
+}
+
+Table mesa {
+  id Int [pk, increment]
+  nombre String [not null]
+  ubicacion String [not null]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  capacidad Int [not null]
+  detalle_reservacion detalle_reservacion [not null]
+  pedido pedido [not null]
+}
+
+Table venta {
+  id Int [pk, increment]
+  cliente cliente [not null]
+  id_cliente Int [not null]
+  trabajador trabajador [not null]
+  id_trabajador Int [not null]
+  pedido pedido [not null]
+  id_pedido Int [not null]
+  comprobante comprobante [not null]
+  id_comprobante Int [not null]
+  moneda moneda [not null]
+  id_moneda Int [not null]
+  cat_forma_pago cat_forma_pago [not null]
+  id_cat_forma_pago Int [not null]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  tipo_venta String [not null]
+  fecha_venta DateTime [not null]
+  subtotal Float [not null]
+  descuento Float [not null]
+  impuesto Float [not null]
+  total Float [not null]
+  detalle_venta detalle_venta [not null]
+  entrega_pedido entrega_pedido [not null]
+}
+
+Table detalle_venta {
+  venta venta [not null]
+  id_venta Int [not null]
+  producto producto
+  id_producto Int
+  producto_elaborado producto_elaborado [not null]
+  id_producto_elaborado Int [not null]
+  cantidad Int [not null]
+  precio Float [not null]
+  monto Float [not null]
+
+  indexes {
+    (id_venta, id_producto_elaborado) [pk]
+  }
+}
+
+Table tipo_bodega {
+  id Int [pk, increment]
+  nombre String [not null]
+  bodega bodega [not null]
+}
+
+Table bodega {
+  id Int [pk, increment]
+  tipo_bodega tipo_bodega [not null]
+  id_tipo_bodega Int [not null]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  ubicacion String [not null]
+  existencia Int [not null]
+  ubicacion_en_bodega ubicacion_en_bodega [not null]
+}
+
+Table ubicacion_en_bodega {
+  id Int [pk, increment]
+  bodega bodega [not null]
+  id_bodega Int [not null]
+  nombre_pasillo String [not null]
+  numero_pasillo Int [not null]
+  numero_estante_vitrina Int [not null]
+}
+
+Table trans_inventario {
+  id Int [pk, increment]
+  producto producto [not null]
+  id_producto Int [not null]
+  fecha_movimiento DateTime [not null]
+  cod_documento String [unique, not null]
+  cantidad Int [not null]
+  tipo_movimiento String [not null]
+}
+
+Table inventario {
+  id Int [pk, increment]
+  producto producto [not null]
+  id_producto Int [unique, not null]
+  stock_min Int [not null]
+  stock_max Int [not null]
+  stock_actual Int [not null]
+  detalle_inventario detalle_inventario [not null]
+}
+
+Table detalle_inventario {
+  inventario inventario [not null]
+  id_inventario Int [not null]
+  producto producto [not null]
+  id_producto Int [not null]
+  stock_minimo Int [not null]
+  stock_maximo Int [not null]
+  existencia Int [not null]
+
+  indexes {
+    (id_inventario, id_producto) [pk]
+  }
+}
+
+Table entrega_pedido {
+  id Int [pk, increment]
+  trabajador trabajador [not null]
+  id_trabajador Int [not null]
+  venta venta [not null]
+  id_venta Int [not null]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  fecha_entrega DateTime [not null]
+  tiempo_estimado Int [not null]
+  lugar_entrega String [not null]
+  monto_delivery Float [not null]
+  detalle_entrega detalle_entrega [not null]
+}
+
+Table detalle_entrega {
+  id Int [pk, increment]
+  entrega_pedido entrega_pedido [not null]
+  id_entrega_pedido Int [not null]
+  producto producto [not null]
+  id_producto Int [not null]
+  cantidad Int [not null]
+  precio Float [not null]
+  monto Float [not null]
+}
+
+Table caja {
+  id Int [pk, increment]
+  trabajador trabajador [not null]
+  id_trabajador Int [not null]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  tipo_caja String [not null]
+  fecha_registro DateTime [not null]
+  saldo_actual Float [not null, default: 0]
+  apertura_caja apertura_caja [not null]
+  movimiento_caja movimiento_caja [not null]
+  arqueo_caja arqueo_caja [not null]
+  cierre_caja cierre_caja [not null]
+}
+
+Table apertura_caja {
+  id Int [pk, increment]
+  caja caja [not null]
+  id_caja Int [not null]
+  trabajador trabajador [not null]
+  id_trabajador Int [not null]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  moneda moneda [not null]
+  id_moneda Int [not null]
+  fecha_apertura DateTime [not null]
+  fecha_cierre DateTime
+  detalle_apertura_caja detalle_apertura_caja
+}
+
+Table detalle_apertura_caja {
+  id Int [pk, increment]
+  apertura_caja apertura_caja [not null]
+  id_apertura_caja Int [unique, not null]
+  monto_cordobas Float [not null]
+  monto_dolares Float [not null]
+}
+
+Table movimiento_caja {
+  id Int [pk, increment]
+  caja caja [not null]
+  id_caja Int [not null]
+  comprobante comprobante [not null]
+  id_comprobante Int [not null]
+  trabajador trabajador [not null]
+  id_trabajador Int [not null]
+  moneda moneda [not null]
+  id_moneda Int [not null]
+  num_movimiento String [not null]
+  tipo_movimiento String [not null]
+  fecha_movimiento DateTime [not null]
+  concepto String [not null]
+  monto Float [not null]
+}
+
+Table arqueo_caja {
+  id Int [pk, increment]
+  caja caja [not null]
+  id_caja Int [not null]
+  trabajador trabajador [not null]
+  id_trabajador Int [not null]
+  moneda moneda [not null]
+  id_moneda Int [not null]
+  fecha_arqueo DateTime [not null]
+  total Float [not null]
+  detalle_billete_arqueo detalle_billete_arqueo [not null]
+  detalle_monedas_arqueo detalle_monedas_arqueo [not null]
+}
+
+Table detalle_monedas_arqueo {
+  id Int [pk, increment]
+  arqueo_caja arqueo_caja [not null]
+  id_arqueo_caja Int [not null]
+  denominacion Int [not null, default: 0]
+  cantidad Int [not null, default: 0]
+  total Float [not null, default: 0]
+}
+
+Table detalle_billete_arqueo {
+  id Int [pk, increment]
+  arqueo_caja arqueo_caja [not null]
+  id_arqueo_caja Int [not null]
+  denominacion Int [not null, default: 0]
+  cantidad Int [not null, default: 0]
+  total Float [not null, default: 0]
+}
+
+Table cierre_caja {
+  id Int [pk, increment]
+  caja caja [not null]
+  id_caja Int [not null]
+  trabajador trabajador [not null]
+  id_trabajador Int [not null]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  fecha_apertura DateTime
+  fecha_cierre DateTime [default: `now()`, not null]
+  total Float [not null]
+}
+
+Table grupo_usuario {
+  id Int [pk, increment]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  nombre String [not null]
+  descripcion String [not null]
+  sub_grupo_usuario sub_grupo_usuario [not null]
+  perfil perfil [not null]
+}
+
+Table sub_grupo_usuario {
+  id Int [pk, increment]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  grupo_usuario grupo_usuario [not null]
+  id_grupo_usuario Int [not null]
+  nombre String [not null]
+  descripcion String [not null]
+}
+
+Table perfil {
+  id Int [pk, increment]
+  grupo_usuario grupo_usuario [not null]
+  id_grupo_usuario Int [not null]
+  nombre String [not null]
+  descripcion String [not null]
+  usuario usuario [not null]
+  privilegio_usuario privilegio_usuario [not null]
+}
+
+Table usuario {
+  id Int [pk, increment]
+  perfil perfil [not null]
+  id_perfil Int [not null]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  persona persona [not null]
+  id_persona Int [unique, not null]
+  usuario String [unique, not null]
+  correo String [unique, not null]
+  password String [not null]
+  rol rol [not null]
+  id_rol Int [not null, default: 6]
+  fecha_registro DateTime [default: `now()`, not null]
+  token String [unique]
+  historial_password_usuario historial_password_usuario [not null]
+  conexion conexion [not null]
+  historial_sesion historial_sesion [not null]
+  historial_permiso_usuario historial_permiso_usuario [not null]
+}
+
+Table historial_password_usuario {
+  id Int [pk, increment]
+  usuario usuario [not null]
+  id_usuario Int [not null]
+  password_antigua String [not null]
+  fecha_registro DateTime [not null]
+}
+
+Table rol {
+  id Int [pk, increment]
+  nombre String [not null]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  rol_modulo rol_modulo [not null]
+  usuario usuario [not null]
+  rol_permiso rol_permiso [not null]
+  rol_sub_modulo rol_sub_modulo [not null]
+}
+
+Table modulo {
+  id Int [pk, increment]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  nombre String [not null]
+  descripcion String [not null]
+  icono String [not null, default: '']
+  fecha_registro DateTime [default: `now()`, not null]
+  sub_modulo sub_modulo [not null]
+  rol_modulo rol_modulo [not null]
+  rol_sub_modulo rol_sub_modulo [not null]
+}
+
+Table sub_modulo {
+  id Int [pk, increment]
+  modulo modulo [not null]
+  id_modulo Int [not null]
+  nombre String [not null]
+  url String [not null]
+  rol_sub_modulo rol_sub_modulo [not null]
+  rol_permiso rol_permiso [not null]
+}
+
+Table rol_modulo {
+  rol rol [not null]
+  id_rol Int [not null]
+  modulo modulo [not null]
+  id_modulo Int [not null]
+  nombre String [not null]
+
+  indexes {
+    (id_modulo, id_rol) [pk]
+  }
+}
+
+Table rol_sub_modulo {
+  rol rol [not null]
+  id_rol Int [not null]
+  modulo modulo [not null]
+  id_modulo Int [not null]
+  sub_modulo sub_modulo [not null]
+  id_sub_modulo Int [not null]
+  nombre String [not null]
+
+  indexes {
+    (id_sub_modulo, id_rol) [pk]
+  }
+}
+
+Table permiso {
+  id Int [pk, increment]
+  nombre String [not null]
+  descripcion String [not null]
+  historial_permiso_usuario historial_permiso_usuario [not null]
+  rol_permiso rol_permiso [not null]
+}
+
+Table rol_permiso {
+  rol rol [not null]
+  id_rol Int [not null]
+  permiso permiso [not null]
+  id_permiso Int [not null]
+  sub_modulo sub_modulo [not null]
+  id_sub_modulo Int [not null]
+  nombre String [not null]
+
+  indexes {
+    (id_rol, id_permiso, id_sub_modulo) [pk]
+  }
+}
+
+Table privilegio_usuario {
+  id Int [pk, increment]
+  perfil perfil [not null]
+  id_perfil Int [not null]
+  id_rol_modulo Int [not null]
+  trabajador trabajador [not null]
+  id_trabajador Int [not null]
+}
+
+Table conexion {
+  id Int [pk, increment]
+  usuario usuario [not null]
+  id_usuario Int [not null]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  num_conexion Int [not null]
+  ip String [not null]
+  mac String [not null]
+}
+
+Table historial_sesion {
+  id Int [pk, increment]
+  usuario usuario [not null]
+  id_usuario Int [not null]
+  cat_estado cat_estado [not null]
+  id_estado Int [not null]
+  fecha_ingreso DateTime [not null]
+}
+
+Table historial_permiso_usuario {
+  usuario usuario [not null]
+  id_usuario Int [not null]
+  permiso permiso [not null]
+  id_permiso Int [not null]
+  fecha_registro DateTime [not null]
+
+  indexes {
+    (id_usuario, id_permiso) [pk]
+  }
+}
+
+Ref: cat_estado.id_categoria_estado > categoria_estado.id
+
+Ref: cat_impuesto.id_categoria_impuesto > categoria_impuesto.id
+
+Ref: cat_impuesto.id_estado > cat_estado.id
+
+Ref: cliente.id_persona > persona.id
+
+Ref: cliente.id_estado > cat_estado.id
+
+Ref: proveedor.id_persona > persona.id
+
+Ref: proveedor.id_estado > cat_estado.id
+
+Ref: contacto_proveedor.id_proveedor > proveedor.id
+
+Ref: trabajador.id_persona - persona.id
+
+Ref: trabajador.id_estado_civil > cat_estado_civil.id
+
+Ref: trabajador.id_estado > cat_estado.id
+
+Ref: cat_cargo.id_estado > cat_estado.id
+
+Ref: historial_cargo_trabajador.id_trabajador > trabajador.id
+
+Ref: historial_cargo_trabajador.id_cargo > cat_cargo.id
+
+Ref: historial_cargo_trabajador.id_estado > cat_estado.id
+
+Ref: comprobante.id_estado > cat_estado.id
+
+Ref: cat_forma_pago.id_estado > cat_estado.id
+
+Ref: tipo_cambio.id_moneda > moneda.id
+
+Ref: tipo_producto.id_estado > cat_estado.id
+
+Ref: tipo_categoria.id_estado > cat_estado.id
+
+Ref: categoria_producto.id_estado > cat_estado.id
+
+Ref: categoria_producto.id_tipo_categoria > tipo_categoria.id
+
+Ref: sub_categoria_producto.id_categoria_producto > categoria_producto.id
+
+Ref: sub_categoria_producto.id_estado > cat_estado.id
+
+Ref: marca.id_estado > cat_estado.id
+
+Ref: unidad_medida.id_estado > cat_estado.id
+
+Ref: zona_preparacion.id_estado > cat_estado.id
+
+Ref: equivalencia.id_unidad_medida > unidad_medida.id
+
+Ref: producto.id_estado > cat_estado.id
+
+Ref: producto.id_marca > marca.id
+
+Ref: producto.id_categoria_producto > categoria_producto.id
+
+Ref: producto.id_sub_categoria_producto > sub_categoria_producto.id
+
+Ref: producto.id_tipo_producto > tipo_producto.id
+
+Ref: producto.id_unidad_medida > unidad_medida.id
+
+Ref: producto.id_proveedor > proveedor.id
+
+Ref: coste_producto.id_producto > producto.id
+
+Ref: producto_elaborado.id_estado > cat_estado.id
+
+Ref: producto_elaborado.id_categoria_producto > categoria_producto.id
+
+Ref: producto_elaborado.id_sub_categoria_producto > sub_categoria_producto.id
+
+Ref: producto_elaborado.id_zona_preparacion > zona_preparacion.id
+
+Ref: producto_elaborado.id_unidad_medida > unidad_medida.id
+
+Ref: stock_seguridad.id_producto > producto.id
+
+Ref: punto_pedido.id_estado > cat_estado.id
+
+Ref: punto_pedido.id_producto > producto.id
+
+Ref: detalle_producto_elaborado.id_producto > producto.id
+
+Ref: detalle_producto_elaborado.id_producto_elaborado > producto_elaborado.id
+
+Ref: detalle_producto_elaborado.id_estado > cat_estado.id
+
+Ref: precio_producto.id_producto > producto.id
+
+Ref: precio_producto.id_estado > cat_estado.id
+
+Ref: producto_proveedor.id_producto > producto.id
+
+Ref: producto_proveedor.id_proveedor > proveedor.id
+
+Ref: coste_producto_elaborado.id_producto_elaborado > producto_elaborado.id
+
+Ref: caducidad.id_producto > producto.id
+
+Ref: caducidad.id_estado > cat_estado.id
+
+Ref: lote_producto.id_producto > producto.id
+
+Ref: lote_producto.id_estado > cat_estado.id
+
+Ref: lote_producto.id_caducidad > caducidad.id
+
+Ref: solicitud_compra.id_estado > cat_estado.id
+
+Ref: solicitud_compra.id_trabajador > trabajador.id
+
+Ref: solicitud_compra.id_comprobante > comprobante.id
+
+Ref: solicitud_compra.id_tipo_orden_compra > tipo_orden_compra.id
+
+Ref: detalle_solicitud_compra.id_producto > producto.id
+
+Ref: detalle_solicitud_compra.id_solicitud_compra > solicitud_compra.id
+
+Ref: tipo_orden_compra.id_estado > cat_estado.id
+
+Ref: orden_compra.id_proveedor > proveedor.id
+
+Ref: orden_compra.id_tipo_orden_compra > tipo_orden_compra.id
+
+Ref: orden_compra.id_comprobante > comprobante.id
+
+Ref: orden_compra.id_estado > cat_estado.id
+
+Ref: orden_compra.id_solicitud_compra > solicitud_compra.id
+
+Ref: orden_compra.autorizado_por > trabajador.id
+
+Ref: detalle_orden_compra.id_producto > producto.id
+
+Ref: detalle_orden_compra.id_orden_compra > orden_compra.id
+
+Ref: compra.id_proveedor > proveedor.id
+
+Ref: compra.id_trabajador > trabajador.id
+
+Ref: compra.id_orden_compra > orden_compra.id
+
+Ref: compra.id_comprobante > comprobante.id
+
+Ref: compra.id_estado > cat_estado.id
+
+Ref: detalle_compra.id_compra > compra.id
+
+Ref: detalle_compra.id_producto > producto.id
+
+Ref: recepcion_compra.id_orden_compra > orden_compra.id
+
+Ref: recepcion_compra.id_trabajador > trabajador.id
+
+Ref: recepcion_compra.id_estado > cat_estado.id
+
+Ref: detalle_recepcion_compra.id_producto > producto.id
+
+Ref: detalle_recepcion_compra.id_recepcion_compra > recepcion_compra.id
+
+Ref: devolucion_compra.id_compra > compra.id
+
+Ref: devolucion_compra.id_proveedor > proveedor.id
+
+Ref: devolucion_compra.id_trabajador > trabajador.id
+
+Ref: pedido.id_cliente > cliente.id
+
+Ref: pedido.id_trabajador > trabajador.id
+
+Ref: pedido.id_estado > cat_estado.id
+
+Ref: pedido.id_mesa > mesa.id
+
+Ref: detalle_pedido.id_pedido > pedido.id
+
+Ref: detalle_pedido.id_producto > producto.id
+
+Ref: detalle_pedido.id_producto_elaborado > producto_elaborado.id
+
+Ref: detalle_pedido.id_estado > cat_estado.id
+
+Ref: detalle_pedido_ingrediente.id_pedido > pedido.id
+
+Ref: detalle_pedido_ingrediente.id_producto > producto.id
+
+Ref: pedido_cocinero.id_trabajador > trabajador.id
+
+Ref: pedido_cocinero.id_pedido > pedido.id
+
+Ref: pedido_cocinero.id_estado > cat_estado.id
+
+Ref: reservacion.id_cliente > cliente.id
+
+Ref: reservacion.id_estado > cat_estado.id
+
+Ref: detalle_reservacion.id_reservacion - reservacion.id
+
+Ref: detalle_reservacion.id_mesa > mesa.id
+
+Ref: mesa.id_estado > cat_estado.id
+
+Ref: venta.id_cliente > cliente.id
+
+Ref: venta.id_trabajador > trabajador.id
+
+Ref: venta.id_pedido > pedido.id
+
+Ref: venta.id_comprobante > comprobante.id
+
+Ref: venta.id_moneda > moneda.id
+
+Ref: venta.id_cat_forma_pago > cat_forma_pago.id
+
+Ref: venta.id_estado > cat_estado.id
+
+Ref: detalle_venta.id_venta > venta.id
+
+Ref: detalle_venta.id_producto > producto.id
+
+Ref: detalle_venta.id_producto_elaborado > producto_elaborado.id
+
+Ref: bodega.id_tipo_bodega > tipo_bodega.id
+
+Ref: bodega.id_estado > cat_estado.id
+
+Ref: ubicacion_en_bodega.id_bodega > bodega.id
+
+Ref: trans_inventario.id_producto > producto.id
+
+Ref: inventario.id_producto - producto.id
+
+Ref: detalle_inventario.id_inventario > inventario.id
+
+Ref: detalle_inventario.id_producto > producto.id
+
+Ref: entrega_pedido.id_trabajador > trabajador.id
+
+Ref: entrega_pedido.id_venta > venta.id
+
+Ref: entrega_pedido.id_estado > cat_estado.id
+
+Ref: detalle_entrega.id_entrega_pedido > entrega_pedido.id
+
+Ref: detalle_entrega.id_producto > producto.id
+
+Ref: caja.id_trabajador > trabajador.id
+
+Ref: caja.id_estado > cat_estado.id
+
+Ref: apertura_caja.id_caja > caja.id
+
+Ref: apertura_caja.id_trabajador > trabajador.id
+
+Ref: apertura_caja.id_estado > cat_estado.id
+
+Ref: apertura_caja.id_moneda > moneda.id
+
+Ref: detalle_apertura_caja.id_apertura_caja - apertura_caja.id
+
+Ref: movimiento_caja.id_caja > caja.id
+
+Ref: movimiento_caja.id_comprobante > comprobante.id
+
+Ref: movimiento_caja.id_trabajador > trabajador.id
+
+Ref: movimiento_caja.id_moneda > moneda.id
+
+Ref: arqueo_caja.id_caja > caja.id
+
+Ref: arqueo_caja.id_trabajador > trabajador.id
+
+Ref: arqueo_caja.id_moneda > moneda.id
+
+Ref: detalle_monedas_arqueo.id_arqueo_caja > arqueo_caja.id
+
+Ref: detalle_billete_arqueo.id_arqueo_caja > arqueo_caja.id
+
+Ref: cierre_caja.id_caja > caja.id
+
+Ref: cierre_caja.id_trabajador > trabajador.id
+
+Ref: cierre_caja.id_estado > cat_estado.id
+
+Ref: grupo_usuario.id_estado > cat_estado.id
+
+Ref: sub_grupo_usuario.id_estado > cat_estado.id
+
+Ref: sub_grupo_usuario.id_grupo_usuario > grupo_usuario.id
+
+Ref: perfil.id_grupo_usuario > grupo_usuario.id
+
+Ref: usuario.id_perfil > perfil.id
+
+Ref: usuario.id_estado > cat_estado.id
+
+Ref: usuario.id_persona - persona.id
+
+Ref: usuario.id_rol > rol.id
+
+Ref: historial_password_usuario.id_usuario > usuario.id
+
+Ref: rol.id_estado > cat_estado.id
+
+Ref: modulo.id_estado > cat_estado.id
+
+Ref: sub_modulo.id_modulo > modulo.id
+
+Ref: rol_modulo.id_rol > rol.id
+
+Ref: rol_modulo.id_modulo > modulo.id
+
+Ref: rol_sub_modulo.id_rol > rol.id
+
+Ref: rol_sub_modulo.id_modulo > modulo.id
+
+Ref: rol_sub_modulo.id_sub_modulo > sub_modulo.id
+
+Ref: rol_permiso.id_rol > rol.id
+
+Ref: rol_permiso.id_permiso > permiso.id
+
+Ref: rol_permiso.id_sub_modulo > sub_modulo.id
+
+Ref: privilegio_usuario.id_perfil > perfil.id
+
+Ref: privilegio_usuario.id_trabajador > trabajador.id
+
+Ref: conexion.id_usuario > usuario.id
+
+Ref: conexion.id_estado > cat_estado.id
+
+Ref: historial_sesion.id_usuario > usuario.id
+
+Ref: historial_sesion.id_estado > cat_estado.id
+
+Ref: historial_permiso_usuario.id_usuario > usuario.id
+
+Ref: historial_permiso_usuario.id_permiso > permiso.id
